@@ -334,6 +334,49 @@
     }
   });
 
+  // src/injected/qr.js
+  var require_qr = __commonJS({
+    "src/injected/qr.js"(exports, module) {
+      "use strict";
+      function createQrCanvas2(document2, qrcode2, value) {
+        if (!document2 || typeof document2.createElement !== "function") throw new Error("QR rendering requires a document.");
+        if (typeof qrcode2 !== "function") throw new Error("QR generator is unavailable.");
+        const code = qrcode2(0, "L");
+        code.addData(String(value || ""));
+        code.make();
+        const moduleCount = code.getModuleCount();
+        const quietZone = 4;
+        const cellSize = Math.max(2, Math.floor(148 / (moduleCount + quietZone * 2)));
+        const dimension = (moduleCount + quietZone * 2) * cellSize;
+        const canvas = document2.createElement("canvas");
+        canvas.width = dimension;
+        canvas.height = dimension;
+        canvas.setAttribute("aria-hidden", "true");
+        canvas.style.width = `${dimension}px`;
+        canvas.style.height = `${dimension}px`;
+        const context = canvas.getContext && canvas.getContext("2d");
+        if (!context) throw new Error("Canvas rendering is unavailable.");
+        context.imageSmoothingEnabled = false;
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, dimension, dimension);
+        context.fillStyle = "#000000";
+        for (let row = 0; row < moduleCount; row += 1) {
+          for (let column = 0; column < moduleCount; column += 1) {
+            if (!code.isDark(row, column)) continue;
+            context.fillRect(
+              (column + quietZone) * cellSize,
+              (row + quietZone) * cellSize,
+              cellSize,
+              cellSize
+            );
+          }
+        }
+        return canvas;
+      }
+      module.exports = { createQrCanvas: createQrCanvas2 };
+    }
+  });
+
   // node_modules/.pnpm/qrcode-generator@1.4.4/node_modules/qrcode-generator/qrcode.js
   var require_qrcode = __commonJS({
     "node_modules/.pnpm/qrcode-generator@1.4.4/node_modules/qrcode-generator/qrcode.js"(exports, module) {
@@ -2023,8 +2066,10 @@
 
   // src/injected/index.js
   var { createPageAdapter, cleanText } = require_adapters();
+  var { createQrCanvas } = require_qr();
   var qrcode = require_qrcode();
   var FRAME_CHANNEL = "web-remote-tv-frame-v1";
+  var BILIBILI_HOME = "https://www.bilibili.com/";
   function startEmbeddedFrameBridge() {
     function frameVideo() {
       const videos = Array.from(document.querySelectorAll("video"));
@@ -2223,9 +2268,9 @@
         .mark { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: #0ea5e9; color: #001018; font-size: 25px; font-weight: 900; }
         h1 { margin: 0; font-size: 22px; line-height: 1.1; color: #fff; }
         .sub { color: #9fb2c8; font-size: 13px; margin-top: 3px; }
-        .pair { display: grid; grid-template-columns: 142px 1fr; gap: 16px; align-items: center; margin-top: 16px; }
-        .qr { display: grid; place-items: center; width: 142px; height: 142px; overflow: hidden; border-radius: 10px; background: white; }
-        .qr svg { width: 136px; height: 136px; }
+        .pair { display: grid; grid-template-columns: 154px 1fr; gap: 16px; align-items: center; margin-top: 16px; }
+        .qr { display: grid; place-items: center; width: 154px; height: 154px; overflow: hidden; border-radius: 10px; background: white; color: #111827; font-size: 13px; text-align: center; }
+        .qr canvas { display: block; image-rendering: pixelated; }
         .pin-label { color: #a9bdd0; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
         .pin { color: #7dd3fc; font-size: 36px; font-weight: 800; letter-spacing: .12em; margin: 4px 0 10px; }
         .url { color: #d8e8f7; font-size: 14px; overflow-wrap: anywhere; line-height: 1.35; }
@@ -2281,13 +2326,13 @@
       overlay.url.textContent = data.pairUrl || data.addresses && data.addresses[0] || "Local service unavailable";
       if (data.pin && data.pairUrl && overlay.qr.getAttribute("data-value") !== data.pairUrl) {
         try {
-          const code = qrcode(0, "M");
-          code.addData(data.pairUrl);
-          code.make();
-          overlay.qr.innerHTML = code.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+          const canvas = createQrCanvas(document, qrcode, data.pairUrl);
+          overlay.qr.textContent = "";
+          overlay.qr.appendChild(canvas);
           overlay.qr.setAttribute("data-value", data.pairUrl);
         } catch (error) {
           lastError = `QR code: ${error.message}`;
+          overlay.qr.textContent = "Use the address";
         }
       }
       overlay.diag.innerHTML = "";
@@ -2418,7 +2463,7 @@
     function execute(command) {
       try {
         if (command.type === "navigate") {
-          window.location.assign(command.url);
+          window.location.replace(command.url);
           return;
         }
         if (command.type === "history") {
@@ -2495,6 +2540,19 @@
       }
       if (message.kind === "command") execute(message.command || {});
       if (message.kind === "ping") postState({ kind: "pong", at: Date.now() });
+    }
+    async function bootstrapServiceInfo() {
+      try {
+        const response = await fetch(`${LOCAL_HTTP}/api/tv-info?t=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        serviceInfo = await response.json();
+        updateOverlay();
+      } catch (error) {
+        if (!serviceInfo) {
+          lastError = `Pairing info unavailable: ${error.message}`;
+          updateOverlay();
+        }
+      }
     }
     async function pollLoop() {
       if (polling) return;
@@ -2584,8 +2642,21 @@
       embeddedPlayerSeenAt = Date.now();
       playerState(true);
     });
+    function emergencyHome(event) {
+      const keyCode = Number(event.keyCode || event.which);
+      const isBack = event.keyName === "back" || event.key === "Back" || event.key === "Escape" || keyCode === 10009;
+      const hostname = String(window.location.hostname || "").toLowerCase();
+      const onBilibili = hostname === "bilibili.com" || hostname.endsWith(".bilibili.com");
+      if (!isBack || onBilibili) return;
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.replace(BILIBILI_HOME);
+    }
+    window.addEventListener("keydown", emergencyHome, true);
+    document.addEventListener("tizenhwkey", emergencyHome, true);
     if (document.documentElement) initializeDom();
     else document.addEventListener("DOMContentLoaded", initializeDom, { once: true });
+    bootstrapServiceInfo();
     connectSocket();
     setInterval(() => {
       const signature = `${window.location.href}|${document.title}|${document.readyState}`;

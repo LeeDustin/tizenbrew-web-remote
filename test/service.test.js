@@ -65,15 +65,23 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const health = await request(base, '/api/health');
   assert.equal(health.body.ok, true);
+  assert.equal(health.body.version, '0.2.2');
 
   const info = instance.getInfo();
   assert.match(info.pin, /^\d{6}$/);
-  assert.equal(info.activeProfileId, '1shows');
-  assert.equal(info.profiles[0].urls[0], 'https://www.1shows.org/');
+  assert.equal(info.version, '0.2.2');
+  assert.equal(info.activeProfileId, 'bilibili');
+  assert.equal(info.profiles[0].urls[0], 'https://www.bilibili.com/');
   assert.equal(info.profiles.find((profile) => profile.id === 'bilibili').urls[0], 'https://www.bilibili.com/');
 
   instance.addLanAddress('192.168.50.20');
   assert.match(instance.getInfo().pairUrl, /192\.168\.50\.20/);
+
+  const tvInfo = await request(base, '/api/tv-info', { headers: { Origin: 'https://www.bilibili.com' } });
+  assert.equal(tvInfo.response.status, 200);
+  assert.equal(tvInfo.body.version, '0.2.2');
+  assert.match(tvInfo.body.pairUrl, /192\.168\.50\.20/);
+  assert.equal(tvInfo.response.headers.get('access-control-allow-origin'), 'https://www.bilibili.com');
 
   const icon = await request(base, '/icon.svg');
   assert.equal(icon.response.status, 200);
@@ -101,6 +109,20 @@ test('service exposes hardened static assets, pairing, state, and configuration'
   const authorized = { Authorization: `Bearer ${token}` };
   const state = await request(base, '/api/state', { headers: authorized });
   assert.equal(state.response.status, 200);
+
+  const queuedNavigation = await request(base, '/api/command', {
+    method: 'POST',
+    headers: { ...authorized, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: { type: 'navigate', profileId: 'bilibili', url: 'https://www.bilibili.com/' } })
+  });
+  assert.equal(queuedNavigation.response.status, 200);
+
+  const disconnectedHistory = await request(base, '/api/command', {
+    method: 'POST',
+    headers: { ...authorized, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: { type: 'history', action: 'back' } })
+  });
+  assert.equal(disconnectedHistory.response.status, 400);
 
   const update = await request(base, '/api/config', {
     method: 'PUT',

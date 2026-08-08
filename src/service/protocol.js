@@ -5,6 +5,11 @@ const urlLibrary = require('url');
 
 const DEFAULT_PROFILES = Object.freeze([
   Object.freeze({
+    id: 'bilibili',
+    name: 'Bilibili',
+    urls: Object.freeze(['https://www.bilibili.com/'])
+  }),
+  Object.freeze({
     id: '1shows',
     name: '1Shows',
     urls: Object.freeze(['https://www.1shows.org/'])
@@ -13,11 +18,6 @@ const DEFAULT_PROFILES = Object.freeze([
     id: 'cineby',
     name: 'Cineby',
     urls: Object.freeze(['https://cineby.at/'])
-  }),
-  Object.freeze({
-    id: 'bilibili',
-    name: 'Bilibili',
-    urls: Object.freeze(['https://www.bilibili.com/'])
   })
 ]);
 

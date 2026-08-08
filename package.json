@@ -1,13 +1,13 @@
 {
   "name": "tizenbrew-web-remote",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A phone-first, site-switchable web remote for Samsung TVs running TizenBrew.",
   "license": "MIT",
   "private": false,
   "packageManager": "pnpm@11.16.0",
   "packageType": "mods",
   "appName": "Web Remote TV",
-  "websiteURL": "https://www.1shows.org/",
+  "websiteURL": "https://www.bilibili.com/",
   "main": "dist/injected.js",
   "serviceFile": "dist/service.js",
   "keys": [

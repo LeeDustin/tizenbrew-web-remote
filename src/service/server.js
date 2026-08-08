@@ -23,6 +23,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
+const APP_VERSION = '0.2.2';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;
@@ -176,12 +177,12 @@ function makeDefaultState() {
   return {
     tvConnected: false,
     phoneCount: 0,
-    activeProfileId: '1shows',
+    activeProfileId: 'bilibili',
     page: {
       title: '',
-      url: 'https://www.1shows.org/',
-      hostname: 'www.1shows.org',
-      adapter: '1shows',
+      url: 'https://www.bilibili.com/',
+      hostname: 'www.bilibili.com',
+      adapter: 'bilibili',
       readyState: 'loading',
       site: null
     },
@@ -269,7 +270,7 @@ function createRemoteServer(options = {}) {
     const ip = request ? publicHost(request) : (lanAddresses[0] || '127.0.0.1');
     return {
       appName: 'Web Remote TV',
-      version: '0.1.0',
+      version: APP_VERSION,
       port: actualPort,
       pin,
       pinExpiresAt,
@@ -334,7 +335,7 @@ function createRemoteServer(options = {}) {
       if (!profile || profile.urls.indexOf(normalized.url) < 0) throw new Error('That address is not configured for the selected profile.');
       state.activeProfileId = profile.id;
     }
-    if (!tvIsConnected()) throw new Error('The TV page bridge is not connected.');
+    if (!tvIsConnected() && normalized.type !== 'navigate') throw new Error('The TV page bridge is not connected.');
     if (normalized.type === 'navigate') {
       state.navigation = {
         status: 'loading',
@@ -434,7 +435,7 @@ function createRemoteServer(options = {}) {
       if (request.method === 'GET' && url.pathname === '/api/health') {
         return json(response, 200, {
           ok: true,
-          version: '0.2.1',
+          version: APP_VERSION,
           tvConnected: state.tvConnected,
           phoneCount: phoneSockets.size,
           uptime: Math.round(process.uptime())

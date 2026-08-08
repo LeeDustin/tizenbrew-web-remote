@@ -1,8 +1,10 @@
 'use strict';
 
 const { createPageAdapter, cleanText } = require('./adapters');
+const { createQrCanvas } = require('./qr');
 const qrcode = require('qrcode-generator');
 const FRAME_CHANNEL = 'web-remote-tv-frame-v1';
+const BILIBILI_HOME = 'https://www.bilibili.com/';
 
 function startEmbeddedFrameBridge() {
   function frameVideo() {
@@ -210,9 +212,9 @@ function startEmbeddedFrameBridge() {
         .mark { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: #0ea5e9; color: #001018; font-size: 25px; font-weight: 900; }
         h1 { margin: 0; font-size: 22px; line-height: 1.1; color: #fff; }
         .sub { color: #9fb2c8; font-size: 13px; margin-top: 3px; }
-        .pair { display: grid; grid-template-columns: 142px 1fr; gap: 16px; align-items: center; margin-top: 16px; }
-        .qr { display: grid; place-items: center; width: 142px; height: 142px; overflow: hidden; border-radius: 10px; background: white; }
-        .qr svg { width: 136px; height: 136px; }
+        .pair { display: grid; grid-template-columns: 154px 1fr; gap: 16px; align-items: center; margin-top: 16px; }
+        .qr { display: grid; place-items: center; width: 154px; height: 154px; overflow: hidden; border-radius: 10px; background: white; color: #111827; font-size: 13px; text-align: center; }
+        .qr canvas { display: block; image-rendering: pixelated; }
         .pin-label { color: #a9bdd0; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
         .pin { color: #7dd3fc; font-size: 36px; font-weight: 800; letter-spacing: .12em; margin: 4px 0 10px; }
         .url { color: #d8e8f7; font-size: 14px; overflow-wrap: anywhere; line-height: 1.35; }
@@ -270,13 +272,13 @@ function startEmbeddedFrameBridge() {
     overlay.url.textContent = data.pairUrl || (data.addresses && data.addresses[0]) || 'Local service unavailable';
     if (data.pin && data.pairUrl && overlay.qr.getAttribute('data-value') !== data.pairUrl) {
       try {
-        const code = qrcode(0, 'M');
-        code.addData(data.pairUrl);
-        code.make();
-        overlay.qr.innerHTML = code.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+        const canvas = createQrCanvas(document, qrcode, data.pairUrl);
+        overlay.qr.textContent = '';
+        overlay.qr.appendChild(canvas);
         overlay.qr.setAttribute('data-value', data.pairUrl);
       } catch (error) {
         lastError = `QR code: ${error.message}`;
+        overlay.qr.textContent = 'Use the address';
       }
     }
     overlay.diag.innerHTML = '';
@@ -413,7 +415,7 @@ function startEmbeddedFrameBridge() {
   function execute(command) {
     try {
       if (command.type === 'navigate') {
-        window.location.assign(command.url);
+        window.location.replace(command.url);
         return;
       }
       if (command.type === 'history') {
@@ -491,6 +493,20 @@ function startEmbeddedFrameBridge() {
     }
     if (message.kind === 'command') execute(message.command || {});
     if (message.kind === 'ping') postState({ kind: 'pong', at: Date.now() });
+  }
+
+  async function bootstrapServiceInfo() {
+    try {
+      const response = await fetch(`${LOCAL_HTTP}/api/tv-info?t=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      serviceInfo = await response.json();
+      updateOverlay();
+    } catch (error) {
+      if (!serviceInfo) {
+        lastError = `Pairing info unavailable: ${error.message}`;
+        updateOverlay();
+      }
+    }
   }
 
   async function pollLoop() {
@@ -582,9 +598,24 @@ function startEmbeddedFrameBridge() {
     playerState(true);
   });
 
+  function emergencyHome(event) {
+    const keyCode = Number(event.keyCode || event.which);
+    const isBack = event.keyName === 'back' || event.key === 'Back' || event.key === 'Escape' || keyCode === 10009;
+    const hostname = String(window.location.hostname || '').toLowerCase();
+    const onBilibili = hostname === 'bilibili.com' || hostname.endsWith('.bilibili.com');
+    if (!isBack || onBilibili) return;
+    event.preventDefault();
+    event.stopPropagation();
+    window.location.replace(BILIBILI_HOME);
+  }
+
+  window.addEventListener('keydown', emergencyHome, true);
+  document.addEventListener('tizenhwkey', emergencyHome, true);
+
   if (document.documentElement) initializeDom();
   else document.addEventListener('DOMContentLoaded', initializeDom, { once: true });
 
+  bootstrapServiceInfo();
   connectSocket();
   setInterval(() => {
     const signature = `${window.location.href}|${document.title}|${document.readyState}`;
