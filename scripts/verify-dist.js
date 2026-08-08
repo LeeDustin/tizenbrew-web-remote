@@ -9,7 +9,11 @@ const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
 assert.equal(packageJson.websiteURL, 'https://www.1shows.org/');
-assert.equal(packageJson.evaluateScriptOnDocumentStart, true);
+assert.notEqual(
+  packageJson.evaluateScriptOnDocumentStart,
+  true,
+  'TizenBrew 2.0.5 does not immediately navigate modules using document-start injection.'
+);
 
 for (const relativePath of [
   packageJson.main,
