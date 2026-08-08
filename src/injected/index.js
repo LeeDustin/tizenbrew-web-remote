@@ -81,7 +81,7 @@ function startEmbeddedFrameBridge() {
 }
 
 (function startWebRemoteBridge() {
-  // TizenBrew 2.0.5 injects document-start scripts into subframes too. A single
+  // TizenBrew 2.0.5 evaluates module scripts in subframe contexts too. A single
   // top-level bridge must own the local TV session or iframe connections would
   // repeatedly replace each other.
   try {

@@ -1048,7 +1048,7 @@ function createRemoteServer() {
             }
             return _context.a(2, json(response, 200, {
               ok: true,
-              version: "0.2.0",
+              version: "0.2.1",
               tvConnected: state.tvConnected,
               phoneCount: phoneSockets.size,
               uptime: Math.round(process.uptime())

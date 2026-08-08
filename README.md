@@ -47,7 +47,7 @@ need to compile the source.
 - Send text to the currently focused search/input field.
 - Play/pause, seek, adjust volume, toggle captions, and request fullscreen when
   the player is accessible from the top-level page or a frame where TizenBrew's
-  document-start injection is active.
+  module script is active.
 - On Bilibili, open the official login dialog, search the desktop site, toggle
   danmu, move between videos/parts, select quality and speed, and enter wide or
   web-fullscreen mode.
@@ -60,6 +60,10 @@ availability, and subscription-only content remain controlled by Bilibili.
 Cross-origin players are handled by a small, bounded frame bridge. Player sites
 can still reject synthetic clicks, programmatic playback, or fullscreen, so the
 touchpad, directional pad, and activation controls remain the fallback.
+
+The manifest intentionally uses TizenBrew 2.0.5's normal injection mode. Its
+document-start mode can leave the module picker waiting for a debugger event
+instead of navigating to the selected website.
 
 ## Security model
 
