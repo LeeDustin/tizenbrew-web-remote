@@ -3,6 +3,7 @@
 (function startController() {
   const TOKEN_KEY = 'webRemoteTvToken';
   const CONFIG_KEY = 'webRemoteTvProfiles';
+  const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';
   const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };
   const dom = {};
   let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -245,15 +246,30 @@
     if (configRestored || !token) return;
     configRestored = true;
     const raw = localStorage.getItem(CONFIG_KEY);
-    if (!raw) return;
+    if (!raw) {
+      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');
+      return;
+    }
     try {
       const saved = JSON.parse(raw);
       if (Array.isArray(saved.profiles) && !saved.profiles.some((profile) => profile.id === 'bilibili')) {
         saved.profiles.push(BILIBILI_PROFILE);
       }
+      if (!localStorage.getItem(BILIBILI_DEFAULT_MIGRATION_KEY) && Array.isArray(saved.profiles)) {
+        saved.profiles = saved.profiles.slice().sort((left, right) => {
+          if (left.id === 'bilibili') return -1;
+          if (right.id === 'bilibili') return 1;
+          return 0;
+        });
+        saved.activeProfileId = 'bilibili';
+      }
       const result = await api('/api/config', { method: 'PUT', body: JSON.stringify(saved) });
-      if (serviceInfo) serviceInfo.profiles = result.profiles;
+      if (serviceInfo) {
+        serviceInfo.profiles = result.profiles;
+        serviceInfo.activeProfileId = result.activeProfileId;
+      }
       localStorage.setItem(CONFIG_KEY, JSON.stringify(result));
+      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');
     } catch (error) {
       showToast(`Saved domains were not restored: ${error.message}`);
     }

@@ -42,9 +42,10 @@ test('profile normalization limits count, ids, and domain lists', () => {
   assert.throws(() => normalizeProfiles([{ id: 'same', name: 'One', urls: ['https://example.com/'] }, { id: 'same', name: 'Two', urls: ['https://example.org/'] }]));
 });
 
-test('default profiles include Bilibili while keeping 1Shows first', () => {
-  assert.equal(DEFAULT_PROFILES[0].id, '1shows');
+test('default profiles start with Bilibili and keep 1Shows available', () => {
+  assert.equal(DEFAULT_PROFILES[0].id, 'bilibili');
   assert.deepEqual(DEFAULT_PROFILES.find((profile) => profile.id === 'bilibili').urls, ['https://www.bilibili.com/']);
+  assert.deepEqual(DEFAULT_PROFILES.find((profile) => profile.id === '1shows').urls, ['https://www.1shows.org/']);
 });
 
 test('command normalization uses an allowlist and clamps numeric values', () => {

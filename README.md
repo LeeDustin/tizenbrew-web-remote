@@ -4,10 +4,10 @@ A phone-first remote for web video sites on Samsung TVs. The TV remains the
 playback screen while an Android-friendly local web app handles site switching,
 text entry, navigation, pointer input, and media controls.
 
-The default site profile is **1Shows**. **Cineby** and the desktop **Bilibili**
-website are included as selectable alternatives. Additional public HTTPS domains
-can be added from the phone. Site
-profiles only control pages already loaded in the TV web view; this project does
+The default site profile is the desktop **Bilibili** website. **1Shows** and
+**Cineby** are included as selectable alternatives. Additional public HTTPS
+domains can be added from the phone. Site profiles only control pages already
+loaded in the TV web view; this project does
 not extract stream URLs, proxy video, bypass DRM, discover mirrors, or disable
 access controls.
 
@@ -42,6 +42,8 @@ need to compile the source.
 ## Phone controls
 
 - Switch between 1Shows, Cineby, Bilibili, and user-added public HTTPS domains.
+- Press the TV remote's **Back** key on any non-Bilibili site for an emergency
+  return to Bilibili; phone-driven site switches also replace redirect pages.
 - Browse a simplified list of visible links, buttons, and inputs.
 - Use a directional pad or touchpad when semantic discovery is incomplete.
 - Send text to the currently focused search/input field.
@@ -86,7 +88,7 @@ untrusted sites. Decline notification and download prompts.
 Automated tests cover pairing, authorization, command validation, static assets,
 WebSocket messaging, and the production build. These items require the TV:
 
-1. The injected overlay appears on 1Shows.
+1. The injected overlay appears on Bilibili with a canvas-rendered pairing QR.
 2. The QR address uses the TV's reachable Wi-Fi or Ethernet address.
 3. The phone connects while both devices are on the same LAN.
 4. Selecting Cineby navigates and the bridge reconnects after the page load.
