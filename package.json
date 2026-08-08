@@ -1,0 +1,54 @@
+{
+  "name": "tizenbrew-web-remote",
+  "version": "0.2.0",
+  "description": "A phone-first, site-switchable web remote for Samsung TVs running TizenBrew.",
+  "license": "MIT",
+  "private": false,
+  "packageManager": "pnpm@11.16.0",
+  "packageType": "mods",
+  "appName": "Web Remote TV",
+  "websiteURL": "https://www.1shows.org/",
+  "main": "dist/injected.js",
+  "serviceFile": "dist/service.js",
+  "evaluateScriptOnDocumentStart": true,
+  "keys": [
+    "MediaPlayPause",
+    "MediaPlay",
+    "MediaPause",
+    "MediaStop",
+    "MediaFastForward",
+    "MediaRewind",
+    "MediaTrackNext",
+    "MediaTrackPrevious"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "check": "node --check src/service/server.js && node --check src/service/protocol.js && node --check src/injected/index.js && node --check src/controller/app.js",
+    "test": "node --test",
+    "verify": "pnpm run check && pnpm run test && pnpm run build && node scripts/verify-dist.js"
+  },
+  "dependencies": {
+    "qrcode-generator": "1.4.4",
+    "ws": "8.18.3"
+  },
+  "devDependencies": {
+    "@babel/core": "7.28.4",
+    "@babel/preset-env": "7.28.3",
+    "esbuild": "0.25.9",
+    "linkedom": "0.18.12"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": [
+    "tizenbrew",
+    "tizen",
+    "samsung-tv",
+    "remote-control"
+  ]
+}

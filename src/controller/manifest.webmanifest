@@ -1,0 +1,17 @@
+{
+  "name": "Web Remote TV",
+  "short_name": "TV Remote",
+  "description": "Local phone controller for Web Remote TV on TizenBrew.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+'use strict';
+
+process.env.WEB_REMOTE_NO_AUTOSTART = '1';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { once } = require('node:events');
+const { WebSocket } = require('ws');
+const { createRemoteServer } = require('../src/service/server');
+
+async function request(base, path, options = {}) {
+  const response = await fetch(`${base}${path}`, options);
+  const contentType = response.headers.get('content-type') || '';
+  const body = contentType.includes('json') ? await response.json() : await response.text();
+  return { response, body };
+}
+
+async function pair(base, pin) {
+  const result = await request(base, '/api/pair', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin, clientName: 'Automated test' })
+  });
+  assert.equal(result.response.status, 200);
+  return result.body.token;
+}
+
+async function openSocket(url) {
+  const socket = new WebSocket(url);
+  await once(socket, 'open');
+  return socket;
+}
+
+function nextJson(socket, predicate = () => true) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('Timed out waiting for WebSocket message.'));
+    }, 2500);
+    function cleanup() {
+      clearTimeout(timeout);
+      socket.off('message', onMessage);
+    }
+    function onMessage(payload) {
+      const value = JSON.parse(payload.toString('utf8'));
+      if (!predicate(value)) return;
+      cleanup();
+      resolve(value);
+    }
+    socket.on('message', onMessage);
+  });
+}
+
+test('service exposes hardened static assets, pairing, state, and configuration', async (t) => {
+  const instance = createRemoteServer({ port: 0, host: '127.0.0.1' });
+  const ready = await instance.ready;
+  t.after(() => instance.close());
+  const base = `http://127.0.0.1:${ready.port}`;
+
+  const index = await request(base, '/');
+  assert.equal(index.response.status, 200);
+  assert.match(index.body, /Web Remote TV/);
+  assert.match(index.response.headers.get('content-security-policy'), /default-src 'self'/);
+  assert.match(index.response.headers.get('permissions-policy'), /camera=\(\)/);
+
+  const health = await request(base, '/api/health');
+  assert.equal(health.body.ok, true);
+
+  const info = instance.getInfo();
+  assert.match(info.pin, /^\d{6}$/);
+  assert.equal(info.activeProfileId, '1shows');
+  assert.equal(info.profiles[0].urls[0], 'https://www.1shows.org/');
+  assert.equal(info.profiles.find((profile) => profile.id === 'bilibili').urls[0], 'https://www.bilibili.com/');
+
+  instance.addLanAddress('192.168.50.20');
+  assert.match(instance.getInfo().pairUrl, /192\.168\.50\.20/);
+
+  const icon = await request(base, '/icon.svg');
+  assert.equal(icon.response.status, 200);
+  assert.match(icon.body, /<svg/);
+
+  const denied = await request(base, '/api/state');
+  assert.equal(denied.response.status, 401);
+
+  const wrong = await request(base, '/api/pair', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin: '000000' })
+  });
+  assert.equal(wrong.response.status, 401);
+
+  const crossOrigin = await request(base, '/api/pair', {
+    method: 'POST',
+    headers: { Origin: 'https://attacker.example', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin: info.pin })
+  });
+  assert.equal(crossOrigin.response.status, 403);
+
+  const token = await pair(base, info.pin);
+  assert.ok(token.length > 30);
+  const authorized = { Authorization: `Bearer ${token}` };
+  const state = await request(base, '/api/state', { headers: authorized });
+  assert.equal(state.response.status, 200);
+
+  const update = await request(base, '/api/config', {
+    method: 'PUT',
+    headers: { ...authorized, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      activeProfileId: '1shows',
+      profiles: [
+        { id: '1shows', name: '1Shows', urls: ['https://www.1shows.org/', 'https://alt.example.com/'] },
+        { id: 'cineby', name: 'Cineby', urls: ['https://cineby.at/'] }
+      ]
+    })
+  });
+  assert.equal(update.response.status, 200);
+  assert.equal(update.body.profiles[0].urls.length, 2);
+
+  const unsafe = await request(base, '/api/config', {
+    method: 'PUT',
+    headers: { ...authorized, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      activeProfileId: 'bad',
+      profiles: [{ id: 'bad', name: 'Router', urls: ['https://192.168.1.1/'] }]
+    })
+  });
+  assert.equal(unsafe.response.status, 400);
+
+  const revoke = await request(base, '/api/session', { method: 'DELETE', headers: authorized });
+  assert.equal(revoke.response.status, 200);
+  const revoked = await request(base, '/api/state', { headers: authorized });
+  assert.equal(revoked.response.status, 401);
+});
+
+test('phone and TV WebSockets exchange only normalized commands and bounded state', async (t) => {
+  const instance = createRemoteServer({ port: 0, host: '127.0.0.1' });
+  const ready = await instance.ready;
+  const base = `http://127.0.0.1:${ready.port}`;
+  const wsBase = `ws://127.0.0.1:${ready.port}`;
+  const token = await pair(base, instance.getInfo().pin);
+  const tv = await openSocket(`${wsBase}/ws?role=tv`);
+  const phone = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
+  t.after(async () => {
+    tv.close();
+    phone.close();
+    await Promise.allSettled([once(tv, 'close'), once(phone, 'close')]);
+    await instance.close();
+  });
+
+  phone.send(JSON.stringify({
+    kind: 'command',
+    requestId: 'focus-test',
+    command: { type: 'pointer', dx: 5000, dy: -5000 }
+  }));
+  const delivered = await nextJson(tv, (message) => message.kind === 'command');
+  assert.deepEqual(delivered.command, { type: 'pointer', dx: 1000, dy: -1000 });
+
+  phone.send(JSON.stringify({
+    kind: 'command',
+    requestId: 'navigate-test',
+    command: { type: 'navigate', profileId: '1shows', url: 'https://www.1shows.org/' }
+  }));
+  const navigation = await nextJson(tv, (message) => message.kind === 'command' && message.command.type === 'navigate');
+  assert.equal(navigation.command.profileId, '1shows');
+  assert.equal(instance.getState().navigation.status, 'loading');
+
+  tv.send(JSON.stringify({
+    kind: 'page',
+    page: {
+      title: 'A'.repeat(500),
+      url: 'https://www.1shows.org/watch/example',
+      hostname: 'www.1shows.org',
+      adapter: '1shows',
+      readyState: 'complete'
+    }
+  }));
+  const stateMessage = await nextJson(phone, (message) => message.kind === 'state' && message.state.page.url.includes('/watch/example'));
+  assert.equal(stateMessage.state.page.title.length, 180);
+  assert.equal(stateMessage.state.navigation.status, 'ready');
+
+  phone.send(JSON.stringify({ kind: 'command', command: { type: 'eval', code: 'bad()' } }));
+  const rejected = await nextJson(phone, (message) => message.kind === 'error');
+  assert.match(rejected.error, /Unknown command/);
+});
+
+test('loopback long polling carries commands when WebSocket is unavailable', async (t) => {
+  const instance = createRemoteServer({ port: 0, host: '127.0.0.1' });
+  const ready = await instance.ready;
+  t.after(() => instance.close());
+  const base = `http://127.0.0.1:${ready.port}`;
+  const token = await pair(base, instance.getInfo().pin);
+
+  const poll = fetch(`${base}/api/tv/poll`, { headers: { Origin: 'https://www.1shows.org' } });
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  const commandResponse = await request(base, '/api/command', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: { type: 'history', action: 'reload' } })
+  });
+  assert.equal(commandResponse.response.status, 200);
+  const pollResponse = await poll;
+  assert.equal(pollResponse.headers.get('access-control-allow-origin'), 'https://www.1shows.org');
+  const payload = await pollResponse.json();
+  assert.deepEqual(payload.messages[0].command, { type: 'history', action: 'reload' });
+
+  const tvState = await request(base, '/api/tv/state', {
+    method: 'POST',
+    headers: { Origin: 'https://www.1shows.org', 'Content-Type': 'text/plain;charset=UTF-8' },
+    body: JSON.stringify({ kind: 'player', player: { found: true, paused: false, currentTime: 12, duration: 120, volume: 0.7 } })
+  });
+  assert.equal(tvState.response.status, 200);
+  assert.equal(instance.getState().player.currentTime, 12);
+});

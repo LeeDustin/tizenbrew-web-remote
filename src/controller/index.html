@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <title>Web Remote TV</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-mark" aria-hidden="true">↗</div>
+    <div class="brand-copy">
+      <h1>Web Remote TV</h1>
+      <p id="connectionLabel">Connecting to television…</p>
+    </div>
+    <span id="connectionDot" class="status-dot" aria-label="Disconnected"></span>
+  </header>
+
+  <main>
+    <section id="pairView" class="panel pair-panel">
+      <p class="eyebrow">Private local pairing</p>
+      <h2>Enter the PIN from your TV</h2>
+      <p class="muted">Your phone and TV must be connected to the same local network.</p>
+      <form id="pairForm">
+        <label for="pinInput">Six-digit PIN</label>
+        <input id="pinInput" name="pin" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+        <button class="primary wide" type="submit">Pair phone</button>
+      </form>
+      <p id="pairError" class="error" role="alert"></p>
+    </section>
+
+    <div id="remoteView" hidden>
+      <section class="panel now-playing">
+        <div>
+          <p class="eyebrow">On television</p>
+          <h2 id="pageTitle">Waiting for page…</h2>
+          <p id="pageUrl" class="muted ellipsis"></p>
+        </div>
+        <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Website</p><h2>Choose source</h2></div>
+          <button id="editSitesButton" class="ghost compact" type="button">Edit domains</button>
+        </div>
+        <div id="profiles" class="profiles"></div>
+      </section>
+
+      <section id="sitesEditor" class="panel" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Configuration</p><h2>Domains</h2></div>
+          <button id="closeSitesButton" class="ghost compact" type="button">Close</button>
+        </div>
+        <p class="muted">One public HTTPS address per line. The first address is preferred.</p>
+        <form id="sitesForm">
+          <div id="profileEditors"></div>
+          <div class="inline-actions">
+            <button id="addProfileButton" class="ghost" type="button">Add custom site</button>
+            <button class="primary" type="submit">Save domains</button>
+          </div>
+        </form>
+        <p id="sitesError" class="error" role="alert"></p>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Keyboard</p>
+        <h2>Search or enter text</h2>
+        <form id="textForm" class="text-form">
+          <input id="textInput" type="search" autocomplete="off" placeholder="Movie, show, or text…">
+          <button class="ghost" type="button" id="sendTextButton">Send</button>
+          <button class="primary" type="submit">Search</button>
+        </form>
+      </section>
+
+      <section id="bilibiliPanel" class="panel bilibili-panel" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Bilibili</p><h2>Desktop web controls</h2></div>
+          <span id="bilibiliStatus" class="site-status">Ready</span>
+        </div>
+        <div class="site-actions">
+          <button class="primary" data-bilibili-action="login" type="button">Login / QR</button>
+          <button data-bilibili-action="home" type="button">Bilibili home</button>
+          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
+          <button data-bilibili-action="previous" type="button">Previous</button>
+          <button data-bilibili-action="next" type="button">Next</button>
+          <button data-bilibili-action="wide" type="button">Wide mode</button>
+          <button data-bilibili-action="webFullscreen" type="button">Web fullscreen</button>
+        </div>
+        <div class="site-selectors">
+          <label for="bilibiliQuality">Quality
+            <select id="bilibiliQuality">
+              <option value="0">Auto</option>
+              <option value="116">1080P 60fps (VIP)</option>
+              <option value="80">1080P</option>
+              <option value="64">720P</option>
+              <option value="32">480P</option>
+              <option value="16">360P</option>
+            </select>
+          </label>
+          <button id="applyBilibiliQuality" type="button">Apply quality</button>
+          <label for="bilibiliSpeed">Speed
+            <select id="bilibiliSpeed">
+              <option value="0.5">0.5×</option>
+              <option value="0.75">0.75×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.25">1.25×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+          <button id="applyBilibiliSpeed" type="button">Apply speed</button>
+        </div>
+        <p class="hint">Login opens Bilibili's own dialog on the TV. Scan its QR code with the Bilibili app; credentials never pass through this remote.</p>
+      </section>
+
+      <section class="control-grid">
+        <div class="panel dpad-panel">
+          <p class="eyebrow">Navigation</p>
+          <div class="dpad" aria-label="Directional navigation">
+            <button data-focus="up" class="up" type="button" aria-label="Up">▲</button>
+            <button data-focus="left" class="left" type="button" aria-label="Left">◀</button>
+            <button id="activateButton" class="ok" type="button">OK</button>
+            <button data-focus="right" class="right" type="button" aria-label="Right">▶</button>
+            <button data-focus="down" class="down" type="button" aria-label="Down">▼</button>
+          </div>
+          <div class="three-buttons">
+            <button data-history="back" class="ghost" type="button">Back</button>
+            <button data-history="reload" class="ghost" type="button">Reload</button>
+            <button data-history="forward" class="ghost" type="button">Forward</button>
+          </div>
+        </div>
+
+        <div class="panel touch-panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">Touchpad</p><h2>Pointer</h2></div>
+            <label class="mode"><span>Mode</span><select id="touchMode"><option value="pointer">Pointer</option><option value="scroll">Scroll</option></select></label>
+          </div>
+          <div id="touchpad" class="touchpad" tabindex="0" aria-label="TV touchpad">
+            <span>Drag to move · Tap to click</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Playback</p><h2 id="playerStatus">No accessible player</h2></div>
+          <span id="playerTime" class="time">--:-- / --:--</span>
+        </div>
+        <div class="media-controls">
+          <button data-media="seekBy" data-value="-30" type="button">−30s</button>
+          <button data-media="toggle" class="primary play" type="button">Play / Pause</button>
+          <button data-media="seekBy" data-value="30" type="button">+30s</button>
+          <button data-media="volumeBy" data-value="-0.1" type="button">Vol −</button>
+          <button data-media="captions" type="button">CC</button>
+          <button data-media="volumeBy" data-value="0.1" type="button">Vol +</button>
+          <button data-media="fullscreen" class="wide-control" type="button">Fullscreen</button>
+        </div>
+        <p class="hint">If the player is inside a protected cross-origin frame, use site buttons or the TV remote for its internal controls.</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Current page</p><h2>Visible controls</h2></div>
+          <button id="refreshItems" class="ghost compact" type="button">Refresh</button>
+        </div>
+        <input id="itemFilter" class="filter" type="search" placeholder="Filter visible buttons and titles…">
+        <div id="pageItems" class="page-items"><p class="muted">Waiting for the television…</p></div>
+      </section>
+
+      <details class="panel diagnostics">
+        <summary>Diagnostics and connection</summary>
+        <dl>
+          <div><dt>TV bridge</dt><dd id="diagTv">—</dd></div>
+          <div><dt>Navigation</dt><dd id="diagNavigation">—</dd></div>
+          <div><dt>Adapter</dt><dd id="diagAdapter">—</dd></div>
+          <div><dt>Phone socket</dt><dd id="diagSocket">—</dd></div>
+          <div><dt>Last TV warning</dt><dd id="diagError">none</dd></div>
+        </dl>
+        <button id="forgetButton" class="danger" type="button">Forget this television</button>
+      </details>
+
+      <p id="toast" class="toast" role="status" aria-live="polite"></p>
+    </div>
+  </main>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
