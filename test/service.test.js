@@ -65,11 +65,11 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const health = await request(base, '/api/health');
   assert.equal(health.body.ok, true);
-  assert.equal(health.body.version, '0.2.9');
+  assert.equal(health.body.version, '0.2.10');
 
   const info = instance.getInfo();
   assert.match(info.pin, /^\d{6}$/);
-  assert.equal(info.version, '0.2.9');
+  assert.equal(info.version, '0.2.10');
   assert.deepEqual(info.overlay, { visible: true, pinned: false });
   assert.equal(info.activeProfileId, 'bilibili');
   assert.equal(info.profiles[0].urls[0], 'https://www.bilibili.com/');
@@ -80,7 +80,7 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const tvInfo = await request(base, '/api/tv-info', { headers: { Origin: 'https://www.bilibili.com' } });
   assert.equal(tvInfo.response.status, 200);
-  assert.equal(tvInfo.body.version, '0.2.9');
+  assert.equal(tvInfo.body.version, '0.2.10');
   assert.match(tvInfo.body.pairUrl, /192\.168\.50\.20/);
   assert.equal(tvInfo.response.headers.get('access-control-allow-origin'), 'https://www.bilibili.com');
 

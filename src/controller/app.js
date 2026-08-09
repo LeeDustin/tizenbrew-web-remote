@@ -133,6 +133,7 @@
     const page = state.page || {};
     const player = state.player || {};
     dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page…';
+    dom.pageTitle.title = dom.pageTitle.textContent;
     dom.pageUrl.textContent = page.url || '';
     const playerAvailable = player.found || Boolean(page.site && page.site.playerAvailable);
     dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing')
