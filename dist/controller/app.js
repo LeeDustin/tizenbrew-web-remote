@@ -9,6 +9,8 @@
   const MANUAL_MODE_KEY = 'webRemoteTvManualModeV1';
   const SEEK_STEP_KEY = 'webRemoteTvSeekStepV1';
   const SEEK_STEPS = [5, 10, 15, 30, 60];
+  const SCROLL_SENSITIVITY = 3.5;
+  const SCROLL_MOMENTUM_DECAY = 0.88;
   const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };
   const dom = {};
   let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -22,6 +24,8 @@
   let pointerSession = null;
   let pointerPending = { dx: 0, dy: 0 };
   let pointerFrame = null;
+  let scrollMomentum = null;
+  let scrollMomentumFrame = null;
   let showAllSections = localStorage.getItem(SHOW_ALL_SECTIONS_KEY) === '1';
   let sectionContext = '';
   let sectionPreferences = {};
@@ -512,31 +516,98 @@
     const dy = pointerPending.dy;
     pointerPending = { dx: 0, dy: 0 };
     if (!dx && !dy) return;
-    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * 2, dy: -dy * 2 }, false);
+    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * SCROLL_SENSITIVITY, dy: -dy * SCROLL_SENSITIVITY }, false);
     else command({ type: 'pointer', dx: dx * 1.4, dy: dy * 1.4 }, false);
   }
 
+  function stopScrollMomentum() {
+    if (scrollMomentumFrame) cancelAnimationFrame(scrollMomentumFrame);
+    scrollMomentumFrame = null;
+    scrollMomentum = null;
+  }
+
+  function stepScrollMomentum(now) {
+    scrollMomentumFrame = null;
+    if (!scrollMomentum || dom.touchMode.value !== 'scroll' || !socket || socket.readyState !== WebSocket.OPEN) {
+      scrollMomentum = null;
+      return;
+    }
+    const elapsed = Math.max(8, Math.min(32, now - scrollMomentum.at));
+    const frameScale = elapsed / 16.67;
+    command({
+      type: 'scroll',
+      dx: scrollMomentum.dx * frameScale,
+      dy: scrollMomentum.dy * frameScale
+    }, false);
+    const decay = Math.pow(SCROLL_MOMENTUM_DECAY, frameScale);
+    scrollMomentum.dx *= decay;
+    scrollMomentum.dy *= decay;
+    scrollMomentum.at = now;
+    if (Math.hypot(scrollMomentum.dx, scrollMomentum.dy) < 0.8) {
+      scrollMomentum = null;
+      return;
+    }
+    scrollMomentumFrame = requestAnimationFrame(stepScrollMomentum);
+  }
+
+  function startScrollMomentum(session) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    const idle = Math.max(0, performance.now() - session.at);
+    const releaseFactor = Math.max(0, 1 - idle / 100);
+    const vx = Math.max(-3, Math.min(3, session.vx * releaseFactor));
+    const vy = Math.max(-3, Math.min(3, session.vy * releaseFactor));
+    const dx = -vx * SCROLL_SENSITIVITY * 16.67;
+    const dy = -vy * SCROLL_SENSITIVITY * 16.67;
+    if (Math.hypot(dx, dy) < 4) return;
+    scrollMomentum = { dx, dy, at: performance.now() };
+    scrollMomentumFrame = requestAnimationFrame(stepScrollMomentum);
+  }
+
   function pointerDown(event) {
+    stopScrollMomentum();
     dom.touchpad.setPointerCapture(event.pointerId);
     dom.touchpad.classList.add('active');
-    pointerSession = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY };
+    pointerSession = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      startX: event.clientX,
+      startY: event.clientY,
+      vx: 0,
+      vy: 0,
+      at: performance.now()
+    };
   }
 
   function pointerMove(event) {
     if (!pointerSession || pointerSession.id !== event.pointerId) return;
-    pointerPending.dx += event.clientX - pointerSession.x;
-    pointerPending.dy += event.clientY - pointerSession.y;
+    const now = performance.now();
+    const elapsed = Math.max(4, now - pointerSession.at);
+    const dx = event.clientX - pointerSession.x;
+    const dy = event.clientY - pointerSession.y;
+    pointerPending.dx += dx;
+    pointerPending.dy += dy;
+    pointerSession.vx = pointerSession.vx * 0.6 + (dx / elapsed) * 0.4;
+    pointerSession.vy = pointerSession.vy * 0.6 + (dy / elapsed) * 0.4;
     pointerSession.x = event.clientX;
     pointerSession.y = event.clientY;
+    pointerSession.at = now;
     if (!pointerFrame) pointerFrame = requestAnimationFrame(flushPointer);
   }
 
   function pointerUp(event) {
     if (!pointerSession || pointerSession.id !== event.pointerId) return;
-    const distance = Math.hypot(event.clientX - pointerSession.startX, event.clientY - pointerSession.startY);
+    const session = pointerSession;
+    const distance = Math.hypot(event.clientX - session.startX, event.clientY - session.startY);
     if (distance < 9 && dom.touchMode.value === 'pointer') command({ type: 'pointerClick' }, false);
     pointerSession = null;
     dom.touchpad.classList.remove('active');
+    if (pointerFrame) {
+      cancelAnimationFrame(pointerFrame);
+      pointerFrame = null;
+      flushPointer();
+    }
+    if (event.type !== 'pointercancel' && dom.touchMode.value === 'scroll') startScrollMomentum(session);
   }
 
   function bindEvents() {
@@ -577,6 +648,7 @@
     dom.itemFilter.addEventListener('input', renderItems);
     dom.bilibiliResultFilter.addEventListener('input', () => renderBilibiliResults((state && state.page) || {}));
     dom.touchMode.addEventListener('change', () => {
+      stopScrollMomentum();
       localStorage.setItem(MANUAL_MODE_KEY, dom.touchMode.value);
       updateManualMode();
     });
