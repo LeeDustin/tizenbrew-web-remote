@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
-assert.equal(packageJson.version, '0.2.7');
+assert.equal(packageJson.version, '0.2.8');
 assert.equal(packageJson.websiteURL, 'https://www.bilibili.com/');
 assert.notEqual(
   packageJson.evaluateScriptOnDocumentStart,
@@ -55,7 +55,7 @@ const ids = [...controllerHtml.matchAll(/\sid="([^"]+)"/g)].map((match) => match
 assert.equal(new Set(ids).size, ids.length, 'Controller HTML contains duplicate ids.');
 assert.doesNotMatch(controllerHtml, /\son[a-z]+=/i, 'Inline event handlers violate the controller CSP.');
 assert.doesNotMatch(controllerHtml, /<script(?![^>]+src=)/i, 'Inline scripts violate the controller CSP.');
-for (const requiredId of ['pairForm', 'remoteView', 'toggleAllSections', 'showTvOverlay', 'hideTvOverlay', 'profiles', 'bilibiliPanel', 'bilibiliQuality', 'fillTvButton', 'touchpad', 'playerPanel', 'pageItems', 'forgetButton']) {
+for (const requiredId of ['pairForm', 'remoteView', 'toggleAllSections', 'showTvOverlay', 'hideTvOverlay', 'profiles', 'bilibiliPanel', 'bilibiliResultsPanel', 'bilibiliResults', 'bilibiliQuality', 'fillTvButton', 'touchpad', 'playerPanel', 'pageItems', 'forgetButton']) {
   assert.ok(ids.includes(requiredId), `Controller is missing #${requiredId}.`);
 }
 

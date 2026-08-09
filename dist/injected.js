@@ -125,14 +125,140 @@
           };
         }
         if (hostname === "bilibili.com" || hostname.endsWith(".bilibili.com")) {
-          let playerContainer = function() {
+          let locationPath = function() {
+            if (window.location.pathname) return window.location.pathname;
+            try {
+              return new URL(window.location.href).pathname;
+            } catch {
+              return "/";
+            }
+          }, isSearchPage = function() {
+            return hostname === "search.bilibili.com" && /^\/all(?:\/|$)/.test(locationPath());
+          }, isPlaybackPage = function() {
+            return /^\/(?:video\/|bangumi\/play\/|medialist\/play\/)/.test(locationPath());
+          }, playerContainer = function() {
             return firstElement([
               ".bpx-player-container",
               "#bilibili-player",
+              '[aria-label="\u54D4\u54E9\u54D4\u54E9\u64AD\u653E\u5668"]',
+              ".player-wrap",
+              ".bilibili-player",
               ".bilibili-player-video",
               ".bilibili-player-video-wrap",
               "video"
             ], false);
+          }, searchResultEntries = function() {
+            if (!isSearchPage()) return [];
+            const cards = Array.from(document.querySelectorAll([
+              ".bili-video-card",
+              ".video-item.matrix",
+              ".video-list-item",
+              ".search-video-card"
+            ].join(",")));
+            const seen = /* @__PURE__ */ new Set();
+            const results = [];
+            for (const card of cards) {
+              const link = card.querySelector([
+                '.bili-video-card__info--right > a[href*="/video/"]',
+                '.bili-video-card__info--tit a[href*="/video/"]',
+                'a.title[href*="/video/"]',
+                '.title a[href*="/video/"]',
+                'a[href*="/video/"]'
+              ].join(","));
+              if (!link || !visible(link)) continue;
+              let key = "";
+              try {
+                const url = new URL(link.href, window.location.href);
+                const match = url.pathname.match(/\/video\/([^/]+)/i);
+                key = match ? match[1].toLowerCase() : url.href;
+              } catch {
+                key = String(link.href || "");
+              }
+              if (!key || seen.has(key)) continue;
+              seen.add(key);
+              const titleNode = card.querySelector(".bili-video-card__info--tit,.title,h3");
+              const ownerNode = card.querySelector(".bili-video-card__info--owner,.up-name,.so-icon.watch-num,.author");
+              const durationNode = card.querySelector(".bili-video-card__stats__duration,.duration,.so-imgTag_rb");
+              const title = cleanText2(titleNode && titleNode.textContent, 140) || elementLabel(link);
+              const detail = [
+                cleanText2(ownerNode && ownerNode.textContent, 70),
+                cleanText2(durationNode && durationNode.textContent, 20)
+              ].filter(Boolean).join(" \xB7 ");
+              results.push({
+                element: link,
+                rect: link.getBoundingClientRect(),
+                kind: "media",
+                label: title,
+                detail: cleanText2(detail || "Bilibili video", 100),
+                group: "bilibili-search-result",
+                priority: -4e3
+              });
+            }
+            return results;
+          }, activateBilibiliElement = function(element) {
+            const link = element && (element.matches("a[href]") ? element : element.closest("a[href]"));
+            if (!link) return false;
+            try {
+              const url = new URL(link.href, window.location.href);
+              const targetHost = url.hostname.toLowerCase();
+              if ((targetHost === "bilibili.com" || targetHost.endsWith(".bilibili.com")) && /^\/(?:video\/|bangumi\/play\/|medialist\/play\/)/.test(url.pathname)) {
+                window.location.assign(url.href);
+                return true;
+              }
+            } catch {
+            }
+            return false;
+          }, dispatchPlayerKey = function(key, keyCode, count) {
+            const target = playerContainer() || document.body || document.documentElement;
+            if (!target) return false;
+            for (let index = 0; index < count; index += 1) {
+              for (const type of ["keydown", "keyup"]) {
+                const event = new window.KeyboardEvent(type, {
+                  key,
+                  code: key,
+                  keyCode,
+                  which: keyCode,
+                  bubbles: true,
+                  cancelable: true
+                });
+                target.dispatchEvent(event);
+              }
+            }
+            return true;
+          }, mediaAction = function(action, value) {
+            const player = playerContainer();
+            if (!player && !isPlaybackPage()) return false;
+            if (action === "fullscreen") return toggleFillTv();
+            if (action === "captions") {
+              return clickElement(firstElement([
+                '[aria-label*="\u5B57\u5E55"]',
+                ".bpx-player-ctrl-subtitle",
+                ".bilibili-player-video-btn-subtitle"
+              ], false));
+            }
+            if (action === "toggle" || action === "play" || action === "pause") {
+              const playControl = firstElement([
+                '[aria-label="\u64AD\u653E/\u6682\u505C"]',
+                ".bpx-player-ctrl-play",
+                ".bilibili-player-video-btn-start",
+                ".bilibili-player-video-state"
+              ], false);
+              if (!playControl) return dispatchPlayerKey("Space", 32, 1);
+              const className = String(player && player.className || "");
+              const paused = /bpx-state-paused|video-state-pause|state-pause/.test(className);
+              const playing = /bpx-state-playing|video-state-playing|state-playing/.test(className);
+              if (action === "play" && playing || action === "pause" && paused) return true;
+              return clickElement(playControl);
+            }
+            if (action === "seekBy") {
+              const amount = Number(value) || 0;
+              return dispatchPlayerKey(amount < 0 ? "ArrowLeft" : "ArrowRight", amount < 0 ? 37 : 39, Math.max(1, Math.min(12, Math.ceil(Math.abs(amount) / 5))));
+            }
+            if (action === "volumeBy") {
+              const amount = Number(value) || 0;
+              return dispatchPlayerKey(amount < 0 ? "ArrowDown" : "ArrowUp", amount < 0 ? 40 : 38, Math.max(1, Math.min(10, Math.ceil(Math.abs(amount) / 0.1))));
+            }
+            return false;
           }, fillTvOverrideActive = function() {
             return document.documentElement.classList.contains(fillTvRootClass);
           }, builtInWebFullscreenActive = function() {
@@ -225,6 +351,9 @@
           };
           return {
             id: "bilibili",
+            snapshotEntries: searchResultEntries,
+            activate: activateBilibiliElement,
+            mediaAction,
             interactiveSelector: [
               ".header-login-entry",
               ".bpx-player-ctrl-btn",
@@ -303,7 +432,9 @@
                 danmakuEnabled: typeof danmakuOverride === "boolean" ? danmakuOverride : danmaku ? Boolean(danmaku.checked) : null,
                 quality: cleanText2(quality && quality.textContent, 40),
                 playbackRate: video ? Number(video.playbackRate) || 1 : 1,
-                playerAvailable: Boolean(playerContainer()),
+                playerAvailable: Boolean(playerContainer()) || isPlaybackPage(),
+                searchPage: isSearchPage(),
+                playbackPage: isPlaybackPage(),
                 webFullscreenActive: builtInWebFullscreenActive() || fillTvOverrideActive()
               };
             }
@@ -317,7 +448,9 @@
         let sequence = 0;
         function scan() {
           const selector = site.interactiveSelector ? `${INTERACTIVE_SELECTOR},${site.interactiveSelector}` : INTERACTIVE_SELECTOR;
-          const candidates = Array.from(document.querySelectorAll(selector)).filter((element) => !element.closest("[data-web-remote-tv]")).filter(visible).map((element) => {
+          const specialCandidates = site.snapshotEntries ? site.snapshotEntries() : [];
+          const specialElements = new Set(specialCandidates.map((entry) => entry.element));
+          const candidates = specialCandidates.concat(Array.from(document.querySelectorAll(selector)).filter((element) => !specialElements.has(element)).filter((element) => !element.closest("[data-web-remote-tv]")).filter(visible).map((element) => {
             const rect = element.getBoundingClientRect();
             const kind = site.kind && site.kind(element) || classify(element);
             return {
@@ -326,12 +459,15 @@
               kind,
               label: elementLabel(element),
               detail: genericDetail(element, kind),
+              group: "",
               priority: site.priority(element, kind)
             };
-          }).filter((entry) => entry.label).sort((left, right) => {
+          }).filter((entry) => entry.label)).sort((left, right) => {
+            const leftDedicated = left.group ? 0 : 1;
+            const rightDedicated = right.group ? 0 : 1;
             const leftInView = left.rect.bottom >= 0 && left.rect.top <= window.innerHeight ? 0 : 1;
             const rightInView = right.rect.bottom >= 0 && right.rect.top <= window.innerHeight ? 0 : 1;
-            return leftInView - rightInView || left.priority - right.priority || left.rect.top - right.rect.top || left.rect.left - right.rect.left;
+            return leftDedicated - rightDedicated || leftInView - rightInView || left.priority - right.priority || left.rect.top - right.rect.top || left.rect.left - right.rect.left;
           }).slice(0, 150);
           elementMap = /* @__PURE__ */ new Map();
           sequence += 1;
@@ -343,6 +479,7 @@
               kind: entry.kind,
               label: entry.label,
               detail: entry.detail,
+              group: entry.group || "",
               selected: entry.element === document.activeElement || entry.element.getAttribute("aria-current") === "page"
             };
           });
@@ -361,6 +498,7 @@
             } catch {
             }
           }
+          if (site.activate && site.activate(element)) return true;
           try {
             element.click();
             return true;
@@ -413,6 +551,7 @@
           preferredTextInput,
           searchUrl: site.searchUrl || null,
           siteAction: site.siteAction || null,
+          mediaAction: site.mediaAction || null,
           siteState: site.siteState || null,
           visible
         };
@@ -2206,6 +2345,23 @@
   var qrcode = require_qrcode();
   var FRAME_CHANNEL = "web-remote-tv-frame-v1";
   var BILIBILI_HOME = "https://www.bilibili.com/";
+  function allVideosDeep() {
+    const direct = Array.from(document.querySelectorAll("video"));
+    if (direct.length) return direct;
+    const videos = [];
+    const roots = [document];
+    const visited = [];
+    while (roots.length) {
+      const root = roots.shift();
+      if (!root || visited.includes(root)) continue;
+      visited.push(root);
+      for (const element of Array.from(root.querySelectorAll("*"))) {
+        if (element.shadowRoot) roots.push(element.shadowRoot);
+      }
+      if (root !== document) videos.push(...Array.from(root.querySelectorAll("video")));
+    }
+    return videos;
+  }
   function startEmbeddedFrameBridge() {
     function requestRecovery() {
       window.parent.postMessage({ channel: FRAME_CHANNEL, kind: "recovery" }, "*");
@@ -2213,7 +2369,7 @@
     const pairingShortcut = createPairingShortcut(requestRecovery);
     window.addEventListener("keydown", pairingShortcut, true);
     function frameVideo() {
-      const videos = Array.from(document.querySelectorAll("video"));
+      const videos = allVideosDeep();
       videos.sort((left, right) => {
         const a = left.getBoundingClientRect();
         const b = right.getBoundingClientRect();
@@ -2328,6 +2484,7 @@
     let lastPlayerSignature = "";
     let embeddedPlayer = null;
     let embeddedPlayerSeenAt = 0;
+    let embeddedPlayerWindow = null;
     let lastError = "";
     let siteFillTvActive = false;
     let lastOverlayBackAt = 0;
@@ -2364,12 +2521,14 @@
       }
     }
     function bestVideo() {
-      const videos = Array.from(document.querySelectorAll("video"));
+      const videos = allVideosDeep();
       if (adapter.id === "bilibili") {
         const playerVideos = Array.from(document.querySelectorAll([
           ".bpx-player-container video",
           "#bilibili-player video",
-          ".bilibili-player-video video"
+          ".bpx-player-video-wrap video",
+          ".bilibili-player-video video",
+          ".bilibili-player-video-wrap video"
         ].join(",")));
         if (playerVideos.length) {
           playerVideos.sort((left, right) => {
@@ -2608,11 +2767,28 @@
       frames.forEach((entry) => entry.window.postMessage({ channel: FRAME_CHANNEL, kind: "command", command }, "*"));
       return frames.length;
     }
+    function relayToEmbeddedPlayer(command) {
+      if (!embeddedPlayerWindow || !embeddedPlayer || Date.now() - embeddedPlayerSeenAt >= 3500) return false;
+      embeddedPlayerWindow.postMessage({ channel: FRAME_CHANNEL, kind: "command", command }, "*");
+      return true;
+    }
     function mediaCommand(action, value) {
       const video = bestVideo();
       if (!video) {
+        const command = { type: "media", action, value };
+        if (relayToEmbeddedPlayer(command)) {
+          setTimeout(() => playerState(true), 100);
+          return;
+        }
+        if (adapter.mediaAction && adapter.mediaAction(action, value)) {
+          setTimeout(() => {
+            pageState(true);
+            playerState(true);
+          }, 180);
+          return;
+        }
         fallbackMediaKey(action);
-        if (!relayToFrames({ type: "media", action, value })) {
+        if (!relayToFrames(command)) {
           throw new Error("No accessible video or embedded player frame was found.");
         }
         lastError = "Media command forwarded to embedded player frame.";
@@ -2887,6 +3063,7 @@
       if (message.kind !== "player") return;
       embeddedPlayer = message.player;
       embeddedPlayerSeenAt = Date.now();
+      embeddedPlayerWindow = event.source;
       playerState(true);
     });
     function emergencyHome(event) {

@@ -90,6 +90,21 @@
         </div>
       </details>
 
+      <details id="bilibiliResultsPanel" class="panel collapsible" data-section="bilibiliResults" hidden>
+        <summary class="section-summary">
+          <span><span class="eyebrow">Bilibili search</span><span class="summary-title">Choose a video</span></span>
+          <span id="bilibiliResultsStatus" class="summary-status">Waiting</span>
+        </summary>
+        <div class="section-body">
+          <div class="section-heading compact-heading">
+            <p class="muted section-intro">Tap a result to open it on the TV in the same window.</p>
+            <button id="refreshBilibiliResults" class="ghost compact" type="button">Refresh</button>
+          </div>
+          <input id="bilibiliResultFilter" class="filter" type="search" placeholder="Filter video results…">
+          <div id="bilibiliResults" class="video-results"><p class="muted">Waiting for Bilibili results…</p></div>
+        </div>
+      </details>
+
       <details id="bilibiliPanel" class="panel collapsible bilibili-panel" data-section="bilibili" hidden>
         <summary class="section-summary">
           <span><span class="eyebrow">Bilibili</span><span class="summary-title">Site controls</span></span>

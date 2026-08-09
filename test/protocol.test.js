@@ -68,11 +68,14 @@ test('TV state is bounded before it reaches a phone', () => {
       id: `wr-a-${index.toString(36)}`,
       kind: 'link',
       label: `Item ${index} ${'x'.repeat(300)}`,
-      detail: 'detail'
+      detail: 'detail',
+      group: index === 0 ? 'bilibili-search-result' : 'untrusted-group'
     }))
   });
   assert.equal(message.items.length, 150);
   assert.ok(message.items.every((item) => item.label.length <= 140));
+  assert.equal(message.items[0].group, 'bilibili-search-result');
+  assert.equal(message.items[1].group, '');
 
   const page = sanitizeTvMessage({
     kind: 'page',
@@ -85,6 +88,8 @@ test('TV state is bounded before it reaches a phone', () => {
         quality: 'Q'.repeat(100),
         playbackRate: 99,
         playerAvailable: true,
+        searchPage: true,
+        playbackPage: false,
         webFullscreenActive: true
       }
     }
@@ -93,6 +98,8 @@ test('TV state is bounded before it reaches a phone', () => {
   assert.equal(page.page.site.playbackRate, 2);
   assert.equal(page.page.site.danmakuEnabled, true);
   assert.equal(page.page.site.playerAvailable, true);
+  assert.equal(page.page.site.searchPage, true);
+  assert.equal(page.page.site.playbackPage, false);
   assert.equal(page.page.site.webFullscreenActive, true);
 
   assert.deepEqual(sanitizeTvMessage({ kind: 'overlay', visible: false, pinned: true }), {

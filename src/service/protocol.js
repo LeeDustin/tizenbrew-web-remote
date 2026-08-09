@@ -206,6 +206,7 @@ function sanitizeSnapshot(items) {
     kind: oneOf(['link', 'button', 'input', 'media', 'other'], item && item.kind) ? item.kind : 'other',
     label: text(item && item.label, 140).trim(),
     detail: text(item && item.detail, 100).trim(),
+    group: oneOf(['bilibili-search-result'], item && item.group) ? item.group : '',
     selected: Boolean(item && item.selected)
   })).filter((item) => item.id && item.label);
 }
@@ -223,6 +224,8 @@ function sanitizeTvMessage(input) {
       quality: text(rawSite.quality, 40),
       playbackRate: clampNumber(rawSite.playbackRate, 0.5, 2, 1),
       playerAvailable: Boolean(rawSite.playerAvailable),
+      searchPage: Boolean(rawSite.searchPage),
+      playbackPage: Boolean(rawSite.playbackPage),
       webFullscreenActive: Boolean(rawSite.webFullscreenActive)
     } : null;
     return {

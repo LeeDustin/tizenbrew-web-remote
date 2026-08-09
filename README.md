@@ -60,6 +60,9 @@ need to compile the source.
 - Press the TV remote's **Back** key on any non-Bilibili site for an emergency
   return to Bilibili; phone-driven site switches also replace redirect pages.
 - Browse a simplified list of visible links, buttons, and inputs.
+- On Bilibili search pages, use the dedicated phone-friendly video list. Results
+  are deduplicated and always open in the current TV window so the local bridge
+  stays attached.
 - Use a directional pad or touchpad when semantic discovery is incomplete.
 - Send text to the currently focused search/input field.
 - Play/pause, seek, adjust volume, toggle captions, and fill the TV when
@@ -70,6 +73,10 @@ need to compile the source.
   web-fullscreen mode. **Fill TV** prefers Bilibili's viewport-filling mode and
   includes a Tizen-compatible fallback because remote WebSocket commands do not
   carry the browser user gesture required by native fullscreen.
+- Bilibili playback pages expose the player controls immediately, even while an
+  older Tizen engine is still creating the media element. The bridge discovers
+  video elements in open shadow roots and falls back to Bilibili's own player
+  buttons and keyboard controls when direct media access is unavailable.
 
 For Bilibili login, tap **Login / QR** on the phone and scan the QR code shown by
 Bilibili on the television. The remote does not read passwords, QR contents,
@@ -88,6 +95,8 @@ touchpad, directional pad, and activation controls remain the fallback.
 - **Bilibili site controls** appears only on Bilibili. It opens automatically
   before playback; during playback it remains collapsed for login, home,
   quality, and speed settings.
+- **Choose a video** appears and opens on Bilibili search pages. It contains
+  only video results rather than every focusable control on the website.
 - **Player controls** appears and opens when a video or supported embedded
   player is detected. Bilibili also adds danmu, previous/next, and wide mode.
 - **Visible controls** appears on non-player pages when semantic links, buttons,
@@ -134,12 +143,14 @@ WebSocket messaging, and the production build. These items require the TV:
 4. Selecting Cineby navigates and the bridge reconnects after the page load.
 5. Selecting Bilibili opens the desktop site; search stays in the TV page.
 6. Bilibili's login dialog displays a scannable QR code and survives navigation.
-7. Danmu, quality, speed, previous/next, wide mode, and web fullscreen work on a
+7. Bilibili search results appear in **Choose a video** and selecting one keeps
+   the phone bridge connected through playback navigation.
+8. Danmu, quality, speed, previous/next, wide mode, and web fullscreen work on a
    normal Bilibili video page.
-8. Search, semantic buttons, touchpad, Back, and media controls work.
-9. Embedded-player state appears and its media controls work, or fall back
+9. Search, semantic buttons, touchpad, Back, and media controls work.
+10. Embedded-player state appears and its media controls work, or fall back
    cleanly when the player rejects programmatic control.
-10. The bridge reconnects after TV reload and phone sleep.
+11. The bridge reconnects after TV reload and phone sleep.
 
 The overlay's **Diagnostics** section reports the active adapter, page URL,
 controller connection, and last bridge error.

@@ -20,3 +20,11 @@ test('pairing overlay starts hidden until persistent service state is restored',
   assert.match(source, /applyOverlayState\(serviceInfo\)/);
   assert.match(source, /kind: 'overlay', visible: overlayVisible, pinned: overlayPinned/);
 });
+
+test('player discovery handles shadow media and Bilibili UI fallbacks', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'injected', 'index.js'), 'utf8');
+  assert.match(source, /function allVideosDeep\(\)/);
+  assert.match(source, /element\.shadowRoot/);
+  assert.match(source, /adapter\.mediaAction && adapter\.mediaAction/);
+  assert.match(source, /relayToEmbeddedPlayer/);
+});

@@ -9,7 +9,7 @@ const { parseHTML } = require('linkedom');
 test('phone remote groups secondary controls into collapsible smart-view sections', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'src', 'controller', 'index.html'), 'utf8');
   const { document } = parseHTML(html);
-  const sectionIds = ['sitesPanel', 'textPanel', 'bilibiliPanel', 'manualPanel', 'playerPanel', 'itemsPanel'];
+  const sectionIds = ['sitesPanel', 'textPanel', 'bilibiliResultsPanel', 'bilibiliPanel', 'manualPanel', 'playerPanel', 'itemsPanel'];
 
   for (const id of sectionIds) {
     const panel = document.getElementById(id);
@@ -25,6 +25,8 @@ test('phone remote groups secondary controls into collapsible smart-view section
   assert.equal(document.getElementById('fillTvButton').dataset.media, 'fullscreen');
   assert.equal(document.getElementById('bilibiliPlayerActions').closest('details').id, 'playerPanel');
   assert.ok(document.getElementById('bilibiliPlaybackSettings').hidden);
+  assert.ok(document.getElementById('bilibiliResults'));
+  assert.ok(document.getElementById('bilibiliResultFilter'));
 });
 
 test('phone WebSocket reconnects cannot multiply active connections', () => {

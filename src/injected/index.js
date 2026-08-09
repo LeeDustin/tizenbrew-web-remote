@@ -7,6 +7,24 @@ const qrcode = require('qrcode-generator');
 const FRAME_CHANNEL = 'web-remote-tv-frame-v1';
 const BILIBILI_HOME = 'https://www.bilibili.com/';
 
+function allVideosDeep() {
+  const direct = Array.from(document.querySelectorAll('video'));
+  if (direct.length) return direct;
+  const videos = [];
+  const roots = [document];
+  const visited = [];
+  while (roots.length) {
+    const root = roots.shift();
+    if (!root || visited.includes(root)) continue;
+    visited.push(root);
+    for (const element of Array.from(root.querySelectorAll('*'))) {
+      if (element.shadowRoot) roots.push(element.shadowRoot);
+    }
+    if (root !== document) videos.push(...Array.from(root.querySelectorAll('video')));
+  }
+  return videos;
+}
+
 function startEmbeddedFrameBridge() {
   function requestRecovery() {
     window.parent.postMessage({ channel: FRAME_CHANNEL, kind: 'recovery' }, '*');
@@ -16,7 +34,7 @@ function startEmbeddedFrameBridge() {
   window.addEventListener('keydown', pairingShortcut, true);
 
   function frameVideo() {
-    const videos = Array.from(document.querySelectorAll('video'));
+    const videos = allVideosDeep();
     videos.sort((left, right) => {
       const a = left.getBoundingClientRect();
       const b = right.getBoundingClientRect();
@@ -132,6 +150,7 @@ function startEmbeddedFrameBridge() {
   let lastPlayerSignature = '';
   let embeddedPlayer = null;
   let embeddedPlayerSeenAt = 0;
+  let embeddedPlayerWindow = null;
   let lastError = '';
   let siteFillTvActive = false;
   let lastOverlayBackAt = 0;
@@ -171,12 +190,14 @@ function startEmbeddedFrameBridge() {
   }
 
   function bestVideo() {
-    const videos = Array.from(document.querySelectorAll('video'));
+    const videos = allVideosDeep();
     if (adapter.id === 'bilibili') {
       const playerVideos = Array.from(document.querySelectorAll([
         '.bpx-player-container video',
         '#bilibili-player video',
-        '.bilibili-player-video video'
+        '.bpx-player-video-wrap video',
+        '.bilibili-player-video video',
+        '.bilibili-player-video-wrap video'
       ].join(',')));
       if (playerVideos.length) {
         playerVideos.sort((left, right) => {
@@ -430,11 +451,29 @@ function startEmbeddedFrameBridge() {
     return frames.length;
   }
 
+  function relayToEmbeddedPlayer(command) {
+    if (!embeddedPlayerWindow || !embeddedPlayer || Date.now() - embeddedPlayerSeenAt >= 3500) return false;
+    embeddedPlayerWindow.postMessage({ channel: FRAME_CHANNEL, kind: 'command', command }, '*');
+    return true;
+  }
+
   function mediaCommand(action, value) {
     const video = bestVideo();
     if (!video) {
+      const command = { type: 'media', action, value };
+      if (relayToEmbeddedPlayer(command)) {
+        setTimeout(() => playerState(true), 100);
+        return;
+      }
+      if (adapter.mediaAction && adapter.mediaAction(action, value)) {
+        setTimeout(() => {
+          pageState(true);
+          playerState(true);
+        }, 180);
+        return;
+      }
       fallbackMediaKey(action);
-      if (!relayToFrames({ type: 'media', action, value })) {
+      if (!relayToFrames(command)) {
         throw new Error('No accessible video or embedded player frame was found.');
       }
       lastError = 'Media command forwarded to embedded player frame.';
@@ -706,6 +745,7 @@ function startEmbeddedFrameBridge() {
     if (message.kind !== 'player') return;
     embeddedPlayer = message.player;
     embeddedPlayerSeenAt = Date.now();
+    embeddedPlayerWindow = event.source;
     playerState(true);
   });
 
