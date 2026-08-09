@@ -42,3 +42,14 @@ test('phone WebSocket reconnects cannot multiply active connections', () => {
   assert.match(source, /if \(socket !== nextSocket\) return;/);
   assert.doesNotMatch(source, /socket\.onclose = null/);
 });
+
+test('television title cannot expand the phone remote viewport', () => {
+  const styles = fs.readFileSync(path.join(__dirname, '..', 'src', 'controller', 'styles.css'), 'utf8');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'controller', 'app.js'), 'utf8');
+
+  assert.match(styles, /#pageTitle\s*\{[^}]*overflow:\s*hidden;/s);
+  assert.match(styles, /#pageTitle\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+  assert.match(styles, /#pageTitle\s*\{[^}]*-webkit-line-clamp:\s*2;/s);
+  assert.match(styles, /\.now-playing\s*>\s*div:first-child\s*\{[^}]*max-width:\s*100%;/s);
+  assert.match(source, /dom\.pageTitle\.title = dom\.pageTitle\.textContent/);
+});
