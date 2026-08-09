@@ -27,6 +27,13 @@ test('phone remote groups secondary controls into collapsible smart-view section
   assert.ok(document.getElementById('bilibiliPlaybackSettings').hidden);
   assert.ok(document.getElementById('bilibiliResults'));
   assert.ok(document.getElementById('bilibiliResultFilter'));
+  assert.equal(document.getElementById('dpadPanel').hidden, true);
+  assert.equal(document.getElementById('touchPanel').hidden, false);
+  assert.deepEqual(Array.from(document.getElementById('touchMode').options).map((option) => option.value), ['pointer', 'scroll', 'dpad']);
+  assert.equal(document.getElementById('seekBack').dataset.value, '-5');
+  assert.equal(document.getElementById('seekForward').dataset.value, '5');
+  assert.deepEqual(Array.from(document.getElementById('seekStep').options).map((option) => option.value), ['5', '10', '15', '30', '60']);
+  assert.equal(document.getElementById('danmakuButton').dataset.bilibiliAction, 'danmaku');
 });
 
 test('phone WebSocket reconnects cannot multiply active connections', () => {

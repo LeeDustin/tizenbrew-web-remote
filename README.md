@@ -63,9 +63,12 @@ need to compile the source.
 - On Bilibili search pages, use the dedicated phone-friendly video list. Results
   are deduplicated and always open in the current TV window so the local bridge
   stays attached.
-- Use a directional pad or touchpad when semantic discovery is incomplete.
+- Use the pointer touchpad by default when semantic discovery is incomplete;
+  switch the same manual-control section to scrolling or D-pad mode only when
+  needed.
 - Send text to the currently focused search/input field.
-- Play/pause, seek, adjust volume, toggle captions, and fill the TV when
+- Play/pause, seek in configurable 5/10/15/30/60-second steps (5 seconds by
+  default), adjust volume, toggle captions, and fill the TV when
   the player is accessible from the top-level page or a frame where TizenBrew's
   module script is active.
 - On Bilibili, open the official login dialog, search the desktop site, toggle
@@ -102,7 +105,8 @@ touchpad, directional pad, and activation controls remain the fallback.
 - **Visible controls** appears on non-player pages when semantic links, buttons,
   or inputs have been discovered.
 - **Navigation and pointer** appears only when no player or semantic controls
-  were found, unless **Show all controls** is enabled.
+  were found, unless **Show all controls** is enabled. It starts as a full-width
+  pointer touchpad; Pointer, Scroll, and D-pad modes are remembered per phone.
 - **Diagnostics and connection** is always available and starts collapsed.
 
 Opening or closing a section is remembered by that phone. **Show all controls**

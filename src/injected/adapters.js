@@ -353,12 +353,30 @@ function makeSiteDefinition() {
       return setFillTvOverride(!before);
     }
 
+    function danmakuLayers() {
+      return document.querySelectorAll('.bpx-player-render-dm-wrap,.bpx-player-row-dm-wrap,.bpx-player-bas-dm-wrap,.bpx-player-cmd-dm-wrap');
+    }
+
+    function clearDanmakuOverrideStyles() {
+      for (const layer of danmakuLayers()) layer.style.removeProperty('visibility');
+    }
+
     function applyDanmakuOverride() {
       if (typeof danmakuOverride !== 'boolean') return;
-      for (const layer of document.querySelectorAll('.bpx-player-render-dm-wrap,.bpx-player-row-dm-wrap,.bpx-player-bas-dm-wrap,.bpx-player-cmd-dm-wrap')) {
+      for (const layer of danmakuLayers()) {
         if (danmakuOverride) layer.style.removeProperty('visibility');
         else layer.style.setProperty('visibility', 'hidden', 'important');
       }
+    }
+
+    function nativeDanmakuState(input, control) {
+      if (input && 'checked' in input) return Boolean(input.checked);
+      const ariaChecked = input && input.getAttribute('aria-checked');
+      if (ariaChecked === 'true' || ariaChecked === 'false') return ariaChecked === 'true';
+      const className = String((control && control.className) || '');
+      if (/bui-danmaku-switch-state-1/.test(className)) return true;
+      if (/bui-danmaku-switch-state-3/.test(className)) return false;
+      return null;
     }
     const playerActions = {
       previous: ['[aria-label="上一个"]', '.bpx-player-ctrl-prev'],
@@ -413,18 +431,30 @@ function makeSiteDefinition() {
         }
         if (action === 'danmaku') {
           const input = document.querySelector('.bui-danmaku-switch-input');
-          const before = input ? Boolean(input.checked) : danmakuOverride !== false;
-          const clicked = clickElement(firstElement(['[aria-label="弹幕显示隐藏"]', '.bpx-player-dm-switch'], false));
-          if (!clicked) return false;
+          const control = firstElement(['[aria-label="弹幕显示隐藏"]', '.bpx-player-dm-switch'], false);
+          const nativeBefore = nativeDanmakuState(input, control);
+          const before = typeof danmakuOverride === 'boolean' ? danmakuOverride : nativeBefore !== null ? nativeBefore : true;
+          const target = !before;
+          danmakuOverride = target;
+          applyDanmakuOverride();
+
+          let clicked = nativeBefore === target;
+          if (!clicked) {
+            clicked = clickElement(input)
+              || clickElement(document.querySelector('.bui-danmaku-switch-label'))
+              || clickElement(control);
+          }
           setTimeout(() => {
-            if (!input || Boolean(input.checked) === before) {
-              danmakuOverride = !before;
-              applyDanmakuOverride();
-            } else {
+            const nativeAfter = nativeDanmakuState(input, control);
+            if (nativeAfter === target) {
+              clearDanmakuOverrideStyles();
               danmakuOverride = null;
+            } else {
+              danmakuOverride = target;
+              applyDanmakuOverride();
             }
-          }, 80);
-          return true;
+          }, 120);
+          return clicked || Boolean(playerContainer());
         }
         if (action === 'quality') {
           return clickElement(document.querySelector(`.bpx-player-ctrl-quality-menu-item[data-value="${value}"]`));

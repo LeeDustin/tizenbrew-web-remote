@@ -333,12 +333,24 @@
               return true;
             }
             return setFillTvOverride(!before);
+          }, danmakuLayers = function() {
+            return document.querySelectorAll(".bpx-player-render-dm-wrap,.bpx-player-row-dm-wrap,.bpx-player-bas-dm-wrap,.bpx-player-cmd-dm-wrap");
+          }, clearDanmakuOverrideStyles = function() {
+            for (const layer of danmakuLayers()) layer.style.removeProperty("visibility");
           }, applyDanmakuOverride = function() {
             if (typeof danmakuOverride !== "boolean") return;
-            for (const layer of document.querySelectorAll(".bpx-player-render-dm-wrap,.bpx-player-row-dm-wrap,.bpx-player-bas-dm-wrap,.bpx-player-cmd-dm-wrap")) {
+            for (const layer of danmakuLayers()) {
               if (danmakuOverride) layer.style.removeProperty("visibility");
               else layer.style.setProperty("visibility", "hidden", "important");
             }
+          }, nativeDanmakuState = function(input, control) {
+            if (input && "checked" in input) return Boolean(input.checked);
+            const ariaChecked = input && input.getAttribute("aria-checked");
+            if (ariaChecked === "true" || ariaChecked === "false") return ariaChecked === "true";
+            const className = String(control && control.className || "");
+            if (/bui-danmaku-switch-state-1/.test(className)) return true;
+            if (/bui-danmaku-switch-state-3/.test(className)) return false;
+            return null;
           };
           let danmakuOverride = null;
           const fillTvRootClass = "web-remote-bilibili-fill-tv";
@@ -396,18 +408,27 @@
               }
               if (action === "danmaku") {
                 const input = document.querySelector(".bui-danmaku-switch-input");
-                const before = input ? Boolean(input.checked) : danmakuOverride !== false;
-                const clicked = clickElement(firstElement(['[aria-label="\u5F39\u5E55\u663E\u793A\u9690\u85CF"]', ".bpx-player-dm-switch"], false));
-                if (!clicked) return false;
+                const control = firstElement(['[aria-label="\u5F39\u5E55\u663E\u793A\u9690\u85CF"]', ".bpx-player-dm-switch"], false);
+                const nativeBefore = nativeDanmakuState(input, control);
+                const before = typeof danmakuOverride === "boolean" ? danmakuOverride : nativeBefore !== null ? nativeBefore : true;
+                const target = !before;
+                danmakuOverride = target;
+                applyDanmakuOverride();
+                let clicked = nativeBefore === target;
+                if (!clicked) {
+                  clicked = clickElement(input) || clickElement(document.querySelector(".bui-danmaku-switch-label")) || clickElement(control);
+                }
                 setTimeout(() => {
-                  if (!input || Boolean(input.checked) === before) {
-                    danmakuOverride = !before;
-                    applyDanmakuOverride();
-                  } else {
+                  const nativeAfter = nativeDanmakuState(input, control);
+                  if (nativeAfter === target) {
+                    clearDanmakuOverrideStyles();
                     danmakuOverride = null;
+                  } else {
+                    danmakuOverride = target;
+                    applyDanmakuOverride();
                   }
-                }, 80);
-                return true;
+                }, 120);
+                return clicked || Boolean(playerContainer());
               }
               if (action === "quality") {
                 return clickElement(document.querySelector(`.bpx-player-ctrl-quality-menu-item[data-value="${value}"]`));

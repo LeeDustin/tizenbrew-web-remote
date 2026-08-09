@@ -148,9 +148,23 @@
           <span><span class="eyebrow">Manual control</span><span class="summary-title">Navigation and pointer</span></span>
           <span id="manualStatus" class="summary-status">Advanced</span>
         </summary>
-        <div class="section-body control-grid">
-        <div class="control-surface dpad-panel">
-          <p class="eyebrow">Navigation</p>
+        <div class="section-body">
+        <div class="manual-mode-row">
+          <p class="muted section-intro">Pointer is the default. Switch to D-pad only when a page needs directional focus.</p>
+          <label class="mode"><span>Control mode</span><select id="touchMode"><option value="pointer">Pointer</option><option value="scroll">Scroll</option><option value="dpad">D-pad</option></select></label>
+        </div>
+        <div class="control-grid">
+        <div id="touchPanel" class="control-surface touch-panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">Touchpad</p><h2 id="touchModeTitle">Pointer</h2></div>
+          </div>
+          <div id="touchpad" class="touchpad" tabindex="0" aria-label="TV touchpad">
+            <span id="touchpadHint">Drag to move · Tap to click</span>
+          </div>
+        </div>
+
+        <div id="dpadPanel" class="control-surface dpad-panel" hidden>
+          <p class="eyebrow">Directional focus</p>
           <div class="dpad" aria-label="Directional navigation">
             <button data-focus="up" class="up" type="button" aria-label="Up">▲</button>
             <button data-focus="left" class="left" type="button" aria-label="Left">◀</button>
@@ -158,21 +172,12 @@
             <button data-focus="right" class="right" type="button" aria-label="Right">▶</button>
             <button data-focus="down" class="down" type="button" aria-label="Down">▼</button>
           </div>
-          <div class="three-buttons">
-            <button data-history="back" class="ghost" type="button">Back</button>
-            <button data-history="reload" class="ghost" type="button">Reload</button>
-            <button data-history="forward" class="ghost" type="button">Forward</button>
-          </div>
         </div>
-
-        <div class="control-surface touch-panel">
-          <div class="section-heading">
-            <div><p class="eyebrow">Touchpad</p><h2>Pointer</h2></div>
-            <label class="mode"><span>Mode</span><select id="touchMode"><option value="pointer">Pointer</option><option value="scroll">Scroll</option></select></label>
-          </div>
-          <div id="touchpad" class="touchpad" tabindex="0" aria-label="TV touchpad">
-            <span>Drag to move · Tap to click</span>
-          </div>
+        </div>
+        <div class="three-buttons manual-history">
+          <button data-history="back" class="ghost" type="button">Back</button>
+          <button data-history="reload" class="ghost" type="button">Reload</button>
+          <button data-history="forward" class="ghost" type="button">Forward</button>
         </div>
         </div>
       </details>
@@ -183,18 +188,21 @@
           <span id="playerStatus" class="summary-status">No player</span>
         </summary>
         <div class="section-body">
-        <div class="player-meta"><span id="playerTime" class="time">--:-- / --:--</span></div>
+        <div class="player-meta">
+          <span id="playerTime" class="time">--:-- / --:--</span>
+          <label class="seek-setting"><span>Seek step</span><select id="seekStep"><option value="5" selected>5 seconds</option><option value="10">10 seconds</option><option value="15">15 seconds</option><option value="30">30 seconds</option><option value="60">60 seconds</option></select></label>
+        </div>
         <div class="media-controls">
-          <button data-media="seekBy" data-value="-30" type="button">−30s</button>
+          <button id="seekBack" data-media="seekBy" data-value="-5" type="button">−5s</button>
           <button data-media="toggle" class="primary play" type="button">Play / Pause</button>
-          <button data-media="seekBy" data-value="30" type="button">+30s</button>
+          <button id="seekForward" data-media="seekBy" data-value="5" type="button">+5s</button>
           <button data-media="volumeBy" data-value="-0.1" type="button">Vol −</button>
           <button data-media="captions" type="button">CC</button>
           <button data-media="volumeBy" data-value="0.1" type="button">Vol +</button>
           <button id="fillTvButton" data-media="fullscreen" class="wide-control primary" type="button">Fill TV</button>
         </div>
         <div id="bilibiliPlayerActions" class="site-actions player-site-actions" hidden>
-          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
+          <button id="danmakuButton" data-bilibili-action="danmaku" type="button">Turn danmu off</button>
           <button data-bilibili-action="previous" type="button">Previous</button>
           <button data-bilibili-action="next" type="button">Next</button>
           <button data-bilibili-action="wide" type="button">Wide mode</button>
