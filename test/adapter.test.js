@@ -132,3 +132,79 @@ test('Bilibili adapter exposes login, search, danmu, quality, speed, and player 
     global.document = previousDocument;
   }
 });
+
+test('Bilibili search results are deduplicated and open in the current TV window', () => {
+  const { window } = parseHTML(`<!doctype html><html><body>
+    <input class="nav-search-input" type="text" placeholder="Search Bilibili">
+    <div class="bili-video-card">
+      <a class="cover" target="_blank" href="https://www.bilibili.com/video/BV123/"><span>05:35</span></a>
+      <div class="bili-video-card__info">
+        <div class="bili-video-card__info--right"><a target="_blank" href="https://www.bilibili.com/video/BV123/"><h3 class="bili-video-card__info--tit">TV-friendly Bilibili video</h3></a></div>
+        <a class="bili-video-card__info--owner">Creator · today</a>
+        <span class="bili-video-card__stats__duration">05:35</span>
+      </div>
+    </div>
+  </body></html>`);
+
+  let assignedUrl = '';
+  Object.defineProperty(window, 'location', {
+    value: {
+      hostname: 'search.bilibili.com',
+      pathname: '/all',
+      href: 'https://search.bilibili.com/all?keyword=tizen',
+      assign(value) { assignedUrl = value; }
+    },
+    configurable: true
+  });
+  window.innerWidth = 1920;
+  window.innerHeight = 1080;
+  window.getComputedStyle = () => ({ display: 'block', visibility: 'visible', opacity: '1' });
+  window.HTMLElement.prototype.getBoundingClientRect = () => ({ left: 20, top: 30, right: 400, bottom: 100, width: 380, height: 70 });
+
+  const previousWindow = global.window;
+  const previousDocument = global.document;
+  global.window = window;
+  global.document = window.document;
+  try {
+    delete require.cache[require.resolve('../src/injected/adapters')];
+    const { createPageAdapter } = require('../src/injected/adapters');
+    const adapter = createPageAdapter();
+    const items = adapter.scan();
+    const results = items.filter((item) => item.group === 'bilibili-search-result');
+    assert.equal(results.length, 1);
+    assert.equal(results[0].kind, 'media');
+    assert.equal(results[0].label, 'TV-friendly Bilibili video');
+    assert.match(results[0].detail, /Creator/);
+    assert.equal(adapter.siteState().searchPage, true);
+
+    assert.equal(adapter.activate(adapter.elementById(results[0].id)), true);
+    assert.equal(assignedUrl, 'https://www.bilibili.com/video/BV123/');
+  } finally {
+    global.window = previousWindow;
+    global.document = previousDocument;
+  }
+});
+
+test('Bilibili playback URLs expose controls while the media element is still loading', () => {
+  const { window } = parseHTML('<!doctype html><html><body></body></html>');
+  Object.defineProperty(window, 'location', {
+    value: { hostname: 'www.bilibili.com', pathname: '/video/BV123/', href: 'https://www.bilibili.com/video/BV123/' },
+    configurable: true
+  });
+  window.getComputedStyle = () => ({ display: 'block', visibility: 'visible', opacity: '1' });
+
+  const previousWindow = global.window;
+  const previousDocument = global.document;
+  global.window = window;
+  global.document = window.document;
+  try {
+    delete require.cache[require.resolve('../src/injected/adapters')];
+    const { createPageAdapter } = require('../src/injected/adapters');
+    const state = createPageAdapter().siteState();
+    assert.equal(state.playbackPage, true);
+    assert.equal(state.playerAvailable, true);
+  } finally {
+    global.window = previousWindow;
+    global.document = previousDocument;
+  }
+});

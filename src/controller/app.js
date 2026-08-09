@@ -36,6 +36,7 @@
       'pageTitle', 'pageUrl', 'showTvOverlay', 'hideTvOverlay', 'toggleAllSections', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',
       'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',
       'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',
+      'bilibiliResultsPanel', 'bilibiliResultsStatus', 'bilibiliResultFilter', 'bilibiliResults', 'refreshBilibiliResults',
       'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime',
       'refreshItems', 'itemFilter', 'pageItems', 'sitesPanel', 'sitesStatus', 'textPanel', 'textStatus', 'manualPanel',
       'manualStatus', 'playerPanel', 'itemsPanel', 'itemsStatus', 'diagnosticsPanel', 'diagTv', 'diagNavigation',
@@ -95,7 +96,9 @@
     dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page…';
     dom.pageUrl.textContent = page.url || '';
     const playerAvailable = player.found || Boolean(page.site && page.site.playerAvailable);
-    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : playerAvailable ? 'Player loading' : 'No player';
+    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing')
+      : page.site && page.site.playbackPage && playerAvailable ? 'Bilibili player ready'
+        : playerAvailable ? 'Player loading' : 'No player';
     dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
     dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';
     dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';
@@ -103,6 +106,7 @@
     dom.diagError.textContent = state.lastLog ? state.lastLog.message : 'none';
     renderBilibili(page);
     renderProfiles();
+    renderBilibiliResults(page);
     renderItems();
     renderSectionLayout(page, player);
   }
@@ -167,38 +171,64 @@
   function renderItems() {
     if (!state) return;
     const query = dom.itemFilter.value.trim().toLowerCase();
-    const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));
-    dom.itemsStatus.textContent = `${state.items ? state.items.length : 0} found`;
+    const controls = (state.items || []).filter((item) => item.group !== 'bilibili-search-result');
+    const items = controls.filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));
+    dom.itemsStatus.textContent = `${controls.length} found`;
     dom.pageItems.textContent = '';
     if (!items.length) {
       const empty = document.createElement('p');
       empty.className = 'muted';
-      empty.textContent = state.items && state.items.length ? 'No matching controls.' : 'No visible controls were discovered yet.';
+      empty.textContent = controls.length ? 'No matching controls.' : 'No visible controls were discovered yet.';
       dom.pageItems.appendChild(empty);
       return;
     }
     for (const item of items) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'page-item';
-      const kind = document.createElement('span');
-      kind.className = 'kind';
-      kind.textContent = item.kind;
-      const copy = document.createElement('span');
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = item.label;
-      copy.appendChild(label);
-      if (item.detail) {
-        const detail = document.createElement('span');
-        detail.className = 'detail';
-        detail.textContent = item.detail;
-        copy.appendChild(detail);
-      }
-      button.append(kind, copy);
-      button.addEventListener('click', () => command({ type: 'select', id: item.id }));
-      dom.pageItems.appendChild(button);
+      dom.pageItems.appendChild(createItemButton(item));
     }
+  }
+
+  function createItemButton(item, dedicatedVideo) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = dedicatedVideo ? 'page-item video-result' : 'page-item';
+    const kind = document.createElement('span');
+    kind.className = 'kind';
+    kind.textContent = dedicatedVideo ? 'video' : item.kind;
+    const copy = document.createElement('span');
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = item.label;
+    copy.appendChild(label);
+    if (item.detail) {
+      const detail = document.createElement('span');
+      detail.className = 'detail';
+      detail.textContent = item.detail;
+      copy.appendChild(detail);
+    }
+    button.append(kind, copy);
+    button.addEventListener('click', () => {
+      if (dedicatedVideo) showToast(`Opening ${item.label}`);
+      command({ type: 'select', id: item.id }, false);
+    });
+    return button;
+  }
+
+  function renderBilibiliResults(page) {
+    if (!state) return;
+    const site = page.site || {};
+    const allResults = (state.items || []).filter((item) => item.group === 'bilibili-search-result');
+    const query = dom.bilibiliResultFilter.value.trim().toLowerCase();
+    const results = allResults.filter((item) => !query || `${item.label} ${item.detail}`.toLowerCase().includes(query));
+    dom.bilibiliResultsStatus.textContent = allResults.length ? `${allResults.length} videos` : site.searchPage ? 'Loading results' : 'No results';
+    dom.bilibiliResults.textContent = '';
+    if (!results.length) {
+      const empty = document.createElement('p');
+      empty.className = 'muted';
+      empty.textContent = allResults.length ? 'No matching videos.' : site.searchPage ? 'Bilibili results are still loading. Tap Refresh if this remains empty.' : 'No Bilibili video results on this page.';
+      dom.bilibiliResults.appendChild(empty);
+      return;
+    }
+    for (const item of results) dom.bilibiliResults.appendChild(createItemButton(item, true));
   }
 
   function hasSectionPreference(panel) {
@@ -218,7 +248,9 @@
     const playerAvailable = Boolean(player.found || site.playerAvailable);
     const items = state && Array.isArray(state.items) ? state.items : [];
     const hasTextInput = isBilibili || items.some((item) => item.kind === 'input');
-    const hasPageItems = items.length > 0;
+    const hasBilibiliResults = items.some((item) => item.group === 'bilibili-search-result');
+    const isBilibiliSearch = isBilibili && Boolean(site.searchPage || hasBilibiliResults);
+    const hasPageItems = items.some((item) => item.group !== 'bilibili-search-result');
 
     dom.toggleAllSections.textContent = showAllSections ? 'Use smart view' : 'Show all controls';
     dom.toggleAllSections.setAttribute('aria-pressed', String(showAllSections));
@@ -229,15 +261,17 @@
     dom.bilibiliPlaybackSettings.hidden = !(isBilibili && playerAvailable);
 
     dom.bilibiliPanel.hidden = !isBilibili;
+    dom.bilibiliResultsPanel.hidden = !(isBilibiliSearch || (showAllSections && isBilibili));
     dom.textPanel.hidden = !(showAllSections || (hasTextInput && !playerAvailable));
     dom.playerPanel.hidden = !(showAllSections || playerAvailable);
-    dom.itemsPanel.hidden = !(showAllSections || (hasPageItems && !playerAvailable));
-    dom.manualPanel.hidden = !(showAllSections || (!playerAvailable && !hasPageItems));
+    dom.itemsPanel.hidden = !(showAllSections || (hasPageItems && !playerAvailable && !isBilibiliSearch));
+    dom.manualPanel.hidden = !(showAllSections || (!playerAvailable && !hasPageItems && !isBilibiliSearch));
 
-    const nextContext = playerAvailable ? 'player' : isBilibili ? 'bilibili' : hasPageItems ? 'items' : 'manual';
+    const nextContext = playerAvailable ? 'player' : isBilibiliSearch ? 'bilibiliResults' : isBilibili ? 'bilibili' : hasPageItems ? 'items' : 'manual';
     if (nextContext !== sectionContext) {
       sectionContext = nextContext;
       setAutomaticOpen(dom.playerPanel, nextContext === 'player');
+      setAutomaticOpen(dom.bilibiliResultsPanel, nextContext === 'bilibiliResults');
       setAutomaticOpen(dom.bilibiliPanel, nextContext === 'bilibili');
       setAutomaticOpen(dom.itemsPanel, nextContext === 'items');
       setAutomaticOpen(dom.manualPanel, nextContext === 'manual');
@@ -498,7 +532,9 @@
       value: Number(button.dataset.value || 0)
     }, false)));
     dom.refreshItems.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));
+    dom.refreshBilibiliResults.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));
     dom.itemFilter.addEventListener('input', renderItems);
+    dom.bilibiliResultFilter.addEventListener('input', () => renderBilibiliResults((state && state.page) || {}));
     dom.touchpad.addEventListener('pointerdown', pointerDown);
     dom.touchpad.addEventListener('pointermove', pointerMove);
     dom.touchpad.addEventListener('pointerup', pointerUp);
