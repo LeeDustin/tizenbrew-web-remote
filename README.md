@@ -41,18 +41,24 @@ need to compile the source.
 
 ## Phone controls
 
+- Smart view is the default: it opens the relevant player, Bilibili, page-item,
+  or manual-control section and hides sections that do not apply. Every section
+  remains individually collapsible, and **Show all controls** restores the full
+  remote when needed. These choices are remembered on the phone.
 - Switch between 1Shows, Cineby, Bilibili, and user-added public HTTPS domains.
 - Press the TV remote's **Back** key on any non-Bilibili site for an emergency
   return to Bilibili; phone-driven site switches also replace redirect pages.
 - Browse a simplified list of visible links, buttons, and inputs.
 - Use a directional pad or touchpad when semantic discovery is incomplete.
 - Send text to the currently focused search/input field.
-- Play/pause, seek, adjust volume, toggle captions, and request fullscreen when
+- Play/pause, seek, adjust volume, toggle captions, and fill the TV when
   the player is accessible from the top-level page or a frame where TizenBrew's
   module script is active.
 - On Bilibili, open the official login dialog, search the desktop site, toggle
   danmu, move between videos/parts, select quality and speed, and enter wide or
-  web-fullscreen mode.
+  web-fullscreen mode. **Fill TV** prefers Bilibili's viewport-filling mode and
+  includes a Tizen-compatible fallback because remote WebSocket commands do not
+  carry the browser user gesture required by native fullscreen.
 
 For Bilibili login, tap **Login / QR** on the phone and scan the QR code shown by
 Bilibili on the television. The remote does not read passwords, QR contents,

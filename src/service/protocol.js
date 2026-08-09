@@ -221,7 +221,9 @@ function sanitizeTvMessage(input) {
       loggedIn: Boolean(rawSite.loggedIn),
       danmakuEnabled: typeof rawSite.danmakuEnabled === 'boolean' ? rawSite.danmakuEnabled : null,
       quality: text(rawSite.quality, 40),
-      playbackRate: clampNumber(rawSite.playbackRate, 0.5, 2, 1)
+      playbackRate: clampNumber(rawSite.playbackRate, 0.5, 2, 1),
+      playerAvailable: Boolean(rawSite.playerAvailable),
+      webFullscreenActive: Boolean(rawSite.webFullscreenActive)
     } : null;
     return {
       kind,

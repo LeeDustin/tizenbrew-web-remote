@@ -78,10 +78,20 @@ test('TV state is bounded before it reaches a phone', () => {
     kind: 'page',
     page: {
       adapter: 'bilibili',
-      site: { id: 'bilibili', loginAvailable: true, danmakuEnabled: true, quality: 'Q'.repeat(100), playbackRate: 99 }
+      site: {
+        id: 'bilibili',
+        loginAvailable: true,
+        danmakuEnabled: true,
+        quality: 'Q'.repeat(100),
+        playbackRate: 99,
+        playerAvailable: true,
+        webFullscreenActive: true
+      }
     }
   });
   assert.equal(page.page.site.quality.length, 40);
   assert.equal(page.page.site.playbackRate, 2);
   assert.equal(page.page.site.danmakuEnabled, true);
+  assert.equal(page.page.site.playerAvailable, true);
+  assert.equal(page.page.site.webFullscreenActive, true);
 });

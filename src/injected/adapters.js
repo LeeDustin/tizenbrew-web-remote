@@ -121,6 +121,103 @@ function makeSiteDefinition() {
   }
   if (hostname === 'bilibili.com' || hostname.endsWith('.bilibili.com')) {
     let danmakuOverride = null;
+    const fillTvRootClass = 'web-remote-bilibili-fill-tv';
+    const fillTvPlayerAttribute = 'data-web-remote-fill-tv';
+
+    function playerContainer() {
+      return firstElement([
+        '.bpx-player-container',
+        '#bilibili-player',
+        '.bilibili-player-video',
+        '.bilibili-player-video-wrap',
+        'video'
+      ], false);
+    }
+
+    function fillTvOverrideActive() {
+      return document.documentElement.classList.contains(fillTvRootClass);
+    }
+
+    function builtInWebFullscreenActive() {
+      const control = document.querySelector('.bpx-player-ctrl-web,.bilibili-player-video-btn-web-fullscreen');
+      return Boolean(
+        (control && /bpx-state-entered|video-state-enter/.test(String(control.className || '')))
+        || document.body.classList.contains('webscreen-fix')
+      );
+    }
+
+    function setFillTvOverride(active) {
+      const player = active ? playerContainer() : null;
+      if (active && !player) {
+        document.documentElement.classList.remove(fillTvRootClass);
+        return false;
+      }
+      for (const element of document.querySelectorAll(`[${fillTvPlayerAttribute}]`)) {
+        element.removeAttribute(fillTvPlayerAttribute);
+      }
+      document.documentElement.classList.toggle(fillTvRootClass, active);
+      if (!active) {
+        window.dispatchEvent(new window.Event('resize'));
+        return true;
+      }
+      player.setAttribute(fillTvPlayerAttribute, 'true');
+      let style = document.getElementById('web-remote-bilibili-fill-style');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'web-remote-bilibili-fill-style';
+        style.textContent = `
+          html.${fillTvRootClass}, html.${fillTvRootClass} body { overflow: hidden !important; }
+          html.${fillTvRootClass} [${fillTvPlayerAttribute}] {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            max-width: none !important;
+            max-height: none !important;
+            margin: 0 !important;
+            transform: none !important;
+            z-index: 2147483000 !important;
+            background: #000 !important;
+          }
+          html.${fillTvRootClass} [${fillTvPlayerAttribute}] .bpx-player-video-area,
+          html.${fillTvRootClass} [${fillTvPlayerAttribute}] .bpx-player-video-wrap,
+          html.${fillTvRootClass} [${fillTvPlayerAttribute}] video {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+      window.dispatchEvent(new window.Event('resize'));
+      return true;
+    }
+
+    function toggleFillTv() {
+      if (fillTvOverrideActive()) return setFillTvOverride(false);
+
+      const before = builtInWebFullscreenActive();
+      const control = firstElement([
+        '[aria-label="\u7f51\u9875\u5168\u5c4f"]',
+        '.bpx-player-ctrl-web',
+        '.bilibili-player-video-btn-web-fullscreen'
+      ], false);
+      if (clickElement(control)) {
+        setTimeout(() => {
+          if (builtInWebFullscreenActive() === before && !before) setFillTvOverride(true);
+        }, 140);
+        return true;
+      }
+      return setFillTvOverride(!before);
+    }
+
     function applyDanmakuOverride() {
       if (typeof danmakuOverride !== 'boolean') return;
       for (const layer of document.querySelectorAll('.bpx-player-render-dm-wrap,.bpx-player-row-dm-wrap,.bpx-player-bas-dm-wrap,.bpx-player-cmd-dm-wrap')) {
@@ -197,6 +294,7 @@ function makeSiteDefinition() {
         if (action === 'speed') {
           return clickElement(document.querySelector(`.bpx-player-ctrl-playbackrate-menu-item[data-value="${value}"]`));
         }
+        if (action === 'webFullscreen') return toggleFillTv();
         return clickElement(firstElement(playerActions[action] || [], false));
       },
       siteState() {
@@ -213,7 +311,9 @@ function makeSiteDefinition() {
           loggedIn: !login && Boolean(account),
           danmakuEnabled: typeof danmakuOverride === 'boolean' ? danmakuOverride : danmaku ? Boolean(danmaku.checked) : null,
           quality: cleanText(quality && quality.textContent, 40),
-          playbackRate: video ? Number(video.playbackRate) || 1 : 1
+          playbackRate: video ? Number(video.playbackRate) || 1 : 1,
+          playerAvailable: Boolean(playerContainer()),
+          webFullscreenActive: builtInWebFullscreenActive() || fillTvOverrideActive()
         };
       }
     };

@@ -65,11 +65,11 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const health = await request(base, '/api/health');
   assert.equal(health.body.ok, true);
-  assert.equal(health.body.version, '0.2.3');
+  assert.equal(health.body.version, '0.2.4');
 
   const info = instance.getInfo();
   assert.match(info.pin, /^\d{6}$/);
-  assert.equal(info.version, '0.2.3');
+  assert.equal(info.version, '0.2.4');
   assert.equal(info.activeProfileId, 'bilibili');
   assert.equal(info.profiles[0].urls[0], 'https://www.bilibili.com/');
   assert.equal(info.profiles.find((profile) => profile.id === 'bilibili').urls[0], 'https://www.bilibili.com/');
@@ -79,7 +79,7 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const tvInfo = await request(base, '/api/tv-info', { headers: { Origin: 'https://www.bilibili.com' } });
   assert.equal(tvInfo.response.status, 200);
-  assert.equal(tvInfo.body.version, '0.2.3');
+  assert.equal(tvInfo.body.version, '0.2.4');
   assert.match(tvInfo.body.pairUrl, /192\.168\.50\.20/);
   assert.equal(tvInfo.response.headers.get('access-control-allow-origin'), 'https://www.bilibili.com');
 
@@ -203,6 +203,27 @@ test('phone and TV WebSockets exchange only normalized commands and bounded stat
   phone.send(JSON.stringify({ kind: 'command', command: { type: 'eval', code: 'bad()' } }));
   const rejected = await nextJson(phone, (message) => message.kind === 'error');
   assert.match(rejected.error, /Unknown command/);
+});
+
+test('an abruptly disconnected phone does not terminate the local service', async (t) => {
+  const instance = createRemoteServer({ port: 0, host: '127.0.0.1' });
+  const ready = await instance.ready;
+  const base = `http://127.0.0.1:${ready.port}`;
+  const wsBase = `ws://127.0.0.1:${ready.port}`;
+  const token = await pair(base, instance.getInfo().pin);
+  const phone = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
+  t.after(() => instance.close());
+
+  const closed = once(phone, 'close');
+  phone.terminate();
+  await closed;
+  await new Promise((resolve) => setTimeout(resolve, 30));
+
+  const health = await request(base, '/api/health');
+  assert.equal(health.response.status, 200);
+  const replacement = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
+  replacement.close();
+  await once(replacement, 'close');
 });
 
 test('loopback long polling carries commands when WebSocket is unavailable', async (t) => {

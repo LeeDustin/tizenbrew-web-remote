@@ -39,16 +39,25 @@
           <h2 id="pageTitle">Waiting for page…</h2>
           <p id="pageUrl" class="muted ellipsis"></p>
         </div>
-        <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+        <div class="header-actions">
+          <button id="toggleAllSections" class="ghost compact" type="button" aria-pressed="false">Show all controls</button>
+          <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+        </div>
       </section>
 
-      <section class="panel">
+      <details id="sitesPanel" class="panel collapsible" data-section="sites">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Website</span><span class="summary-title">Switch site</span></span>
+          <span id="sitesStatus" class="summary-status">Current site</span>
+        </summary>
+        <div class="section-body">
         <div class="section-heading">
-          <div><p class="eyebrow">Website</p><h2>Choose source</h2></div>
+          <p class="muted section-intro">Open another service or edit its fallback domains.</p>
           <button id="editSitesButton" class="ghost compact" type="button">Edit domains</button>
         </div>
         <div id="profiles" class="profiles"></div>
-      </section>
+        </div>
+      </details>
 
       <section id="sitesEditor" class="panel" hidden>
         <div class="section-heading">
@@ -66,31 +75,31 @@
         <p id="sitesError" class="error" role="alert"></p>
       </section>
 
-      <section class="panel">
-        <p class="eyebrow">Keyboard</p>
-        <h2>Search or enter text</h2>
+      <details id="textPanel" class="panel collapsible" data-section="text">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Keyboard</span><span class="summary-title">Search or enter text</span></span>
+          <span id="textStatus" class="summary-status">Available</span>
+        </summary>
+        <div class="section-body">
         <form id="textForm" class="text-form">
           <input id="textInput" type="search" autocomplete="off" placeholder="Movie, show, or text…">
           <button class="ghost" type="button" id="sendTextButton">Send</button>
           <button class="primary" type="submit">Search</button>
         </form>
-      </section>
-
-      <section id="bilibiliPanel" class="panel bilibili-panel" hidden>
-        <div class="section-heading">
-          <div><p class="eyebrow">Bilibili</p><h2>Desktop web controls</h2></div>
-          <span id="bilibiliStatus" class="site-status">Ready</span>
         </div>
+      </details>
+
+      <details id="bilibiliPanel" class="panel collapsible bilibili-panel" data-section="bilibili" hidden>
+        <summary class="section-summary">
+          <span><span class="eyebrow">Bilibili</span><span class="summary-title">Site controls</span></span>
+          <span id="bilibiliStatus" class="site-status">Ready</span>
+        </summary>
+        <div class="section-body">
         <div class="site-actions">
           <button class="primary" data-bilibili-action="login" type="button">Login / QR</button>
           <button data-bilibili-action="home" type="button">Bilibili home</button>
-          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
-          <button data-bilibili-action="previous" type="button">Previous</button>
-          <button data-bilibili-action="next" type="button">Next</button>
-          <button data-bilibili-action="wide" type="button">Wide mode</button>
-          <button data-bilibili-action="webFullscreen" type="button">Web fullscreen</button>
         </div>
-        <div class="site-selectors">
+        <div id="bilibiliPlaybackSettings" class="site-selectors" hidden>
           <label for="bilibiliQuality">Quality
             <select id="bilibiliQuality">
               <option value="0">Auto</option>
@@ -114,11 +123,17 @@
           </label>
           <button id="applyBilibiliSpeed" type="button">Apply speed</button>
         </div>
-        <p class="hint">Login opens Bilibili's own dialog on the TV. Scan its QR code with the Bilibili app; credentials never pass through this remote.</p>
-      </section>
+        <p class="hint">Login opens Bilibili's own dialog on the TV. Playback-specific controls appear automatically when a player is detected.</p>
+        </div>
+      </details>
 
-      <section class="control-grid">
-        <div class="panel dpad-panel">
+      <details id="manualPanel" class="panel collapsible" data-section="manual">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Manual control</span><span class="summary-title">Navigation and pointer</span></span>
+          <span id="manualStatus" class="summary-status">Advanced</span>
+        </summary>
+        <div class="section-body control-grid">
+        <div class="control-surface dpad-panel">
           <p class="eyebrow">Navigation</p>
           <div class="dpad" aria-label="Directional navigation">
             <button data-focus="up" class="up" type="button" aria-label="Up">▲</button>
@@ -134,7 +149,7 @@
           </div>
         </div>
 
-        <div class="panel touch-panel">
+        <div class="control-surface touch-panel">
           <div class="section-heading">
             <div><p class="eyebrow">Touchpad</p><h2>Pointer</h2></div>
             <label class="mode"><span>Mode</span><select id="touchMode"><option value="pointer">Pointer</option><option value="scroll">Scroll</option></select></label>
@@ -143,13 +158,16 @@
             <span>Drag to move · Tap to click</span>
           </div>
         </div>
-      </section>
-
-      <section class="panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">Playback</p><h2 id="playerStatus">No accessible player</h2></div>
-          <span id="playerTime" class="time">--:-- / --:--</span>
         </div>
+      </details>
+
+      <details id="playerPanel" class="panel collapsible" data-section="player">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Playback</span><span class="summary-title">Player controls</span></span>
+          <span id="playerStatus" class="summary-status">No player</span>
+        </summary>
+        <div class="section-body">
+        <div class="player-meta"><span id="playerTime" class="time">--:-- / --:--</span></div>
         <div class="media-controls">
           <button data-media="seekBy" data-value="-30" type="button">−30s</button>
           <button data-media="toggle" class="primary play" type="button">Play / Pause</button>
@@ -157,21 +175,34 @@
           <button data-media="volumeBy" data-value="-0.1" type="button">Vol −</button>
           <button data-media="captions" type="button">CC</button>
           <button data-media="volumeBy" data-value="0.1" type="button">Vol +</button>
-          <button data-media="fullscreen" class="wide-control" type="button">Fullscreen</button>
+          <button id="fillTvButton" data-media="fullscreen" class="wide-control primary" type="button">Fill TV</button>
         </div>
-        <p class="hint">If the player is inside a protected cross-origin frame, use site buttons or the TV remote for its internal controls.</p>
-      </section>
+        <div id="bilibiliPlayerActions" class="site-actions player-site-actions" hidden>
+          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
+          <button data-bilibili-action="previous" type="button">Previous</button>
+          <button data-bilibili-action="next" type="button">Next</button>
+          <button data-bilibili-action="wide" type="button">Wide mode</button>
+        </div>
+        <p class="hint">Fill TV uses the site's own viewport mode when available. Other sites fall back to browser fullscreen.</p>
+        </div>
+      </details>
 
-      <section class="panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">Current page</p><h2>Visible controls</h2></div>
+      <details id="itemsPanel" class="panel collapsible" data-section="items">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Current page</span><span class="summary-title">Visible controls</span></span>
+          <span id="itemsStatus" class="summary-status">Waiting</span>
+        </summary>
+        <div class="section-body">
+        <div class="section-heading compact-heading">
+          <p class="muted section-intro">Buttons and titles detected on the TV page.</p>
           <button id="refreshItems" class="ghost compact" type="button">Refresh</button>
         </div>
         <input id="itemFilter" class="filter" type="search" placeholder="Filter visible buttons and titles…">
         <div id="pageItems" class="page-items"><p class="muted">Waiting for the television…</p></div>
-      </section>
+        </div>
+      </details>
 
-      <details class="panel diagnostics">
+      <details id="diagnosticsPanel" class="panel diagnostics" data-section="diagnostics">
         <summary>Diagnostics and connection</summary>
         <dl>
           <div><dt>TV bridge</dt><dd id="diagTv">—</dd></div>

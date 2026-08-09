@@ -18,7 +18,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
-const APP_VERSION = '0.2.3';
+const APP_VERSION = '0.2.4';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;
@@ -279,7 +279,12 @@ function createRemoteServer(options = {}) {
   }
 
   function send(socket, message) {
-    if (socket && socket.readyState === WS_OPEN) socket.send(JSON.stringify(message));
+    if (!socket || socket.readyState !== WS_OPEN) return;
+    try {
+      socket.send(JSON.stringify(message), () => {});
+    } catch {
+      // A phone can disappear between the readyState check and send (sleep, reload, Wi-Fi change).
+    }
   }
 
   function broadcastPhones(message) {
@@ -621,10 +626,18 @@ function createRemoteServer(options = {}) {
           // Malformed TV messages are ignored instead of reaching the controller.
         }
       });
-      socket.on('close', () => {
+      let tvDisconnected = false;
+      const disconnectTv = () => {
+        if (tvDisconnected) return;
+        tvDisconnected = true;
         if (tvSocket === socket) tvSocket = null;
         broadcastState();
+      };
+      socket.on('error', () => {
+        disconnectTv();
+        try { socket.terminate(); } catch { /* The socket may already be closed. */ }
       });
+      socket.on('close', disconnectTv);
       return;
     }
 
@@ -643,10 +656,18 @@ function createRemoteServer(options = {}) {
         send(socket, { kind: 'error', requestId: '', error: text(error.message, 300) });
       }
     });
-    socket.on('close', () => {
+    let phoneDisconnected = false;
+    const disconnectPhone = () => {
+      if (phoneDisconnected) return;
+      phoneDisconnected = true;
       phoneSockets.delete(socket);
       broadcastState();
+    };
+    socket.on('error', () => {
+      disconnectPhone();
+      try { socket.terminate(); } catch { /* The socket may already be closed. */ }
     });
+    socket.on('close', disconnectPhone);
   });
 
   const ready = new Promise((resolve, reject) => {

@@ -14,6 +14,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { background: var(--bg); }
 body { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 20% -10%, #12395a 0, transparent 37rem), var(--bg); }
 button, input, select, textarea { font: inherit; }
@@ -42,6 +43,27 @@ button, select { touch-action: manipulation; }
 
 main { width: min(920px, 100%); margin: 0 auto; padding: 16px 12px calc(30px + var(--safe-bottom)); }
 .panel { margin-bottom: 13px; padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, rgba(20, 37, 58, .96), rgba(12, 27, 43, .98)); box-shadow: 0 14px 45px rgba(0, 0, 0, .16); }
+.collapsible { overflow: hidden; padding: 0; }
+.section-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 70px;
+  padding: 14px 17px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.section-summary::-webkit-details-marker { display: none; }
+.section-summary::after { content: '›'; color: var(--muted); font-size: 28px; line-height: 1; transform: rotate(90deg); transition: transform .16s ease; }
+.collapsible[open] > .section-summary::after { transform: rotate(-90deg); }
+.section-summary .eyebrow { display: block; }
+.summary-title { display: block; overflow: hidden; color: var(--text); font-size: 18px; font-weight: 800; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.summary-status { max-width: 42vw; overflow: hidden; color: var(--muted); font-size: 12px; font-weight: 750; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.section-body { padding: 2px 17px 17px; border-top: 1px solid rgba(38, 59, 82, .72); }
+.section-intro { margin: 12px 0 0; font-size: 12px; }
+.header-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .pair-panel { max-width: 480px; margin: 8vh auto 0; padding: 24px; }
 .pair-panel h2 { font-size: 25px; }
 h2 { margin: 2px 0 6px; font-size: 20px; line-height: 1.2; }
@@ -80,10 +102,12 @@ button.wide { width: 100%; }
 .text-form { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-top: 13px; }
 .site-status { flex: 0 0 auto; color: #f9a8d4; font-size: 12px; font-weight: 800; }
 .site-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 13px; }
+.player-site-actions { grid-template-columns: repeat(4, 1fr); }
 .site-selectors { display: grid; grid-template-columns: minmax(150px, 1fr) auto minmax(130px, .8fr) auto; gap: 8px; align-items: end; margin-top: 10px; }
 .site-selectors select { min-height: 42px; padding: 8px 10px; }
 .site-selectors button { min-height: 42px; }
-.control-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 13px; }
+.control-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 13px; padding-top: 13px; }
+.control-surface { min-width: 0; padding: 13px; border: 1px solid #2b455f; border-radius: 14px; background: rgba(5, 15, 26, .3); }
 .dpad-panel, .touch-panel { min-width: 0; }
 .dpad { display: grid; grid-template: repeat(3, 60px) / repeat(3, 60px); justify-content: center; gap: 7px; margin: 12px auto; }
 .dpad button { min-height: 60px; padding: 0; font-size: 20px; }
@@ -99,6 +123,7 @@ button.wide { width: 100%; }
 .touchpad.active { border-color: var(--accent); color: #d9f4ff; }
 
 .time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }
+.player-meta { display: flex; justify-content: flex-end; padding-top: 11px; }
 .media-controls { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 13px; }
 .media-controls .play { grid-column: span 2; }
 .media-controls .wide-control { grid-column: span 6; }
@@ -129,11 +154,20 @@ button.wide { width: 100%; }
   .media-controls .play { grid-column: span 1; }
   .media-controls .wide-control { grid-column: span 3; }
   .now-playing { align-items: flex-start; }
+  .now-playing { flex-direction: column; }
+  .header-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .summary-status { max-width: 34vw; }
+  .player-site-actions { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 390px) {
   main { padding-left: 8px; padding-right: 8px; }
   .panel { padding: 14px; border-radius: 15px; }
+  .collapsible { padding: 0; }
+  .section-summary { min-height: 64px; padding: 12px 14px; }
+  .section-body { padding: 2px 14px 14px; }
+  .summary-title { font-size: 16px; }
+  .header-actions button { min-height: 34px; padding: 5px 8px; font-size: 11px; }
   .dpad { grid-template: repeat(3, 56px) / repeat(3, 56px); }
   .dpad button { min-height: 56px; }
   .three-buttons button { padding-left: 5px; padding-right: 5px; font-size: 12px; }
