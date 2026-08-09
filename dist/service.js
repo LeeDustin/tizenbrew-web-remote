@@ -3349,6 +3349,15 @@ var require_protocol = __commonJS({
           message: text2(input.message, 300)
         };
       }
+      if (kind === "overlay") {
+        return {
+          kind,
+          overlay: {
+            visible: Boolean(input.visible),
+            pinned: Boolean(input.visible && input.pinned)
+          }
+        };
+      }
       if (kind === "pong") return {
         kind,
         at: Date.now()
@@ -3385,7 +3394,7 @@ var _require_protocol = require_protocol(),
   sanitizeTvMessage = _require_protocol.sanitizeTvMessage,
   text = _require_protocol.text;
 var DEFAULT_PORT = 8182;
-var APP_VERSION = "0.2.6";
+var APP_VERSION = "0.2.7";
 var BODY_LIMIT = 32 * 1024;
 var TOKEN_TTL = 30 * 24 * 60 * 60 * 1e3;
 var PIN_TTL = 10 * 60 * 1e3;
@@ -3566,6 +3575,10 @@ function makeDefaultState() {
       startedAt: 0,
       finishedAt: 0
     },
+    overlay: {
+      visible: true,
+      pinned: false
+    },
     lastLog: null,
     updatedAt: Date.now()
   };
@@ -3661,7 +3674,8 @@ function createRemoteServer() {
       profiles,
       activeProfileId: state.activeProfileId,
       tvConnected: state.tvConnected,
-      phoneCount: phoneSockets.size
+      phoneCount: phoneSockets.size,
+      overlay: _objectSpread({}, state.overlay)
     };
   }
   function send(socket, message) {
@@ -3734,7 +3748,7 @@ function createRemoteServer() {
       if (!profile || profile.urls.indexOf(normalized.url) < 0) throw new Error("That address is not configured for the selected profile.");
       state.activeProfileId = profile.id;
     }
-    if (!tvIsConnected() && normalized.type !== "navigate") throw new Error("The TV page bridge is not connected.");
+    if (!tvIsConnected() && normalized.type !== "navigate" && normalized.type !== "overlay") throw new Error("The TV page bridge is not connected.");
     if (normalized.type === "navigate") {
       state.navigation = {
         status: "loading",
@@ -3743,6 +3757,15 @@ function createRemoteServer() {
         finishedAt: 0
       };
       broadcastState();
+    }
+    if (normalized.type === "overlay") {
+      var visible = normalized.action === "toggle" ? !state.overlay.visible : normalized.action === "show";
+      state.overlay = {
+        visible,
+        pinned: visible && normalized.action !== "hide"
+      };
+      broadcastState();
+      broadcastServiceInfo();
     }
     sendTv({
       kind: "command",
@@ -3769,10 +3792,12 @@ function createRemoteServer() {
     }
     if (safe.kind === "snapshot") state.items = safe.items;
     if (safe.kind === "player") state.player = safe.player;
+    if (safe.kind === "overlay") state.overlay = safe.overlay;
     if (safe.kind === "log") state.lastLog = _objectSpread(_objectSpread({}, safe), {}, {
       at: Date.now()
     });
     broadcastState();
+    if (safe.kind === "overlay") broadcastServiceInfo();
   }
   function updateProfiles(value) {
     var nextProfiles = normalizeProfiles(value.profiles);
@@ -4210,6 +4235,19 @@ function createRemoteServer() {
         info: info(request)
       });
       broadcastState();
+      var queued = tvCommandQueue.splice(0, tvCommandQueue.length);
+      var _iterator5 = _createForOfIteratorHelper(queued),
+        _step5;
+      try {
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var message = _step5.value;
+          send(socket, message);
+        }
+      } catch (err) {
+        _iterator5.e(err);
+      } finally {
+        _iterator5.f();
+      }
       socket.on("message", function (payload) {
         try {
           updateFromTv(JSON.parse(payload.toString("utf8")));
@@ -4240,12 +4278,12 @@ function createRemoteServer() {
     });
     socket.on("message", function (payload) {
       try {
-        var message = JSON.parse(payload.toString("utf8"));
-        if (message.kind !== "command") throw new Error("Unsupported message.");
-        var command = dispatchCommand(message.command);
+        var _message = JSON.parse(payload.toString("utf8"));
+        if (_message.kind !== "command") throw new Error("Unsupported message.");
+        var command = dispatchCommand(_message.command);
         send(socket, {
           kind: "ack",
-          requestId: text(message.requestId, 64),
+          requestId: text(_message.requestId, 64),
           command
         });
       } catch (error) {
@@ -4280,17 +4318,17 @@ function createRemoteServer() {
       actualPort = server.address().port;
       rotatePin(true);
       console.log(`[Web Remote TV] Service listening on port ${actualPort}`);
-      var _iterator5 = _createForOfIteratorHelper(lanAddresses),
-        _step5;
+      var _iterator6 = _createForOfIteratorHelper(lanAddresses),
+        _step6;
       try {
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          var address = _step5.value;
+        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+          var address = _step6.value;
           console.log(`[Web Remote TV] Controller: http://${address}:${actualPort}/`);
         }
       } catch (err) {
-        _iterator5.e(err);
+        _iterator6.e(err);
       } finally {
-        _iterator5.f();
+        _iterator6.f();
       }
       resolve({
         port: actualPort,
@@ -4306,11 +4344,11 @@ function createRemoteServer() {
       at: Date.now()
     });
     var phonesChanged = false;
-    var _iterator6 = _createForOfIteratorHelper(phoneSockets),
-      _step6;
+    var _iterator7 = _createForOfIteratorHelper(phoneSockets),
+      _step7;
     try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var phoneSocket = _step6.value;
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var phoneSocket = _step7.value;
         if (phoneSocket.readyState !== WS_OPEN || phoneHeartbeats.get(phoneSocket) === false) {
           phoneSockets.delete(phoneSocket);
           phoneHeartbeats.delete(phoneSocket);
@@ -4333,9 +4371,9 @@ function createRemoteServer() {
         }
       }
     } catch (err) {
-      _iterator6.e(err);
+      _iterator7.e(err);
     } finally {
-      _iterator6.f();
+      _iterator7.f();
     }
     if (phonesChanged) {
       broadcastState();
@@ -4357,17 +4395,17 @@ function createRemoteServer() {
   if (typeof maintenance.unref === "function") maintenance.unref();
   function close() {
     clearInterval(maintenance);
-    var _iterator7 = _createForOfIteratorHelper(phoneSockets),
-      _step7;
+    var _iterator8 = _createForOfIteratorHelper(phoneSockets),
+      _step8;
     try {
-      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-        var socket = _step7.value;
+      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+        var socket = _step8.value;
         socket.close();
       }
     } catch (err) {
-      _iterator7.e(err);
+      _iterator8.e(err);
     } finally {
-      _iterator7.f();
+      _iterator8.f();
     }
     if (tvSocket) tvSocket.close();
     if (tvPollWaiter) {

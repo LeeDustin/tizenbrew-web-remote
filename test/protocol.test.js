@@ -94,4 +94,9 @@ test('TV state is bounded before it reaches a phone', () => {
   assert.equal(page.page.site.danmakuEnabled, true);
   assert.equal(page.page.site.playerAvailable, true);
   assert.equal(page.page.site.webFullscreenActive, true);
+
+  assert.deepEqual(sanitizeTvMessage({ kind: 'overlay', visible: false, pinned: true }), {
+    kind: 'overlay',
+    overlay: { visible: false, pinned: false }
+  });
 });

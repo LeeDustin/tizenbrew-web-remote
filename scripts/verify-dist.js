@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
-assert.equal(packageJson.version, '0.2.6');
+assert.equal(packageJson.version, '0.2.7');
 assert.equal(packageJson.websiteURL, 'https://www.bilibili.com/');
 assert.notEqual(
   packageJson.evaluateScriptOnDocumentStart,
@@ -45,6 +45,8 @@ assert.match(injected, /Remote recovery/);
 assert.match(injected, /ColorF0Red/);
 assert.match(injected, /kind:\s*["']recovery["']/);
 assert.doesNotMatch(injected, /overlayHideTimer/);
+assert.match(injected, /pagehide/);
+assert.match(injected, /pageshow/);
 assert.match(injected, /web-remote-tv-frame-v1/);
 assert.match(injected, /window\.top !== window\.self/);
 

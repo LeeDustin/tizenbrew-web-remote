@@ -256,6 +256,15 @@ function sanitizeTvMessage(input) {
   if (kind === 'log') {
     return { kind, level: oneOf(['info', 'warn', 'error'], input.level) ? input.level : 'info', message: text(input.message, 300) };
   }
+  if (kind === 'overlay') {
+    return {
+      kind,
+      overlay: {
+        visible: Boolean(input.visible),
+        pinned: Boolean(input.visible && input.pinned)
+      }
+    };
+  }
   if (kind === 'pong') return { kind, at: Date.now() };
   return null;
 }

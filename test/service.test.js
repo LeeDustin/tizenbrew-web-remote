@@ -65,11 +65,12 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const health = await request(base, '/api/health');
   assert.equal(health.body.ok, true);
-  assert.equal(health.body.version, '0.2.6');
+  assert.equal(health.body.version, '0.2.7');
 
   const info = instance.getInfo();
   assert.match(info.pin, /^\d{6}$/);
-  assert.equal(info.version, '0.2.6');
+  assert.equal(info.version, '0.2.7');
+  assert.deepEqual(info.overlay, { visible: true, pinned: false });
   assert.equal(info.activeProfileId, 'bilibili');
   assert.equal(info.profiles[0].urls[0], 'https://www.bilibili.com/');
   assert.equal(info.profiles.find((profile) => profile.id === 'bilibili').urls[0], 'https://www.bilibili.com/');
@@ -79,7 +80,7 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const tvInfo = await request(base, '/api/tv-info', { headers: { Origin: 'https://www.bilibili.com' } });
   assert.equal(tvInfo.response.status, 200);
-  assert.equal(tvInfo.body.version, '0.2.6');
+  assert.equal(tvInfo.body.version, '0.2.7');
   assert.match(tvInfo.body.pairUrl, /192\.168\.50\.20/);
   assert.equal(tvInfo.response.headers.get('access-control-allow-origin'), 'https://www.bilibili.com');
 
@@ -229,6 +230,38 @@ test('an abruptly disconnected phone does not terminate the local service', asyn
   const replacement = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
   replacement.close();
   await once(replacement, 'close');
+});
+
+test('navigation handoff preserves overlay state and flushes queued controls to the replacement TV page', async (t) => {
+  const instance = createRemoteServer({ port: 0, host: '127.0.0.1' });
+  const ready = await instance.ready;
+  const base = `http://127.0.0.1:${ready.port}`;
+  const wsBase = `ws://127.0.0.1:${ready.port}`;
+  const token = await pair(base, instance.getInfo().pin);
+  const phone = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
+  const firstTv = await openSocket(`${wsBase}/ws?role=tv`);
+  t.after(() => instance.close());
+
+  const hiddenState = nextJson(phone, (message) => message.kind === 'state' && message.state.overlay && !message.state.overlay.visible);
+  firstTv.send(JSON.stringify({ kind: 'overlay', visible: false, pinned: false }));
+  await hiddenState;
+  assert.deepEqual(instance.getInfo().overlay, { visible: false, pinned: false });
+
+  const firstClosed = once(firstTv, 'close');
+  firstTv.close();
+  await firstClosed;
+  phone.send(JSON.stringify({
+    kind: 'command',
+    requestId: 'handoff-focus',
+    command: { type: 'focus', direction: 'down' }
+  }));
+
+  const replacementTv = new WebSocket(`${wsBase}/ws?role=tv`);
+  const replacementInfo = nextJson(replacementTv, (message) => message.kind === 'service_info');
+  const queuedCommand = nextJson(replacementTv, (message) => message.kind === 'command' && message.command.type === 'focus');
+  await once(replacementTv, 'open');
+  assert.deepEqual((await replacementInfo).info.overlay, { visible: false, pinned: false });
+  assert.deepEqual((await queuedCommand).command, { type: 'focus', direction: 'down' });
 });
 
 test('phone heartbeat retains responsive browsers across maintenance passes', async (t) => {

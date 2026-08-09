@@ -115,12 +115,14 @@ function startEmbeddedFrameBridge() {
   let adapter = createPageAdapter();
   let socket = null;
   let socketTimer = null;
+  let reconnectTimer = null;
   let pollAbort = null;
   let polling = false;
+  let pageActive = true;
   let transport = 'connecting';
   let serviceInfo = null;
   let overlay = null;
-  let overlayVisible = true;
+  let overlayVisible = false;
   let overlayPinned = false;
   let focusedElement = null;
   let pointerX = Math.round(window.innerWidth / 2);
@@ -293,10 +295,17 @@ function startEmbeddedFrameBridge() {
     syncOverlayVisibility();
   }
 
-  function setOverlay(show, pinned) {
+  function setOverlay(show, pinned, notifyService = true) {
     overlayVisible = show;
     overlayPinned = Boolean(show && pinned);
     syncOverlayVisibility();
+    if (notifyService) postState({ kind: 'overlay', visible: overlayVisible, pinned: overlayPinned });
+  }
+
+  function applyOverlayState(info) {
+    const next = info && info.overlay;
+    if (!next || typeof next.visible !== 'boolean') return;
+    setOverlay(next.visible, next.pinned, false);
   }
 
   function syncOverlayVisibility() {
@@ -544,6 +553,7 @@ function startEmbeddedFrameBridge() {
     if (!message || typeof message !== 'object') return;
     if (message.kind === 'service_info') {
       serviceInfo = message.info;
+      applyOverlayState(serviceInfo);
       updateOverlay();
     }
     if (message.kind === 'command') execute(message.command || {});
@@ -555,10 +565,12 @@ function startEmbeddedFrameBridge() {
       const response = await fetch(`${LOCAL_HTTP}/api/tv-info?t=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       serviceInfo = await response.json();
+      applyOverlayState(serviceInfo);
       updateOverlay();
     } catch (error) {
       if (!serviceInfo) {
         lastError = `Pairing info unavailable: ${error.message}`;
+        setOverlay(true, false, false);
         updateOverlay();
       }
     }
@@ -569,7 +581,7 @@ function startEmbeddedFrameBridge() {
     polling = true;
     transport = 'HTTP fallback';
     updateOverlay();
-    while (polling && (!socket || socket.readyState !== WebSocket.OPEN)) {
+    while (pageActive && polling && (!socket || socket.readyState !== WebSocket.OPEN)) {
       try {
         pollAbort = typeof AbortController === 'function' ? new AbortController() : null;
         const response = await fetch(`${LOCAL_HTTP}/api/tv/poll?t=${Date.now()}`, {
@@ -596,17 +608,27 @@ function startEmbeddedFrameBridge() {
 
   function connectSocket() {
     clearTimeout(socketTimer);
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+    if (!pageActive) return;
+    if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) return;
+    let nextSocket;
     try {
-      socket = new WebSocket(LOCAL_WS);
+      nextSocket = new WebSocket(LOCAL_WS);
+      socket = nextSocket;
     } catch (error) {
       lastError = `WebSocket: ${error.message}`;
       pollLoop();
       return;
     }
     socketTimer = setTimeout(() => {
-      if (!socket || socket.readyState !== WebSocket.OPEN) pollLoop();
+      if (pageActive && socket === nextSocket && nextSocket.readyState !== WebSocket.OPEN) pollLoop();
     }, 2200);
-    socket.addEventListener('open', () => {
+    nextSocket.addEventListener('open', () => {
+      if (!pageActive || socket !== nextSocket) {
+        try { nextSocket.close(); } catch { /* The page is already leaving. */ }
+        return;
+      }
       clearTimeout(socketTimer);
       transport = 'WebSocket';
       lastError = '';
@@ -617,19 +639,47 @@ function startEmbeddedFrameBridge() {
       snapshot();
       updateOverlay();
     });
-    socket.addEventListener('message', (event) => {
+    nextSocket.addEventListener('message', (event) => {
+      if (!pageActive || socket !== nextSocket) return;
       try { processServiceMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }
     });
-    socket.addEventListener('close', () => {
+    nextSocket.addEventListener('close', () => {
+      if (socket !== nextSocket) return;
+      socket = null;
+      if (!pageActive) return;
       transport = 'reconnecting';
       updateOverlay();
       pollLoop();
-      setTimeout(connectSocket, 5000);
+      reconnectTimer = setTimeout(connectSocket, 1800);
     });
-    socket.addEventListener('error', () => {
+    nextSocket.addEventListener('error', () => {
+      if (!pageActive || socket !== nextSocket) return;
       lastError = 'WebSocket connection failed; trying HTTP fallback.';
       updateOverlay();
     });
+  }
+
+  function suspendBridge() {
+    pageActive = false;
+    clearTimeout(socketTimer);
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+    polling = false;
+    if (pollAbort) pollAbort.abort();
+    pollAbort = null;
+    const previousSocket = socket;
+    socket = null;
+    if (previousSocket) {
+      try { previousSocket.close(1000, 'Page navigation'); } catch { /* The document is already unloading. */ }
+    }
+  }
+
+  function resumeBridge() {
+    if (pageActive && socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) return;
+    pageActive = true;
+    transport = 'connecting';
+    bootstrapServiceInfo();
+    connectSocket();
   }
 
   function initializeDom() {
@@ -698,6 +748,8 @@ function startEmbeddedFrameBridge() {
   window.addEventListener('keydown', emergencyHome, true);
   document.addEventListener('tizenhwkey', hideOverlayWithBack, true);
   document.addEventListener('tizenhwkey', emergencyHome, true);
+  window.addEventListener('pagehide', suspendBridge);
+  window.addEventListener('pageshow', resumeBridge);
 
   if (document.documentElement) initializeDom();
   else document.addEventListener('DOMContentLoaded', initializeDom, { once: true });

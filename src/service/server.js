@@ -18,7 +18,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
-const APP_VERSION = '0.2.6';
+const APP_VERSION = '0.2.7';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;
@@ -197,6 +197,10 @@ function makeDefaultState() {
       startedAt: 0,
       finishedAt: 0
     },
+    overlay: {
+      visible: true,
+      pinned: false
+    },
     lastLog: null,
     updatedAt: Date.now()
   };
@@ -278,7 +282,8 @@ function createRemoteServer(options = {}) {
       profiles,
       activeProfileId: state.activeProfileId,
       tvConnected: state.tvConnected,
-      phoneCount: phoneSockets.size
+      phoneCount: phoneSockets.size,
+      overlay: { ...state.overlay }
     };
   }
 
@@ -339,7 +344,7 @@ function createRemoteServer(options = {}) {
       if (!profile || profile.urls.indexOf(normalized.url) < 0) throw new Error('That address is not configured for the selected profile.');
       state.activeProfileId = profile.id;
     }
-    if (!tvIsConnected() && normalized.type !== 'navigate') throw new Error('The TV page bridge is not connected.');
+    if (!tvIsConnected() && normalized.type !== 'navigate' && normalized.type !== 'overlay') throw new Error('The TV page bridge is not connected.');
     if (normalized.type === 'navigate') {
       state.navigation = {
         status: 'loading',
@@ -348,6 +353,12 @@ function createRemoteServer(options = {}) {
         finishedAt: 0
       };
       broadcastState();
+    }
+    if (normalized.type === 'overlay') {
+      const visible = normalized.action === 'toggle' ? !state.overlay.visible : normalized.action === 'show';
+      state.overlay = { visible, pinned: visible && normalized.action !== 'hide' };
+      broadcastState();
+      broadcastServiceInfo();
     }
     sendTv({ kind: 'command', command: normalized });
     return normalized;
@@ -372,8 +383,10 @@ function createRemoteServer(options = {}) {
     }
     if (safe.kind === 'snapshot') state.items = safe.items;
     if (safe.kind === 'player') state.player = safe.player;
+    if (safe.kind === 'overlay') state.overlay = safe.overlay;
     if (safe.kind === 'log') state.lastLog = { ...safe, at: Date.now() };
     broadcastState();
+    if (safe.kind === 'overlay') broadcastServiceInfo();
   }
 
   function updateProfiles(value) {
@@ -622,6 +635,8 @@ function createRemoteServer(options = {}) {
       state.tvConnected = true;
       send(socket, { kind: 'service_info', info: info(request) });
       broadcastState();
+      const queued = tvCommandQueue.splice(0, tvCommandQueue.length);
+      for (const message of queued) send(socket, message);
 
       socket.on('message', (payload) => {
         try {
