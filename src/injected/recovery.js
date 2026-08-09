@@ -7,11 +7,13 @@ function remoteKey(event) {
   if (code === 38) return 'up';
   if (code === 40) return 'down';
   if (code === 13) return 'ok';
+  if (code === 403) return 'recover';
 
   const key = String(event && (event.key || event.keyName) || '').toLowerCase();
   if (key === 'arrowup' || key === 'up') return 'up';
   if (key === 'arrowdown' || key === 'down') return 'down';
   if (key === 'enter' || key === 'ok' || key === 'done') return 'ok';
+  if (key === 'colorf0red' || key === 'red') return 'recover';
   return '';
 }
 
@@ -30,7 +32,8 @@ function createPairingShortcut(onComplete, options) {
     lastAt = currentTime;
     if (!key) return false;
 
-    if (key === PAIRING_SEQUENCE[index]) index += 1;
+    if (key === 'recover') index = PAIRING_SEQUENCE.length;
+    else if (key === PAIRING_SEQUENCE[index]) index += 1;
     else index = key === PAIRING_SEQUENCE[0] ? 1 : 0;
     if (index < PAIRING_SEQUENCE.length) return false;
 

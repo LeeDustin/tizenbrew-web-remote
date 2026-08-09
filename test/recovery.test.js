@@ -8,6 +8,7 @@ test('remote pairing shortcut recognizes standard Tizen arrow and OK keys', () =
   assert.equal(remoteKey({ keyCode: 38 }), 'up');
   assert.equal(remoteKey({ key: 'ArrowDown' }), 'down');
   assert.equal(remoteKey({ keyName: 'Done' }), 'ok');
+  assert.equal(remoteKey({ keyCode: 403 }), 'recover');
 
   let opened = 0;
   let currentTime = 1000;
@@ -26,6 +27,20 @@ test('remote pairing shortcut recognizes standard Tizen arrow and OK keys', () =
   assert.equal(opened, 1);
   assert.equal(events[4].prevented, true);
   assert.equal(events[4].immediate, true);
+});
+
+test('remote Red key opens pairing immediately', () => {
+  let opened = 0;
+  const event = {
+    keyName: 'ColorF0Red',
+    preventDefault() { this.prevented = true; },
+    stopPropagation() {},
+    stopImmediatePropagation() {}
+  };
+  const shortcut = createPairingShortcut(() => { opened += 1; });
+  assert.equal(shortcut(event), true);
+  assert.equal(opened, 1);
+  assert.equal(event.prevented, true);
 });
 
 test('remote pairing shortcut resets after a long pause or wrong key', () => {
