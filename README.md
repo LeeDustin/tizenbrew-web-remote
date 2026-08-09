@@ -48,6 +48,10 @@ need to compile the source.
   OK**. Recovery is relayed out of embedded player frames and works over Fill TV.
 - Press **Back** while the pairing panel is visible, or tap **Hide pairing
   screen** on a connected phone, to dismiss it.
+- Pairing-panel visibility and TV bridge ownership survive full-page navigation,
+  including Bilibili searches that move from `www.bilibili.com` to
+  `search.bilibili.com`; controls pressed during the handoff are delivered when
+  the replacement page connects.
 - Smart view is the default: it opens the relevant player, Bilibili, page-item,
   or manual-control section and hides sections that do not apply. Every section
   remains individually collapsible, and **Show all controls** restores the full

@@ -1,6 +1,6 @@
 {
   "name": "tizenbrew-web-remote",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A phone-first, site-switchable web remote for Samsung TVs running TizenBrew.",
   "license": "MIT",
   "private": false,
