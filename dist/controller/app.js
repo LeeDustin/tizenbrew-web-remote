@@ -6,6 +6,9 @@
   const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';
   const SECTION_PREFERENCES_KEY = 'webRemoteTvSectionPreferencesV1';
   const SHOW_ALL_SECTIONS_KEY = 'webRemoteTvShowAllSectionsV1';
+  const MANUAL_MODE_KEY = 'webRemoteTvManualModeV1';
+  const SEEK_STEP_KEY = 'webRemoteTvSeekStepV1';
+  const SEEK_STEPS = [5, 10, 15, 30, 60];
   const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };
   const dom = {};
   let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -37,7 +40,8 @@
       'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',
       'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',
       'bilibiliResultsPanel', 'bilibiliResultsStatus', 'bilibiliResultFilter', 'bilibiliResults', 'refreshBilibiliResults',
-      'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime',
+      'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'danmakuButton', 'activateButton', 'touchMode', 'touchModeTitle', 'touchpad', 'touchpadHint',
+      'touchPanel', 'dpadPanel', 'playerStatus', 'playerTime', 'seekStep', 'seekBack', 'seekForward',
       'refreshItems', 'itemFilter', 'pageItems', 'sitesPanel', 'sitesStatus', 'textPanel', 'textStatus', 'manualPanel',
       'manualStatus', 'playerPanel', 'itemsPanel', 'itemsStatus', 'diagnosticsPanel', 'diagTv', 'diagNavigation',
       'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'
@@ -88,6 +92,41 @@
     return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}` : `${minutes}:${String(rest).padStart(2, '0')}`;
   }
 
+  function manualModeLabel() {
+    if (dom.touchMode.value === 'dpad') return 'D-pad';
+    if (dom.touchMode.value === 'scroll') return 'Scroll';
+    return 'Pointer';
+  }
+
+  function updateManualMode() {
+    const mode = ['pointer', 'scroll', 'dpad'].includes(dom.touchMode.value) ? dom.touchMode.value : 'pointer';
+    dom.touchMode.value = mode;
+    dom.touchPanel.hidden = mode === 'dpad';
+    dom.dpadPanel.hidden = mode !== 'dpad';
+    dom.touchModeTitle.textContent = mode === 'scroll' ? 'Scroll' : 'Pointer';
+    dom.touchpadHint.textContent = mode === 'scroll' ? 'Drag to scroll the TV page' : 'Drag to move · Tap to click';
+    dom.manualStatus.textContent = manualModeLabel();
+  }
+
+  function updateSeekStep() {
+    const requested = Number(dom.seekStep.value);
+    const step = SEEK_STEPS.includes(requested) ? requested : 5;
+    dom.seekStep.value = String(step);
+    dom.seekBack.dataset.value = String(-step);
+    dom.seekForward.dataset.value = String(step);
+    dom.seekBack.textContent = `−${step}s`;
+    dom.seekForward.textContent = `+${step}s`;
+  }
+
+  function restoreControlPreferences() {
+    const savedMode = localStorage.getItem(MANUAL_MODE_KEY);
+    dom.touchMode.value = ['pointer', 'scroll', 'dpad'].includes(savedMode) ? savedMode : 'pointer';
+    const savedSeek = Number(localStorage.getItem(SEEK_STEP_KEY));
+    dom.seekStep.value = String(SEEK_STEPS.includes(savedSeek) ? savedSeek : 5);
+    updateManualMode();
+    updateSeekStep();
+  }
+
   function renderState() {
     setConnection();
     if (!state) return;
@@ -127,6 +166,7 @@
     dom.bilibiliStatus.title = dom.bilibiliStatus.textContent;
     const fillLabel = site.webFullscreenActive ? 'Exit Fill TV' : 'Fill TV';
     dom.fillTvButton.textContent = fillLabel;
+    dom.danmakuButton.textContent = site.danmakuEnabled === false ? 'Turn danmu on' : 'Turn danmu off';
 
     const rate = String(site.playbackRate || '');
     if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;
@@ -255,7 +295,7 @@
     dom.toggleAllSections.textContent = showAllSections ? 'Use smart view' : 'Show all controls';
     dom.toggleAllSections.setAttribute('aria-pressed', String(showAllSections));
     dom.textStatus.textContent = hasTextInput ? (isBilibili ? 'Bilibili search' : 'Input detected') : 'No input detected';
-    dom.manualStatus.textContent = showAllSections ? 'Manual' : 'Fallback only';
+    dom.manualStatus.textContent = manualModeLabel();
     if (!isBilibili) dom.fillTvButton.textContent = 'Fullscreen';
     dom.bilibiliPlayerActions.hidden = !(isBilibili && playerAvailable);
     dom.bilibiliPlaybackSettings.hidden = !(isBilibili && playerAvailable);
@@ -535,6 +575,14 @@
     dom.refreshBilibiliResults.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));
     dom.itemFilter.addEventListener('input', renderItems);
     dom.bilibiliResultFilter.addEventListener('input', () => renderBilibiliResults((state && state.page) || {}));
+    dom.touchMode.addEventListener('change', () => {
+      localStorage.setItem(MANUAL_MODE_KEY, dom.touchMode.value);
+      updateManualMode();
+    });
+    dom.seekStep.addEventListener('change', () => {
+      localStorage.setItem(SEEK_STEP_KEY, dom.seekStep.value);
+      updateSeekStep();
+    });
     dom.touchpad.addEventListener('pointerdown', pointerDown);
     dom.touchpad.addEventListener('pointermove', pointerMove);
     dom.touchpad.addEventListener('pointerup', pointerUp);
@@ -550,6 +598,7 @@
 
   async function initialize() {
     cacheDom();
+    restoreControlPreferences();
     bindEvents();
     const pin = new URLSearchParams(location.search).get('pin');
     if (pin) dom.pinInput.value = pin.replace(/\D/g, '').slice(0, 6);

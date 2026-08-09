@@ -107,7 +107,7 @@ test('Bilibili adapter exposes login, search, danmu, quality, speed, and player 
 
     for (const [action, selector, value] of [
       ['login', '.header-login-entry'],
-      ['danmaku', '.bpx-player-dm-switch'],
+      ['danmaku', '.bui-danmaku-switch-input'],
       ['next', '.bpx-player-ctrl-next'],
       ['webFullscreen', '.bpx-player-ctrl-web'],
       ['quality', '[data-value="64"]', '64'],
@@ -127,6 +127,10 @@ test('Bilibili adapter exposes login, search, danmu, quality, speed, and player 
     assert.equal(site.playbackRate, 1);
     assert.equal(site.playerAvailable, true);
     assert.equal(site.webFullscreenActive, true);
+
+    assert.equal(adapter.siteAction('danmaku'), true);
+    await new Promise((resolve) => setTimeout(resolve, 180));
+    assert.equal(adapter.siteState().danmakuEnabled, true);
   } finally {
     global.window = previousWindow;
     global.document = previousDocument;
