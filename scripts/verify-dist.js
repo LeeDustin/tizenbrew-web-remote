@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
-assert.equal(packageJson.version, '0.2.10');
+assert.equal(packageJson.version, '0.2.11');
 assert.equal(packageJson.websiteURL, 'https://www.bilibili.com/');
 assert.notEqual(
   packageJson.evaluateScriptOnDocumentStart,

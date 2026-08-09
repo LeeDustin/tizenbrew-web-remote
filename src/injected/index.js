@@ -533,7 +533,7 @@ function startEmbeddedFrameBridge() {
         }
       }
       if (command.type === 'activate') adapter.activate(focusedElement || document.activeElement);
-      if (command.type === 'scroll') window.scrollBy({ left: command.dx, top: command.dy, behavior: 'smooth' });
+      if (command.type === 'scroll') window.scrollBy(command.dx, command.dy);
       if (command.type === 'pointer') {
         pointerX = Math.max(0, Math.min(window.innerWidth - 1, pointerX + command.dx));
         pointerY = Math.max(0, Math.min(window.innerHeight - 1, pointerY + command.dy));

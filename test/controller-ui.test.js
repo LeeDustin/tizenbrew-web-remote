@@ -53,3 +53,15 @@ test('television title cannot expand the phone remote viewport', () => {
   assert.match(styles, /\.now-playing\s*>\s*div:first-child\s*\{[^}]*max-width:\s*100%;/s);
   assert.match(source, /dom\.pageTitle\.title = dom\.pageTitle\.textContent/);
 });
+
+test('scroll gestures are direct, sensitive, and retain flick momentum', () => {
+  const controller = fs.readFileSync(path.join(__dirname, '..', 'src', 'controller', 'app.js'), 'utf8');
+  const injected = fs.readFileSync(path.join(__dirname, '..', 'src', 'injected', 'index.js'), 'utf8');
+
+  assert.match(controller, /SCROLL_SENSITIVITY = 3\.5/);
+  assert.match(controller, /SCROLL_MOMENTUM_DECAY = 0\.88/);
+  assert.match(controller, /requestAnimationFrame\(stepScrollMomentum\)/);
+  assert.match(controller, /event\.type !== 'pointercancel'/);
+  assert.match(injected, /window\.scrollBy\(command\.dx, command\.dy\)/);
+  assert.doesNotMatch(injected, /command\.type === 'scroll'[^\n]+behavior:\s*'smooth'/);
+});
