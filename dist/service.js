@@ -9,19 +9,29 @@ function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLim
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __esm = function __esm(fn, res) {
   return function __init() {
@@ -234,11 +244,2625 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
 </body>
 </html>
 `,
-      "app.js": "'use strict';\n\n(function startController() {\n  const TOKEN_KEY = 'webRemoteTvToken';\n  const CONFIG_KEY = 'webRemoteTvProfiles';\n  const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';\n  const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };\n  const dom = {};\n  let token = localStorage.getItem(TOKEN_KEY) || '';\n  let socket = null;\n  let reconnectTimer = null;\n  let state = null;\n  let serviceInfo = null;\n  let editorProfiles = [];\n  let toastTimer = null;\n  let configRestored = false;\n  let pointerSession = null;\n  let pointerPending = { dx: 0, dy: 0 };\n  let pointerFrame = null;\n\n  function byId(id) { return document.getElementById(id); }\n\n  function cacheDom() {\n    for (const id of [\n      'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',\n      'pageTitle', 'pageUrl', 'showTvOverlay', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',\n      'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',\n      'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',\n      'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime', 'refreshItems', 'itemFilter',\n      'pageItems', 'diagTv', 'diagNavigation', 'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'\n    ]) dom[id] = byId(id);\n  }\n\n  function showToast(message) {\n    clearTimeout(toastTimer);\n    dom.toast.textContent = message;\n    dom.toast.classList.add('visible');\n    toastTimer = setTimeout(() => dom.toast.classList.remove('visible'), 2400);\n  }\n\n  async function api(path, options) {\n    const response = await fetch(path, {\n      cache: 'no-store',\n      ...options,\n      headers: {\n        ...(token ? { Authorization: `Bearer ${token}` } : {}),\n        ...(options && options.body ? { 'Content-Type': 'application/json' } : {}),\n        ...((options && options.headers) || {})\n      }\n    });\n    const payload = await response.json().catch(() => ({}));\n    if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);\n    return payload;\n  }\n\n  function setConnection() {\n    const phoneConnected = socket && socket.readyState === WebSocket.OPEN;\n    const tvConnected = Boolean(state && state.tvConnected);\n    dom.connectionDot.classList.toggle('connected', phoneConnected && tvConnected);\n    dom.connectionDot.classList.toggle('partial', phoneConnected && !tvConnected);\n    dom.connectionDot.setAttribute('aria-label', phoneConnected && tvConnected ? 'Connected' : 'Disconnected');\n    dom.connectionLabel.textContent = !token ? 'Pair this phone'\n      : !phoneConnected ? 'Reconnecting to local service\u2026'\n        : tvConnected ? 'Phone and television connected'\n          : 'Phone connected \xB7 TV page bridge unavailable';\n    dom.diagSocket.textContent = phoneConnected ? 'connected' : 'disconnected';\n  }\n\n  function formatTime(seconds) {\n    if (!Number.isFinite(seconds) || seconds <= 0) return '--:--';\n    const whole = Math.floor(seconds);\n    const hours = Math.floor(whole / 3600);\n    const minutes = Math.floor((whole % 3600) / 60);\n    const rest = whole % 60;\n    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}` : `${minutes}:${String(rest).padStart(2, '0')}`;\n  }\n\n  function renderState() {\n    setConnection();\n    if (!state) return;\n    const page = state.page || {};\n    const player = state.player || {};\n    dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page\u2026';\n    dom.pageUrl.textContent = page.url || '';\n    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : 'No accessible top-level player';\n    dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;\n    dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';\n    dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';\n    dom.diagAdapter.textContent = page.adapter || 'unknown';\n    dom.diagError.textContent = state.lastLog ? state.lastLog.message : 'none';\n    renderBilibili(page);\n    renderProfiles();\n    renderItems();\n  }\n\n  function renderBilibili(page) {\n    const active = page.adapter === 'bilibili';\n    dom.bilibiliPanel.hidden = !active;\n    if (!active) return;\n    const site = page.site || {};\n    const status = [];\n    status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');\n    if (typeof site.danmakuEnabled === 'boolean') status.push(site.danmakuEnabled ? 'Danmu on' : 'Danmu off');\n    if (site.quality) status.push(site.quality);\n    dom.bilibiliStatus.textContent = status.join(' \xB7 ');\n\n    const rate = String(site.playbackRate || '');\n    if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;\n    const quality = String(site.quality || '').toLowerCase();\n    const qualityValue = /\u81EA\u52A8|auto/.test(quality) ? '0'\n      : /1080p\\s*60/.test(quality) ? '116'\n        : /1080p/.test(quality) ? '80'\n          : /720p/.test(quality) ? '64'\n            : /480p/.test(quality) ? '32'\n              : /360p/.test(quality) ? '16' : '';\n    if (qualityValue) dom.bilibiliQuality.value = qualityValue;\n  }\n\n  function renderProfiles() {\n    if (!serviceInfo || !Array.isArray(serviceInfo.profiles)) return;\n    dom.profiles.textContent = '';\n    for (const profile of serviceInfo.profiles) {\n      const row = document.createElement('div');\n      row.className = `profile${state && state.activeProfileId === profile.id ? ' active' : ''}`;\n      const name = document.createElement('span');\n      name.className = 'profile-name';\n      name.textContent = profile.name;\n      const select = document.createElement('select');\n      select.setAttribute('aria-label', `${profile.name} domain`);\n      profile.urls.forEach((url, index) => {\n        const option = document.createElement('option');\n        option.value = url;\n        option.textContent = profile.urls.length > 1 ? `${index + 1}. ${new URL(url).hostname}` : new URL(url).hostname;\n        select.appendChild(option);\n      });\n      const open = document.createElement('button');\n      open.type = 'button';\n      open.textContent = state && state.activeProfileId === profile.id ? 'Reload' : 'Open';\n      open.addEventListener('click', () => command({ type: 'navigate', profileId: profile.id, url: select.value }));\n      row.append(name, select, open);\n      dom.profiles.appendChild(row);\n    }\n  }\n\n  function renderItems() {\n    if (!state) return;\n    const query = dom.itemFilter.value.trim().toLowerCase();\n    const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));\n    dom.pageItems.textContent = '';\n    if (!items.length) {\n      const empty = document.createElement('p');\n      empty.className = 'muted';\n      empty.textContent = state.items && state.items.length ? 'No matching controls.' : 'No visible controls were discovered yet.';\n      dom.pageItems.appendChild(empty);\n      return;\n    }\n    for (const item of items) {\n      const button = document.createElement('button');\n      button.type = 'button';\n      button.className = 'page-item';\n      const kind = document.createElement('span');\n      kind.className = 'kind';\n      kind.textContent = item.kind;\n      const copy = document.createElement('span');\n      const label = document.createElement('span');\n      label.className = 'label';\n      label.textContent = item.label;\n      copy.appendChild(label);\n      if (item.detail) {\n        const detail = document.createElement('span');\n        detail.className = 'detail';\n        detail.textContent = item.detail;\n        copy.appendChild(detail);\n      }\n      button.append(kind, copy);\n      button.addEventListener('click', () => command({ type: 'select', id: item.id }));\n      dom.pageItems.appendChild(button);\n    }\n  }\n\n  function renderProfileEditors() {\n    dom.profileEditors.textContent = '';\n    editorProfiles.forEach((profile, index) => {\n      const fieldset = document.createElement('div');\n      fieldset.className = 'profile-editor';\n      const grid = document.createElement('div');\n      grid.className = 'profile-editor-grid';\n      const nameLabel = document.createElement('label');\n      nameLabel.textContent = 'Name';\n      const nameInput = document.createElement('input');\n      nameInput.value = profile.name;\n      nameInput.maxLength = 40;\n      nameInput.addEventListener('input', () => { profile.name = nameInput.value; });\n      nameLabel.appendChild(nameInput);\n      const urlsLabel = document.createElement('label');\n      urlsLabel.textContent = 'HTTPS domains (one per line)';\n      const urlsInput = document.createElement('textarea');\n      urlsInput.value = profile.urls.join('\\n');\n      urlsInput.addEventListener('input', () => { profile.urls = urlsInput.value.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean); });\n      urlsLabel.appendChild(urlsInput);\n      grid.append(nameLabel, urlsLabel);\n      fieldset.appendChild(grid);\n      if (!['1shows', 'cineby', 'bilibili'].includes(profile.id)) {\n        const remove = document.createElement('button');\n        remove.type = 'button';\n        remove.className = 'danger compact';\n        remove.textContent = 'Remove custom site';\n        remove.addEventListener('click', () => {\n          editorProfiles.splice(index, 1);\n          renderProfileEditors();\n        });\n        fieldset.appendChild(remove);\n      }\n      dom.profileEditors.appendChild(fieldset);\n    });\n  }\n\n  function openEditor() {\n    editorProfiles = JSON.parse(JSON.stringify((serviceInfo && serviceInfo.profiles) || []));\n    renderProfileEditors();\n    dom.sitesEditor.hidden = false;\n    dom.sitesEditor.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  async function saveProfiles(event) {\n    event.preventDefault();\n    dom.sitesError.textContent = '';\n    try {\n      const active = editorProfiles.some((profile) => profile.id === (state && state.activeProfileId)) ? state.activeProfileId : editorProfiles[0].id;\n      const result = await api('/api/config', {\n        method: 'PUT',\n        body: JSON.stringify({ profiles: editorProfiles, activeProfileId: active })\n      });\n      serviceInfo.profiles = result.profiles;\n      serviceInfo.activeProfileId = result.activeProfileId;\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      dom.sitesEditor.hidden = true;\n      renderProfiles();\n      showToast('Domains saved on this TV session');\n    } catch (error) {\n      dom.sitesError.textContent = error.message;\n    }\n  }\n\n  async function restoreSavedConfig() {\n    if (configRestored || !token) return;\n    configRestored = true;\n    const raw = localStorage.getItem(CONFIG_KEY);\n    if (!raw) {\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n      return;\n    }\n    try {\n      const saved = JSON.parse(raw);\n      if (Array.isArray(saved.profiles) && !saved.profiles.some((profile) => profile.id === 'bilibili')) {\n        saved.profiles.push(BILIBILI_PROFILE);\n      }\n      if (!localStorage.getItem(BILIBILI_DEFAULT_MIGRATION_KEY) && Array.isArray(saved.profiles)) {\n        saved.profiles = saved.profiles.slice().sort((left, right) => {\n          if (left.id === 'bilibili') return -1;\n          if (right.id === 'bilibili') return 1;\n          return 0;\n        });\n        saved.activeProfileId = 'bilibili';\n      }\n      const result = await api('/api/config', { method: 'PUT', body: JSON.stringify(saved) });\n      if (serviceInfo) {\n        serviceInfo.profiles = result.profiles;\n        serviceInfo.activeProfileId = result.activeProfileId;\n      }\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n    } catch (error) {\n      showToast(`Saved domains were not restored: ${error.message}`);\n    }\n  }\n\n  function handleMessage(message) {\n    if (message.kind === 'state') state = message.state;\n    if (message.kind === 'service_info') serviceInfo = message.info;\n    if (message.kind === 'error') showToast(message.error || 'Command failed');\n    renderState();\n  }\n\n  function connectSocket() {\n    clearTimeout(reconnectTimer);\n    if (!token) return;\n    if (socket) {\n      socket.onclose = null;\n      try { socket.close(); } catch { /* Already closed. */ }\n    }\n    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';\n    socket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);\n    socket.addEventListener('open', () => {\n      setConnection();\n      command({ type: 'requestSnapshot' }, false);\n    });\n    socket.addEventListener('message', (event) => {\n      try { handleMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }\n    });\n    socket.addEventListener('close', () => {\n      setConnection();\n      reconnectTimer = setTimeout(connectSocket, 1800);\n    });\n    socket.addEventListener('error', setConnection);\n  }\n\n  async function command(value, announce = true) {\n    try {\n      if (socket && socket.readyState === WebSocket.OPEN) {\n        socket.send(JSON.stringify({ kind: 'command', requestId: String(Date.now()), command: value }));\n      } else {\n        await api('/api/command', { method: 'POST', body: JSON.stringify({ command: value }) });\n      }\n      if (announce && value.type === 'navigate') showToast(`Opening ${new URL(value.url).hostname}`);\n      if (announce && value.type === 'site') showToast('Bilibili control sent');\n    } catch (error) {\n      showToast(error.message);\n    }\n  }\n\n  async function pair(event) {\n    event.preventDefault();\n    dom.pairError.textContent = '';\n    try {\n      const payload = await api('/api/pair', {\n        method: 'POST',\n        body: JSON.stringify({ pin: dom.pinInput.value.trim(), clientName: navigator.userAgent.slice(0, 60) })\n      });\n      token = payload.token;\n      localStorage.setItem(TOKEN_KEY, token);\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch (error) {\n      dom.pairError.textContent = error.message;\n    }\n  }\n\n  function flushPointer() {\n    pointerFrame = null;\n    const dx = pointerPending.dx;\n    const dy = pointerPending.dy;\n    pointerPending = { dx: 0, dy: 0 };\n    if (!dx && !dy) return;\n    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * 2, dy: -dy * 2 }, false);\n    else command({ type: 'pointer', dx: dx * 1.4, dy: dy * 1.4 }, false);\n  }\n\n  function pointerDown(event) {\n    dom.touchpad.setPointerCapture(event.pointerId);\n    dom.touchpad.classList.add('active');\n    pointerSession = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY };\n  }\n\n  function pointerMove(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    pointerPending.dx += event.clientX - pointerSession.x;\n    pointerPending.dy += event.clientY - pointerSession.y;\n    pointerSession.x = event.clientX;\n    pointerSession.y = event.clientY;\n    if (!pointerFrame) pointerFrame = requestAnimationFrame(flushPointer);\n  }\n\n  function pointerUp(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    const distance = Math.hypot(event.clientX - pointerSession.startX, event.clientY - pointerSession.startY);\n    if (distance < 9 && dom.touchMode.value === 'pointer') command({ type: 'pointerClick' }, false);\n    pointerSession = null;\n    dom.touchpad.classList.remove('active');\n  }\n\n  function bindEvents() {\n    dom.pairForm.addEventListener('submit', pair);\n    dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));\n    dom.editSitesButton.addEventListener('click', openEditor);\n    dom.closeSitesButton.addEventListener('click', () => { dom.sitesEditor.hidden = true; });\n    dom.sitesForm.addEventListener('submit', saveProfiles);\n    dom.addProfileButton.addEventListener('click', () => {\n      const id = `custom-${Date.now().toString(36)}`;\n      editorProfiles.push({ id, name: 'Custom site', urls: ['https://example.com/'] });\n      renderProfileEditors();\n    });\n    dom.textForm.addEventListener('submit', (event) => {\n      event.preventDefault();\n      command({ type: 'text', value: dom.textInput.value, submit: true }, false);\n    });\n    dom.sendTextButton.addEventListener('click', () => command({ type: 'text', value: dom.textInput.value, submit: false }, false));\n    document.querySelectorAll('[data-bilibili-action]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'site',\n      site: 'bilibili',\n      action: button.dataset.bilibiliAction\n    })));\n    dom.applyBilibiliQuality.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'quality', value: dom.bilibiliQuality.value }));\n    dom.applyBilibiliSpeed.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'speed', value: dom.bilibiliSpeed.value }));\n    document.querySelectorAll('[data-focus]').forEach((button) => button.addEventListener('click', () => command({ type: 'focus', direction: button.dataset.focus }, false)));\n    document.querySelectorAll('[data-history]').forEach((button) => button.addEventListener('click', () => command({ type: 'history', action: button.dataset.history }, false)));\n    dom.activateButton.addEventListener('click', () => command({ type: 'activate' }, false));\n    document.querySelectorAll('[data-media]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'media',\n      action: button.dataset.media,\n      value: Number(button.dataset.value || 0)\n    }, false)));\n    dom.refreshItems.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));\n    dom.itemFilter.addEventListener('input', renderItems);\n    dom.touchpad.addEventListener('pointerdown', pointerDown);\n    dom.touchpad.addEventListener('pointermove', pointerMove);\n    dom.touchpad.addEventListener('pointerup', pointerUp);\n    dom.touchpad.addEventListener('pointercancel', pointerUp);\n    dom.forgetButton.addEventListener('click', async () => {\n      try { await api('/api/session', { method: 'DELETE' }); } catch { /* Local cleanup still proceeds. */ }\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      if (socket) socket.close();\n      location.reload();\n    });\n  }\n\n  async function initialize() {\n    cacheDom();\n    bindEvents();\n    const pin = new URLSearchParams(location.search).get('pin');\n    if (pin) dom.pinInput.value = pin.replace(/\\D/g, '').slice(0, 6);\n    if (!token) {\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n      if (pin && dom.pinInput.value.length === 6) dom.pinInput.focus();\n      return;\n    }\n    try {\n      const payload = await api('/api/state');\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch {\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n    }\n  }\n\n  document.addEventListener('DOMContentLoaded', initialize, { once: true });\n})();\n",
+      "app.js": "'use strict';\r\n\r\n(function startController() {\r\n  const TOKEN_KEY = 'webRemoteTvToken';\r\n  const CONFIG_KEY = 'webRemoteTvProfiles';\r\n  const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';\r\n  const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };\r\n  const dom = {};\r\n  let token = localStorage.getItem(TOKEN_KEY) || '';\r\n  let socket = null;\r\n  let reconnectTimer = null;\r\n  let state = null;\r\n  let serviceInfo = null;\r\n  let editorProfiles = [];\r\n  let toastTimer = null;\r\n  let configRestored = false;\r\n  let pointerSession = null;\r\n  let pointerPending = { dx: 0, dy: 0 };\r\n  let pointerFrame = null;\r\n\r\n  function byId(id) { return document.getElementById(id); }\r\n\r\n  function cacheDom() {\r\n    for (const id of [\r\n      'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',\r\n      'pageTitle', 'pageUrl', 'showTvOverlay', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',\r\n      'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',\r\n      'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',\r\n      'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime', 'refreshItems', 'itemFilter',\r\n      'pageItems', 'diagTv', 'diagNavigation', 'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'\r\n    ]) dom[id] = byId(id);\r\n  }\r\n\r\n  function showToast(message) {\r\n    clearTimeout(toastTimer);\r\n    dom.toast.textContent = message;\r\n    dom.toast.classList.add('visible');\r\n    toastTimer = setTimeout(() => dom.toast.classList.remove('visible'), 2400);\r\n  }\r\n\r\n  async function api(path, options) {\r\n    const response = await fetch(path, {\r\n      cache: 'no-store',\r\n      ...options,\r\n      headers: {\r\n        ...(token ? { Authorization: `Bearer ${token}` } : {}),\r\n        ...(options && options.body ? { 'Content-Type': 'application/json' } : {}),\r\n        ...((options && options.headers) || {})\r\n      }\r\n    });\r\n    const payload = await response.json().catch(() => ({}));\r\n    if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);\r\n    return payload;\r\n  }\r\n\r\n  function setConnection() {\r\n    const phoneConnected = socket && socket.readyState === WebSocket.OPEN;\r\n    const tvConnected = Boolean(state && state.tvConnected);\r\n    dom.connectionDot.classList.toggle('connected', phoneConnected && tvConnected);\r\n    dom.connectionDot.classList.toggle('partial', phoneConnected && !tvConnected);\r\n    dom.connectionDot.setAttribute('aria-label', phoneConnected && tvConnected ? 'Connected' : 'Disconnected');\r\n    dom.connectionLabel.textContent = !token ? 'Pair this phone'\r\n      : !phoneConnected ? 'Reconnecting to local service\u2026'\r\n        : tvConnected ? 'Phone and television connected'\r\n          : 'Phone connected \xB7 TV page bridge unavailable';\r\n    dom.diagSocket.textContent = phoneConnected ? 'connected' : 'disconnected';\r\n  }\r\n\r\n  function formatTime(seconds) {\r\n    if (!Number.isFinite(seconds) || seconds <= 0) return '--:--';\r\n    const whole = Math.floor(seconds);\r\n    const hours = Math.floor(whole / 3600);\r\n    const minutes = Math.floor((whole % 3600) / 60);\r\n    const rest = whole % 60;\r\n    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}` : `${minutes}:${String(rest).padStart(2, '0')}`;\r\n  }\r\n\r\n  function renderState() {\r\n    setConnection();\r\n    if (!state) return;\r\n    const page = state.page || {};\r\n    const player = state.player || {};\r\n    dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page\u2026';\r\n    dom.pageUrl.textContent = page.url || '';\r\n    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : 'No accessible top-level player';\r\n    dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;\r\n    dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';\r\n    dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';\r\n    dom.diagAdapter.textContent = page.adapter || 'unknown';\r\n    dom.diagError.textContent = state.lastLog ? state.lastLog.message : 'none';\r\n    renderBilibili(page);\r\n    renderProfiles();\r\n    renderItems();\r\n  }\r\n\r\n  function renderBilibili(page) {\r\n    const active = page.adapter === 'bilibili';\r\n    dom.bilibiliPanel.hidden = !active;\r\n    if (!active) return;\r\n    const site = page.site || {};\r\n    const status = [];\r\n    status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');\r\n    if (typeof site.danmakuEnabled === 'boolean') status.push(site.danmakuEnabled ? 'Danmu on' : 'Danmu off');\r\n    if (site.quality) status.push(site.quality);\r\n    dom.bilibiliStatus.textContent = status.join(' \xB7 ');\r\n\r\n    const rate = String(site.playbackRate || '');\r\n    if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;\r\n    const quality = String(site.quality || '').toLowerCase();\r\n    const qualityValue = /\u81EA\u52A8|auto/.test(quality) ? '0'\r\n      : /1080p\\s*60/.test(quality) ? '116'\r\n        : /1080p/.test(quality) ? '80'\r\n          : /720p/.test(quality) ? '64'\r\n            : /480p/.test(quality) ? '32'\r\n              : /360p/.test(quality) ? '16' : '';\r\n    if (qualityValue) dom.bilibiliQuality.value = qualityValue;\r\n  }\r\n\r\n  function renderProfiles() {\r\n    if (!serviceInfo || !Array.isArray(serviceInfo.profiles)) return;\r\n    dom.profiles.textContent = '';\r\n    for (const profile of serviceInfo.profiles) {\r\n      const row = document.createElement('div');\r\n      row.className = `profile${state && state.activeProfileId === profile.id ? ' active' : ''}`;\r\n      const name = document.createElement('span');\r\n      name.className = 'profile-name';\r\n      name.textContent = profile.name;\r\n      const select = document.createElement('select');\r\n      select.setAttribute('aria-label', `${profile.name} domain`);\r\n      profile.urls.forEach((url, index) => {\r\n        const option = document.createElement('option');\r\n        option.value = url;\r\n        option.textContent = profile.urls.length > 1 ? `${index + 1}. ${new URL(url).hostname}` : new URL(url).hostname;\r\n        select.appendChild(option);\r\n      });\r\n      const open = document.createElement('button');\r\n      open.type = 'button';\r\n      open.textContent = state && state.activeProfileId === profile.id ? 'Reload' : 'Open';\r\n      open.addEventListener('click', () => command({ type: 'navigate', profileId: profile.id, url: select.value }));\r\n      row.append(name, select, open);\r\n      dom.profiles.appendChild(row);\r\n    }\r\n  }\r\n\r\n  function renderItems() {\r\n    if (!state) return;\r\n    const query = dom.itemFilter.value.trim().toLowerCase();\r\n    const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));\r\n    dom.pageItems.textContent = '';\r\n    if (!items.length) {\r\n      const empty = document.createElement('p');\r\n      empty.className = 'muted';\r\n      empty.textContent = state.items && state.items.length ? 'No matching controls.' : 'No visible controls were discovered yet.';\r\n      dom.pageItems.appendChild(empty);\r\n      return;\r\n    }\r\n    for (const item of items) {\r\n      const button = document.createElement('button');\r\n      button.type = 'button';\r\n      button.className = 'page-item';\r\n      const kind = document.createElement('span');\r\n      kind.className = 'kind';\r\n      kind.textContent = item.kind;\r\n      const copy = document.createElement('span');\r\n      const label = document.createElement('span');\r\n      label.className = 'label';\r\n      label.textContent = item.label;\r\n      copy.appendChild(label);\r\n      if (item.detail) {\r\n        const detail = document.createElement('span');\r\n        detail.className = 'detail';\r\n        detail.textContent = item.detail;\r\n        copy.appendChild(detail);\r\n      }\r\n      button.append(kind, copy);\r\n      button.addEventListener('click', () => command({ type: 'select', id: item.id }));\r\n      dom.pageItems.appendChild(button);\r\n    }\r\n  }\r\n\r\n  function renderProfileEditors() {\r\n    dom.profileEditors.textContent = '';\r\n    editorProfiles.forEach((profile, index) => {\r\n      const fieldset = document.createElement('div');\r\n      fieldset.className = 'profile-editor';\r\n      const grid = document.createElement('div');\r\n      grid.className = 'profile-editor-grid';\r\n      const nameLabel = document.createElement('label');\r\n      nameLabel.textContent = 'Name';\r\n      const nameInput = document.createElement('input');\r\n      nameInput.value = profile.name;\r\n      nameInput.maxLength = 40;\r\n      nameInput.addEventListener('input', () => { profile.name = nameInput.value; });\r\n      nameLabel.appendChild(nameInput);\r\n      const urlsLabel = document.createElement('label');\r\n      urlsLabel.textContent = 'HTTPS domains (one per line)';\r\n      const urlsInput = document.createElement('textarea');\r\n      urlsInput.value = profile.urls.join('\\n');\r\n      urlsInput.addEventListener('input', () => { profile.urls = urlsInput.value.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean); });\r\n      urlsLabel.appendChild(urlsInput);\r\n      grid.append(nameLabel, urlsLabel);\r\n      fieldset.appendChild(grid);\r\n      if (!['1shows', 'cineby', 'bilibili'].includes(profile.id)) {\r\n        const remove = document.createElement('button');\r\n        remove.type = 'button';\r\n        remove.className = 'danger compact';\r\n        remove.textContent = 'Remove custom site';\r\n        remove.addEventListener('click', () => {\r\n          editorProfiles.splice(index, 1);\r\n          renderProfileEditors();\r\n        });\r\n        fieldset.appendChild(remove);\r\n      }\r\n      dom.profileEditors.appendChild(fieldset);\r\n    });\r\n  }\r\n\r\n  function openEditor() {\r\n    editorProfiles = JSON.parse(JSON.stringify((serviceInfo && serviceInfo.profiles) || []));\r\n    renderProfileEditors();\r\n    dom.sitesEditor.hidden = false;\r\n    dom.sitesEditor.scrollIntoView({ behavior: 'smooth', block: 'start' });\r\n  }\r\n\r\n  async function saveProfiles(event) {\r\n    event.preventDefault();\r\n    dom.sitesError.textContent = '';\r\n    try {\r\n      const active = editorProfiles.some((profile) => profile.id === (state && state.activeProfileId)) ? state.activeProfileId : editorProfiles[0].id;\r\n      const result = await api('/api/config', {\r\n        method: 'PUT',\r\n        body: JSON.stringify({ profiles: editorProfiles, activeProfileId: active })\r\n      });\r\n      serviceInfo.profiles = result.profiles;\r\n      serviceInfo.activeProfileId = result.activeProfileId;\r\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\r\n      dom.sitesEditor.hidden = true;\r\n      renderProfiles();\r\n      showToast('Domains saved on this TV session');\r\n    } catch (error) {\r\n      dom.sitesError.textContent = error.message;\r\n    }\r\n  }\r\n\r\n  async function restoreSavedConfig() {\r\n    if (configRestored || !token) return;\r\n    configRestored = true;\r\n    const raw = localStorage.getItem(CONFIG_KEY);\r\n    if (!raw) {\r\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\r\n      return;\r\n    }\r\n    try {\r\n      const saved = JSON.parse(raw);\r\n      if (Array.isArray(saved.profiles) && !saved.profiles.some((profile) => profile.id === 'bilibili')) {\r\n        saved.profiles.push(BILIBILI_PROFILE);\r\n      }\r\n      if (!localStorage.getItem(BILIBILI_DEFAULT_MIGRATION_KEY) && Array.isArray(saved.profiles)) {\r\n        saved.profiles = saved.profiles.slice().sort((left, right) => {\r\n          if (left.id === 'bilibili') return -1;\r\n          if (right.id === 'bilibili') return 1;\r\n          return 0;\r\n        });\r\n        saved.activeProfileId = 'bilibili';\r\n      }\r\n      const result = await api('/api/config', { method: 'PUT', body: JSON.stringify(saved) });\r\n      if (serviceInfo) {\r\n        serviceInfo.profiles = result.profiles;\r\n        serviceInfo.activeProfileId = result.activeProfileId;\r\n      }\r\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\r\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\r\n    } catch (error) {\r\n      showToast(`Saved domains were not restored: ${error.message}`);\r\n    }\r\n  }\r\n\r\n  function handleMessage(message) {\r\n    if (message.kind === 'state') state = message.state;\r\n    if (message.kind === 'service_info') serviceInfo = message.info;\r\n    if (message.kind === 'error') showToast(message.error || 'Command failed');\r\n    renderState();\r\n  }\r\n\r\n  function connectSocket() {\r\n    clearTimeout(reconnectTimer);\r\n    if (!token) return;\r\n    if (socket) {\r\n      socket.onclose = null;\r\n      try { socket.close(); } catch { /* Already closed. */ }\r\n    }\r\n    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';\r\n    socket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);\r\n    socket.addEventListener('open', () => {\r\n      setConnection();\r\n      command({ type: 'requestSnapshot' }, false);\r\n    });\r\n    socket.addEventListener('message', (event) => {\r\n      try { handleMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }\r\n    });\r\n    socket.addEventListener('close', () => {\r\n      setConnection();\r\n      reconnectTimer = setTimeout(connectSocket, 1800);\r\n    });\r\n    socket.addEventListener('error', setConnection);\r\n  }\r\n\r\n  async function command(value, announce = true) {\r\n    try {\r\n      if (socket && socket.readyState === WebSocket.OPEN) {\r\n        socket.send(JSON.stringify({ kind: 'command', requestId: String(Date.now()), command: value }));\r\n      } else {\r\n        await api('/api/command', { method: 'POST', body: JSON.stringify({ command: value }) });\r\n      }\r\n      if (announce && value.type === 'navigate') showToast(`Opening ${new URL(value.url).hostname}`);\r\n      if (announce && value.type === 'site') showToast('Bilibili control sent');\r\n    } catch (error) {\r\n      showToast(error.message);\r\n    }\r\n  }\r\n\r\n  async function pair(event) {\r\n    event.preventDefault();\r\n    dom.pairError.textContent = '';\r\n    try {\r\n      const payload = await api('/api/pair', {\r\n        method: 'POST',\r\n        body: JSON.stringify({ pin: dom.pinInput.value.trim(), clientName: navigator.userAgent.slice(0, 60) })\r\n      });\r\n      token = payload.token;\r\n      localStorage.setItem(TOKEN_KEY, token);\r\n      state = payload.state;\r\n      serviceInfo = payload.info;\r\n      dom.pairView.hidden = true;\r\n      dom.remoteView.hidden = false;\r\n      await restoreSavedConfig();\r\n      renderState();\r\n      connectSocket();\r\n    } catch (error) {\r\n      dom.pairError.textContent = error.message;\r\n    }\r\n  }\r\n\r\n  function flushPointer() {\r\n    pointerFrame = null;\r\n    const dx = pointerPending.dx;\r\n    const dy = pointerPending.dy;\r\n    pointerPending = { dx: 0, dy: 0 };\r\n    if (!dx && !dy) return;\r\n    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * 2, dy: -dy * 2 }, false);\r\n    else command({ type: 'pointer', dx: dx * 1.4, dy: dy * 1.4 }, false);\r\n  }\r\n\r\n  function pointerDown(event) {\r\n    dom.touchpad.setPointerCapture(event.pointerId);\r\n    dom.touchpad.classList.add('active');\r\n    pointerSession = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY };\r\n  }\r\n\r\n  function pointerMove(event) {\r\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\r\n    pointerPending.dx += event.clientX - pointerSession.x;\r\n    pointerPending.dy += event.clientY - pointerSession.y;\r\n    pointerSession.x = event.clientX;\r\n    pointerSession.y = event.clientY;\r\n    if (!pointerFrame) pointerFrame = requestAnimationFrame(flushPointer);\r\n  }\r\n\r\n  function pointerUp(event) {\r\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\r\n    const distance = Math.hypot(event.clientX - pointerSession.startX, event.clientY - pointerSession.startY);\r\n    if (distance < 9 && dom.touchMode.value === 'pointer') command({ type: 'pointerClick' }, false);\r\n    pointerSession = null;\r\n    dom.touchpad.classList.remove('active');\r\n  }\r\n\r\n  function bindEvents() {\r\n    dom.pairForm.addEventListener('submit', pair);\r\n    dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));\r\n    dom.editSitesButton.addEventListener('click', openEditor);\r\n    dom.closeSitesButton.addEventListener('click', () => { dom.sitesEditor.hidden = true; });\r\n    dom.sitesForm.addEventListener('submit', saveProfiles);\r\n    dom.addProfileButton.addEventListener('click', () => {\r\n      const id = `custom-${Date.now().toString(36)}`;\r\n      editorProfiles.push({ id, name: 'Custom site', urls: ['https://example.com/'] });\r\n      renderProfileEditors();\r\n    });\r\n    dom.textForm.addEventListener('submit', (event) => {\r\n      event.preventDefault();\r\n      command({ type: 'text', value: dom.textInput.value, submit: true }, false);\r\n    });\r\n    dom.sendTextButton.addEventListener('click', () => command({ type: 'text', value: dom.textInput.value, submit: false }, false));\r\n    document.querySelectorAll('[data-bilibili-action]').forEach((button) => button.addEventListener('click', () => command({\r\n      type: 'site',\r\n      site: 'bilibili',\r\n      action: button.dataset.bilibiliAction\r\n    })));\r\n    dom.applyBilibiliQuality.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'quality', value: dom.bilibiliQuality.value }));\r\n    dom.applyBilibiliSpeed.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'speed', value: dom.bilibiliSpeed.value }));\r\n    document.querySelectorAll('[data-focus]').forEach((button) => button.addEventListener('click', () => command({ type: 'focus', direction: button.dataset.focus }, false)));\r\n    document.querySelectorAll('[data-history]').forEach((button) => button.addEventListener('click', () => command({ type: 'history', action: button.dataset.history }, false)));\r\n    dom.activateButton.addEventListener('click', () => command({ type: 'activate' }, false));\r\n    document.querySelectorAll('[data-media]').forEach((button) => button.addEventListener('click', () => command({\r\n      type: 'media',\r\n      action: button.dataset.media,\r\n      value: Number(button.dataset.value || 0)\r\n    }, false)));\r\n    dom.refreshItems.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));\r\n    dom.itemFilter.addEventListener('input', renderItems);\r\n    dom.touchpad.addEventListener('pointerdown', pointerDown);\r\n    dom.touchpad.addEventListener('pointermove', pointerMove);\r\n    dom.touchpad.addEventListener('pointerup', pointerUp);\r\n    dom.touchpad.addEventListener('pointercancel', pointerUp);\r\n    dom.forgetButton.addEventListener('click', async () => {\r\n      try { await api('/api/session', { method: 'DELETE' }); } catch { /* Local cleanup still proceeds. */ }\r\n      localStorage.removeItem(TOKEN_KEY);\r\n      token = '';\r\n      if (socket) socket.close();\r\n      location.reload();\r\n    });\r\n  }\r\n\r\n  async function initialize() {\r\n    cacheDom();\r\n    bindEvents();\r\n    const pin = new URLSearchParams(location.search).get('pin');\r\n    if (pin) dom.pinInput.value = pin.replace(/\\D/g, '').slice(0, 6);\r\n    if (!token) {\r\n      dom.pairView.hidden = false;\r\n      dom.remoteView.hidden = true;\r\n      setConnection();\r\n      if (pin && dom.pinInput.value.length === 6) dom.pinInput.focus();\r\n      return;\r\n    }\r\n    try {\r\n      const payload = await api('/api/state');\r\n      state = payload.state;\r\n      serviceInfo = payload.info;\r\n      dom.pairView.hidden = true;\r\n      dom.remoteView.hidden = false;\r\n      await restoreSavedConfig();\r\n      renderState();\r\n      connectSocket();\r\n    } catch {\r\n      localStorage.removeItem(TOKEN_KEY);\r\n      token = '';\r\n      dom.pairView.hidden = false;\r\n      dom.remoteView.hidden = true;\r\n      setConnection();\r\n    }\r\n  }\r\n\r\n  document.addEventListener('DOMContentLoaded', initialize, { once: true });\r\n})();\r\n",
       "styles.css": ':root {\n  color-scheme: dark;\n  --bg: #07111f;\n  --panel: #101d2d;\n  --panel-2: #14253a;\n  --line: #263b52;\n  --text: #eef6ff;\n  --muted: #96abc1;\n  --accent: #38bdf8;\n  --accent-2: #0ea5e9;\n  --danger: #fb7185;\n  --safe-bottom: env(safe-area-inset-bottom, 0px);\n  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n}\n\n* { box-sizing: border-box; }\nhtml { background: var(--bg); }\nbody { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 20% -10%, #12395a 0, transparent 37rem), var(--bg); }\nbutton, input, select, textarea { font: inherit; }\nbutton, select { touch-action: manipulation; }\n\n.app-header {\n  position: sticky;\n  top: 0;\n  z-index: 20;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  min-height: 72px;\n  padding: max(12px, env(safe-area-inset-top)) 18px 12px;\n  background: rgba(7, 17, 31, .91);\n  border-bottom: 1px solid rgba(77, 111, 145, .35);\n  backdrop-filter: blur(18px);\n}\n.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto; border-radius: 13px; color: #00131d; background: var(--accent); font-size: 25px; font-weight: 900; }\n.brand-copy { min-width: 0; flex: 1; }\n.brand-copy h1 { margin: 0; font-size: 18px; }\n.brand-copy p { margin: 2px 0 0; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.status-dot { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; background: #64748b; box-shadow: 0 0 0 5px rgba(100, 116, 139, .15); }\n.status-dot.connected { background: #34d399; box-shadow: 0 0 0 5px rgba(52, 211, 153, .15); }\n.status-dot.partial { background: #fbbf24; box-shadow: 0 0 0 5px rgba(251, 191, 36, .15); }\n\nmain { width: min(920px, 100%); margin: 0 auto; padding: 16px 12px calc(30px + var(--safe-bottom)); }\n.panel { margin-bottom: 13px; padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, rgba(20, 37, 58, .96), rgba(12, 27, 43, .98)); box-shadow: 0 14px 45px rgba(0, 0, 0, .16); }\n.pair-panel { max-width: 480px; margin: 8vh auto 0; padding: 24px; }\n.pair-panel h2 { font-size: 25px; }\nh2 { margin: 2px 0 6px; font-size: 20px; line-height: 1.2; }\n.eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }\n.muted, .hint { color: var(--muted); }\n.hint { margin: 12px 0 0; font-size: 12px; line-height: 1.45; }\n.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\nlabel { display: grid; gap: 7px; color: #c4d3e2; font-size: 13px; font-weight: 700; }\ninput, select, textarea { width: 100%; min-height: 48px; border: 1px solid #35506c; border-radius: 12px; outline: none; color: var(--text); background: #091725; padding: 11px 13px; }\ninput:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, .15); }\ntextarea { min-height: 92px; resize: vertical; line-height: 1.45; }\n.pair-panel input { margin: 8px 0 12px; text-align: center; font-size: 30px; font-weight: 800; letter-spacing: .22em; }\n\nbutton { min-height: 46px; border: 1px solid #38536d; border-radius: 12px; color: var(--text); background: #19304a; padding: 9px 13px; font-weight: 750; cursor: pointer; }\nbutton:active { transform: scale(.975); filter: brightness(1.18); }\nbutton:focus-visible { outline: 3px solid rgba(56, 189, 248, .8); outline-offset: 2px; }\nbutton.primary { border-color: #38bdf8; color: #00151f; background: linear-gradient(145deg, #67d4ff, #0ea5e9); }\nbutton.ghost { background: transparent; }\nbutton.danger { border-color: rgba(251, 113, 133, .6); color: #fecdd3; background: rgba(136, 19, 55, .25); }\nbutton.compact { min-height: 38px; padding: 6px 10px; font-size: 12px; }\nbutton.wide { width: 100%; }\n.error { min-height: 1.25em; margin: 10px 0 0; color: #fda4af; font-size: 13px; }\n.section-heading, .now-playing { display: flex; align-items: center; justify-content: space-between; gap: 14px; }\n.section-heading > div:first-child, .now-playing > div:first-child { min-width: 0; }\n\n.profiles { display: grid; gap: 10px; margin-top: 14px; }\n.profile { display: grid; grid-template-columns: minmax(90px, .7fr) minmax(130px, 1.5fr) auto; gap: 9px; align-items: center; padding: 11px; border: 1px solid #2b455f; border-radius: 14px; background: rgba(5, 15, 26, .35); }\n.profile.active { border-color: var(--accent); background: rgba(14, 165, 233, .1); }\n.profile-name { font-weight: 800; }\n.profile select { min-height: 42px; padding: 8px 10px; font-size: 12px; }\n.profile button { min-height: 42px; }\n.profile-editor { margin: 13px 0; padding: 13px; border: 1px solid var(--line); border-radius: 14px; }\n.profile-editor-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }\n.inline-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 9px; margin-top: 12px; }\n\n.text-form { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-top: 13px; }\n.site-status { flex: 0 0 auto; color: #f9a8d4; font-size: 12px; font-weight: 800; }\n.site-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 13px; }\n.site-selectors { display: grid; grid-template-columns: minmax(150px, 1fr) auto minmax(130px, .8fr) auto; gap: 8px; align-items: end; margin-top: 10px; }\n.site-selectors select { min-height: 42px; padding: 8px 10px; }\n.site-selectors button { min-height: 42px; }\n.control-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 13px; }\n.dpad-panel, .touch-panel { min-width: 0; }\n.dpad { display: grid; grid-template: repeat(3, 60px) / repeat(3, 60px); justify-content: center; gap: 7px; margin: 12px auto; }\n.dpad button { min-height: 60px; padding: 0; font-size: 20px; }\n.dpad .up { grid-area: 1 / 2; }\n.dpad .left { grid-area: 2 / 1; }\n.dpad .ok { grid-area: 2 / 2; border-radius: 50%; color: #00131d; background: var(--accent); }\n.dpad .right { grid-area: 2 / 3; }\n.dpad .down { grid-area: 3 / 2; }\n.three-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }\n.mode { display: flex; align-items: center; gap: 7px; font-size: 11px; }\n.mode select { width: auto; min-height: 38px; padding: 6px 9px; }\n.touchpad { display: grid; place-items: center; height: 224px; margin-top: 12px; border: 1px solid #3c5a76; border-radius: 17px; color: #8ca8c1; background: radial-gradient(circle at 50% 42%, rgba(56, 189, 248, .11), transparent 55%), #081522; user-select: none; touch-action: none; }\n.touchpad.active { border-color: var(--accent); color: #d9f4ff; }\n\n.time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }\n.media-controls { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 13px; }\n.media-controls .play { grid-column: span 2; }\n.media-controls .wide-control { grid-column: span 6; }\n.page-items { display: grid; gap: 8px; max-height: 54vh; overflow: auto; margin-top: 10px; padding-right: 2px; }\n.page-item { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: center; width: 100%; min-height: 56px; text-align: left; }\n.page-item .kind { color: var(--accent); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }\n.page-item .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.page-item .detail { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.filter { margin-top: 10px; }\n.diagnostics summary { cursor: pointer; font-weight: 800; }\n.diagnostics dl { display: grid; gap: 7px; }\n.diagnostics dl div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; }\n.diagnostics dt { color: var(--muted); }\n.diagnostics dd { margin: 0; overflow-wrap: anywhere; }\n.toast { position: fixed; z-index: 30; left: 50%; bottom: calc(18px + var(--safe-bottom)); transform: translateX(-50%) translateY(20px); width: max-content; max-width: calc(100% - 28px); margin: 0; padding: 11px 15px; border: 1px solid #3a5872; border-radius: 999px; color: white; background: rgba(7, 17, 31, .96); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; box-shadow: 0 12px 35px rgba(0,0,0,.4); }\n.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }\n\n@media (max-width: 680px) {\n  .control-grid { grid-template-columns: 1fr; }\n  .profile { grid-template-columns: 86px 1fr; }\n  .profile button { grid-column: 1 / -1; }\n  .profile-editor-grid { grid-template-columns: 1fr; }\n  .text-form { grid-template-columns: 1fr 1fr; }\n  .text-form input { grid-column: 1 / -1; }\n  .site-actions { grid-template-columns: repeat(2, 1fr); }\n  .site-selectors { grid-template-columns: 1fr auto; }\n  .media-controls { grid-template-columns: repeat(3, 1fr); }\n  .media-controls .play { grid-column: span 1; }\n  .media-controls .wide-control { grid-column: span 3; }\n  .now-playing { align-items: flex-start; }\n}\n\n@media (max-width: 390px) {\n  main { padding-left: 8px; padding-right: 8px; }\n  .panel { padding: 14px; border-radius: 15px; }\n  .dpad { grid-template: repeat(3, 56px) / repeat(3, 56px); }\n  .dpad button { min-height: 56px; }\n  .three-buttons button { padding-left: 5px; padding-right: 5px; font-size: 12px; }\n}\n',
       "manifest.webmanifest": '{\n  "name": "Web Remote TV",\n  "short_name": "TV Remote",\n  "description": "Local phone controller for Web Remote TV on TizenBrew.",\n  "start_url": "/",\n  "display": "standalone",\n  "background_color": "#07111f",\n  "theme_color": "#07111f",\n  "icons": [\n    {\n      "src": "/icon.svg",\n      "sizes": "any",\n      "type": "image/svg+xml",\n      "purpose": "any maskable"\n    }\n  ]\n}\n',
       "icon.svg": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">\n  <rect width="512" height="512" rx="112" fill="#07111f"/>\n  <rect x="72" y="94" width="368" height="252" rx="38" fill="#14253a" stroke="#38bdf8" stroke-width="20"/>\n  <path d="M188 418h136M256 346v72" stroke="#dff6ff" stroke-width="24" stroke-linecap="round"/>\n  <path d="M188 260l136-136M234 124h90v90" fill="none" stroke="#38bdf8" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>\n</svg>\n'
     };
+  }
+});
+
+// node_modules/.pnpm/safe-buffer@5.1.2/node_modules/safe-buffer/index.js
+var require_safe_buffer = __commonJS({
+  "node_modules/.pnpm/safe-buffer@5.1.2/node_modules/safe-buffer/index.js"(exports2, module2) {
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var buffer = require("buffer");
+    var Buffer2 = buffer.Buffer;
+    function copyProps(src, dst) {
+      for (var key in src) {
+        dst[key] = src[key];
+      }
+    }
+    if (Buffer2.from && Buffer2.alloc && Buffer2.allocUnsafe && Buffer2.allocUnsafeSlow) {
+      module2.exports = buffer;
+    } else {
+      copyProps(buffer, exports2);
+      exports2.Buffer = SafeBuffer;
+    }
+    function SafeBuffer(arg, encodingOrOffset, length) {
+      return Buffer2(arg, encodingOrOffset, length);
+    }
+    copyProps(Buffer2, SafeBuffer);
+    SafeBuffer.from = function (arg, encodingOrOffset, length) {
+      if (typeof arg === "number") {
+        throw new TypeError("Argument must not be a number");
+      }
+      return Buffer2(arg, encodingOrOffset, length);
+    };
+    SafeBuffer.alloc = function (size, fill, encoding) {
+      if (typeof size !== "number") {
+        throw new TypeError("Argument must be a number");
+      }
+      var buf = Buffer2(size);
+      if (fill !== void 0) {
+        if (typeof encoding === "string") {
+          buf.fill(fill, encoding);
+        } else {
+          buf.fill(fill);
+        }
+      } else {
+        buf.fill(0);
+      }
+      return buf;
+    };
+    SafeBuffer.allocUnsafe = function (size) {
+      if (typeof size !== "number") {
+        throw new TypeError("Argument must be a number");
+      }
+      return Buffer2(size);
+    };
+    SafeBuffer.allocUnsafeSlow = function (size) {
+      if (typeof size !== "number") {
+        throw new TypeError("Argument must be a number");
+      }
+      return buffer.SlowBuffer(size);
+    };
+  }
+});
+
+// node_modules/.pnpm/async-limiter@1.0.1/node_modules/async-limiter/index.js
+var require_async_limiter = __commonJS({
+  "node_modules/.pnpm/async-limiter@1.0.1/node_modules/async-limiter/index.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    function Queue(options) {
+      if (!(this instanceof Queue)) {
+        return new Queue(options);
+      }
+      options = options || {};
+      this.concurrency = options.concurrency || Infinity;
+      this.pending = 0;
+      this.jobs = [];
+      this.cbs = [];
+      this._done = done.bind(this);
+    }
+    var arrayAddMethods = ["push", "unshift", "splice"];
+    arrayAddMethods.forEach(function (method) {
+      Queue.prototype[method] = function () {
+        var methodResult = Array.prototype[method].apply(this.jobs, arguments);
+        this._run();
+        return methodResult;
+      };
+    });
+    Object.defineProperty(Queue.prototype, "length", {
+      get: function get() {
+        return this.pending + this.jobs.length;
+      }
+    });
+    Queue.prototype._run = function () {
+      if (this.pending === this.concurrency) {
+        return;
+      }
+      if (this.jobs.length) {
+        var job = this.jobs.shift();
+        this.pending++;
+        job(this._done);
+        this._run();
+      }
+      if (this.pending === 0) {
+        while (this.cbs.length !== 0) {
+          var cb = this.cbs.pop();
+          process.nextTick(cb);
+        }
+      }
+    };
+    Queue.prototype.onDone = function (cb) {
+      if (typeof cb === "function") {
+        this.cbs.push(cb);
+        this._run();
+      }
+    };
+    function done() {
+      this.pending--;
+      this._run();
+    }
+    module2.exports = Queue;
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/buffer-util.js
+var require_buffer_util = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/buffer-util.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var Buffer2 = safeBuffer.Buffer;
+    var concat = function concat(list, totalLength) {
+      var target = Buffer2.allocUnsafe(totalLength);
+      var offset = 0;
+      for (var i = 0; i < list.length; i++) {
+        var buf = list[i];
+        buf.copy(target, offset);
+        offset += buf.length;
+      }
+      return target;
+    };
+    try {
+      var bufferUtil = require("bufferutil");
+      module2.exports = Object.assign({
+        concat
+      }, bufferUtil.BufferUtil || bufferUtil);
+    } catch (e) {
+      var mask = function mask(source, mask2, output, offset, length) {
+        for (var i = 0; i < length; i++) {
+          output[offset + i] = source[i] ^ mask2[i & 3];
+        }
+      };
+      var unmask = function unmask(buffer, mask2) {
+        var length = buffer.length;
+        for (var i = 0; i < length; i++) {
+          buffer[i] ^= mask2[i & 3];
+        }
+      };
+      module2.exports = {
+        concat,
+        mask,
+        unmask
+      };
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/permessage-deflate.js
+var require_permessage_deflate = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/permessage-deflate.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var Limiter = require_async_limiter();
+    var zlib = require("zlib");
+    var bufferUtil = require_buffer_util();
+    var Buffer2 = safeBuffer.Buffer;
+    var TRAILER = Buffer2.from([0, 0, 255, 255]);
+    var EMPTY_BLOCK = Buffer2.from([0]);
+    var kWriteInProgress = Symbol("write-in-progress");
+    var kPendingClose = Symbol("pending-close");
+    var kTotalLength = Symbol("total-length");
+    var kCallback = Symbol("callback");
+    var kBuffers = Symbol("buffers");
+    var kError = Symbol("error");
+    var kOwner = Symbol("owner");
+    var zlibLimiter;
+    var PerMessageDeflate = /*#__PURE__*/function () {
+      /**
+       * Creates a PerMessageDeflate instance.
+       *
+       * @param {Object} options Configuration options
+       * @param {Boolean} options.serverNoContextTakeover Request/accept disabling
+       *     of server context takeover
+       * @param {Boolean} options.clientNoContextTakeover Advertise/acknowledge
+       *     disabling of client context takeover
+       * @param {(Boolean|Number)} options.serverMaxWindowBits Request/confirm the
+       *     use of a custom server window size
+       * @param {(Boolean|Number)} options.clientMaxWindowBits Advertise support
+       *     for, or request, a custom client window size
+       * @param {Object} options.zlibDeflateOptions Options to pass to zlib on deflate
+       * @param {Object} options.zlibInflateOptions Options to pass to zlib on inflate
+       * @param {Number} options.threshold Size (in bytes) below which messages
+       *     should not be compressed
+       * @param {Number} options.concurrencyLimit The number of concurrent calls to
+       *     zlib
+       * @param {Boolean} isServer Create the instance in either server or client
+       *     mode
+       * @param {Number} maxPayload The maximum allowed message length
+       */
+      function PerMessageDeflate(options, isServer, maxPayload) {
+        _classCallCheck(this, PerMessageDeflate);
+        this._maxPayload = maxPayload | 0;
+        this._options = options || {};
+        this._threshold = this._options.threshold !== void 0 ? this._options.threshold : 1024;
+        this._isServer = !!isServer;
+        this._deflate = null;
+        this._inflate = null;
+        this.params = null;
+        if (!zlibLimiter) {
+          var concurrency = this._options.concurrencyLimit !== void 0 ? this._options.concurrencyLimit : 10;
+          zlibLimiter = new Limiter({
+            concurrency
+          });
+        }
+      }
+      /**
+       * @type {String}
+       */
+      return _createClass(PerMessageDeflate, [{
+        key: "offer",
+        value:
+        /**
+         * Create an extension negotiation offer.
+         *
+         * @return {Object} Extension parameters
+         * @public
+         */
+        function offer() {
+          var params = {};
+          if (this._options.serverNoContextTakeover) {
+            params.server_no_context_takeover = true;
+          }
+          if (this._options.clientNoContextTakeover) {
+            params.client_no_context_takeover = true;
+          }
+          if (this._options.serverMaxWindowBits) {
+            params.server_max_window_bits = this._options.serverMaxWindowBits;
+          }
+          if (this._options.clientMaxWindowBits) {
+            params.client_max_window_bits = this._options.clientMaxWindowBits;
+          } else if (this._options.clientMaxWindowBits == null) {
+            params.client_max_window_bits = true;
+          }
+          return params;
+        }
+        /**
+         * Accept an extension negotiation offer/response.
+         *
+         * @param {Array} configurations The extension negotiation offers/reponse
+         * @return {Object} Accepted configuration
+         * @public
+         */
+      }, {
+        key: "accept",
+        value: function accept(configurations) {
+          configurations = this.normalizeParams(configurations);
+          this.params = this._isServer ? this.acceptAsServer(configurations) : this.acceptAsClient(configurations);
+          return this.params;
+        }
+        /**
+         * Releases all resources used by the extension.
+         *
+         * @public
+         */
+      }, {
+        key: "cleanup",
+        value: function cleanup() {
+          if (this._inflate) {
+            if (this._inflate[kWriteInProgress]) {
+              this._inflate[kPendingClose] = true;
+            } else {
+              this._inflate.close();
+              this._inflate = null;
+            }
+          }
+          if (this._deflate) {
+            if (this._deflate[kWriteInProgress]) {
+              this._deflate[kPendingClose] = true;
+            } else {
+              this._deflate.close();
+              this._deflate = null;
+            }
+          }
+        }
+        /**
+         *  Accept an extension negotiation offer.
+         *
+         * @param {Array} offers The extension negotiation offers
+         * @return {Object} Accepted configuration
+         * @private
+         */
+      }, {
+        key: "acceptAsServer",
+        value: function acceptAsServer(offers) {
+          var opts = this._options;
+          var accepted = offers.find(function (params) {
+            if (opts.serverNoContextTakeover === false && params.server_no_context_takeover || params.server_max_window_bits && (opts.serverMaxWindowBits === false || typeof opts.serverMaxWindowBits === "number" && opts.serverMaxWindowBits > params.server_max_window_bits) || typeof opts.clientMaxWindowBits === "number" && !params.client_max_window_bits) {
+              return false;
+            }
+            return true;
+          });
+          if (!accepted) {
+            throw new Error("None of the extension offers can be accepted");
+          }
+          if (opts.serverNoContextTakeover) {
+            accepted.server_no_context_takeover = true;
+          }
+          if (opts.clientNoContextTakeover) {
+            accepted.client_no_context_takeover = true;
+          }
+          if (typeof opts.serverMaxWindowBits === "number") {
+            accepted.server_max_window_bits = opts.serverMaxWindowBits;
+          }
+          if (typeof opts.clientMaxWindowBits === "number") {
+            accepted.client_max_window_bits = opts.clientMaxWindowBits;
+          } else if (accepted.client_max_window_bits === true || opts.clientMaxWindowBits === false) {
+            delete accepted.client_max_window_bits;
+          }
+          return accepted;
+        }
+        /**
+         * Accept the extension negotiation response.
+         *
+         * @param {Array} response The extension negotiation response
+         * @return {Object} Accepted configuration
+         * @private
+         */
+      }, {
+        key: "acceptAsClient",
+        value: function acceptAsClient(response) {
+          var params = response[0];
+          if (this._options.clientNoContextTakeover === false && params.client_no_context_takeover) {
+            throw new Error('Unexpected parameter "client_no_context_takeover"');
+          }
+          if (!params.client_max_window_bits) {
+            if (typeof this._options.clientMaxWindowBits === "number") {
+              params.client_max_window_bits = this._options.clientMaxWindowBits;
+            }
+          } else if (this._options.clientMaxWindowBits === false || typeof this._options.clientMaxWindowBits === "number" && params.client_max_window_bits > this._options.clientMaxWindowBits) {
+            throw new Error('Unexpected or invalid parameter "client_max_window_bits"');
+          }
+          return params;
+        }
+        /**
+         * Normalize parameters.
+         *
+         * @param {Array} configurations The extension negotiation offers/reponse
+         * @return {Array} The offers/response with normalized parameters
+         * @private
+         */
+      }, {
+        key: "normalizeParams",
+        value: function normalizeParams(configurations) {
+          var _this = this;
+          configurations.forEach(function (params) {
+            Object.keys(params).forEach(function (key) {
+              var value = params[key];
+              if (value.length > 1) {
+                throw new Error(`Parameter "${key}" must have only a single value`);
+              }
+              value = value[0];
+              if (key === "client_max_window_bits") {
+                if (value !== true) {
+                  var num = +value;
+                  if (!Number.isInteger(num) || num < 8 || num > 15) {
+                    throw new TypeError(`Invalid value for parameter "${key}": ${value}`);
+                  }
+                  value = num;
+                } else if (!_this._isServer) {
+                  throw new TypeError(`Invalid value for parameter "${key}": ${value}`);
+                }
+              } else if (key === "server_max_window_bits") {
+                var _num = +value;
+                if (!Number.isInteger(_num) || _num < 8 || _num > 15) {
+                  throw new TypeError(`Invalid value for parameter "${key}": ${value}`);
+                }
+                value = _num;
+              } else if (key === "client_no_context_takeover" || key === "server_no_context_takeover") {
+                if (value !== true) {
+                  throw new TypeError(`Invalid value for parameter "${key}": ${value}`);
+                }
+              } else {
+                throw new Error(`Unknown parameter "${key}"`);
+              }
+              params[key] = value;
+            });
+          });
+          return configurations;
+        }
+        /**
+         * Decompress data. Concurrency limited by async-limiter.
+         *
+         * @param {Buffer} data Compressed data
+         * @param {Boolean} fin Specifies whether or not this is the last fragment
+         * @param {Function} callback Callback
+         * @public
+         */
+      }, {
+        key: "decompress",
+        value: function decompress(data, fin, callback) {
+          var _this2 = this;
+          zlibLimiter.push(function (done) {
+            _this2._decompress(data, fin, function (err, result) {
+              done();
+              callback(err, result);
+            });
+          });
+        }
+        /**
+         * Compress data. Concurrency limited by async-limiter.
+         *
+         * @param {Buffer} data Data to compress
+         * @param {Boolean} fin Specifies whether or not this is the last fragment
+         * @param {Function} callback Callback
+         * @public
+         */
+      }, {
+        key: "compress",
+        value: function compress(data, fin, callback) {
+          var _this3 = this;
+          zlibLimiter.push(function (done) {
+            _this3._compress(data, fin, function (err, result) {
+              done();
+              callback(err, result);
+            });
+          });
+        }
+        /**
+         * Decompress data.
+         *
+         * @param {Buffer} data Compressed data
+         * @param {Boolean} fin Specifies whether or not this is the last fragment
+         * @param {Function} callback Callback
+         * @private
+         */
+      }, {
+        key: "_decompress",
+        value: function _decompress(data, fin, callback) {
+          var _this4 = this;
+          var endpoint = this._isServer ? "client" : "server";
+          if (!this._inflate) {
+            var key = `${endpoint}_max_window_bits`;
+            var windowBits = typeof this.params[key] !== "number" ? zlib.Z_DEFAULT_WINDOWBITS : this.params[key];
+            this._inflate = zlib.createInflateRaw(Object.assign({}, this._options.zlibInflateOptions, {
+              windowBits
+            }));
+            this._inflate[kTotalLength] = 0;
+            this._inflate[kBuffers] = [];
+            this._inflate[kOwner] = this;
+            this._inflate.on("error", inflateOnError);
+            this._inflate.on("data", inflateOnData);
+          }
+          this._inflate[kCallback] = callback;
+          this._inflate[kWriteInProgress] = true;
+          this._inflate.write(data);
+          if (fin) this._inflate.write(TRAILER);
+          this._inflate.flush(function () {
+            var err = _this4._inflate[kError];
+            if (err) {
+              _this4._inflate.close();
+              _this4._inflate = null;
+              callback(err);
+              return;
+            }
+            var data2 = bufferUtil.concat(_this4._inflate[kBuffers], _this4._inflate[kTotalLength]);
+            if (fin && _this4.params[`${endpoint}_no_context_takeover`] || _this4._inflate[kPendingClose]) {
+              _this4._inflate.close();
+              _this4._inflate = null;
+            } else {
+              _this4._inflate[kWriteInProgress] = false;
+              _this4._inflate[kTotalLength] = 0;
+              _this4._inflate[kBuffers] = [];
+            }
+            callback(null, data2);
+          });
+        }
+        /**
+         * Compress data.
+         *
+         * @param {Buffer} data Data to compress
+         * @param {Boolean} fin Specifies whether or not this is the last fragment
+         * @param {Function} callback Callback
+         * @private
+         */
+      }, {
+        key: "_compress",
+        value: function _compress(data, fin, callback) {
+          var _this5 = this;
+          if (!data || data.length === 0) {
+            process.nextTick(callback, null, EMPTY_BLOCK);
+            return;
+          }
+          var endpoint = this._isServer ? "server" : "client";
+          if (!this._deflate) {
+            var key = `${endpoint}_max_window_bits`;
+            var windowBits = typeof this.params[key] !== "number" ? zlib.Z_DEFAULT_WINDOWBITS : this.params[key];
+            this._deflate = zlib.createDeflateRaw(Object.assign(
+            // TODO deprecate memLevel/level and recommend zlibDeflateOptions instead
+            {
+              memLevel: this._options.memLevel,
+              level: this._options.level
+            }, this._options.zlibDeflateOptions, {
+              windowBits
+            }));
+            this._deflate[kTotalLength] = 0;
+            this._deflate[kBuffers] = [];
+            this._deflate.on("data", deflateOnData);
+          }
+          this._deflate[kWriteInProgress] = true;
+          this._deflate.write(data);
+          this._deflate.flush(zlib.Z_SYNC_FLUSH, function () {
+            var data2 = bufferUtil.concat(_this5._deflate[kBuffers], _this5._deflate[kTotalLength]);
+            if (fin) data2 = data2.slice(0, data2.length - 4);
+            if (fin && _this5.params[`${endpoint}_no_context_takeover`] || _this5._deflate[kPendingClose]) {
+              _this5._deflate.close();
+              _this5._deflate = null;
+            } else {
+              _this5._deflate[kWriteInProgress] = false;
+              _this5._deflate[kTotalLength] = 0;
+              _this5._deflate[kBuffers] = [];
+            }
+            callback(null, data2);
+          });
+        }
+      }], [{
+        key: "extensionName",
+        get: function get() {
+          return "permessage-deflate";
+        }
+      }]);
+    }();
+    module2.exports = PerMessageDeflate;
+    function deflateOnData(chunk) {
+      this[kBuffers].push(chunk);
+      this[kTotalLength] += chunk.length;
+    }
+    function inflateOnData(chunk) {
+      this[kTotalLength] += chunk.length;
+      if (this[kOwner]._maxPayload < 1 || this[kTotalLength] <= this[kOwner]._maxPayload) {
+        this[kBuffers].push(chunk);
+        return;
+      }
+      this[kError] = new RangeError("Max payload size exceeded");
+      this[kError].closeCode = 1009;
+      this.removeListener("data", inflateOnData);
+      this.reset();
+    }
+    function inflateOnError(err) {
+      this[kOwner]._inflate = null;
+      this[kCallback](err);
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/event-target.js
+var require_event_target = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/event-target.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var Event = /*#__PURE__*/_createClass(
+    /**
+     * Create a new `Event`.
+     *
+     * @param {String} type The name of the event
+     * @param {Object} target A reference to the target to which the event was dispatched
+     */
+    function Event(type, target) {
+      _classCallCheck(this, Event);
+      this.target = target;
+      this.type = type;
+    });
+    var MessageEvent = /*#__PURE__*/function (_Event) {
+      /**
+       * Create a new `MessageEvent`.
+       *
+       * @param {(String|Buffer|ArrayBuffer|Buffer[])} data The received data
+       * @param {WebSocket} target A reference to the target to which the event was dispatched
+       */
+      function MessageEvent(data, target) {
+        var _this6;
+        _classCallCheck(this, MessageEvent);
+        _this6 = _callSuper(this, MessageEvent, ["message", target]);
+        _this6.data = data;
+        return _this6;
+      }
+      _inherits(MessageEvent, _Event);
+      return _createClass(MessageEvent);
+    }(Event);
+    var CloseEvent = /*#__PURE__*/function (_Event2) {
+      /**
+       * Create a new `CloseEvent`.
+       *
+       * @param {Number} code The status code explaining why the connection is being closed
+       * @param {String} reason A human-readable string explaining why the connection is closing
+       * @param {WebSocket} target A reference to the target to which the event was dispatched
+       */
+      function CloseEvent(code, reason, target) {
+        var _this7;
+        _classCallCheck(this, CloseEvent);
+        _this7 = _callSuper(this, CloseEvent, ["close", target]);
+        _this7.wasClean = target._closeFrameReceived && target._closeFrameSent;
+        _this7.reason = reason;
+        _this7.code = code;
+        return _this7;
+      }
+      _inherits(CloseEvent, _Event2);
+      return _createClass(CloseEvent);
+    }(Event);
+    var OpenEvent = /*#__PURE__*/function (_Event3) {
+      /**
+       * Create a new `OpenEvent`.
+       *
+       * @param {WebSocket} target A reference to the target to which the event was dispatched
+       */
+      function OpenEvent(target) {
+        _classCallCheck(this, OpenEvent);
+        return _callSuper(this, OpenEvent, ["open", target]);
+      }
+      _inherits(OpenEvent, _Event3);
+      return _createClass(OpenEvent);
+    }(Event);
+    var ErrorEvent = /*#__PURE__*/function (_Event4) {
+      /**
+       * Create a new `ErrorEvent`.
+       *
+       * @param {Object} error The error that generated this event
+       * @param {WebSocket} target A reference to the target to which the event was dispatched
+       */
+      function ErrorEvent(error, target) {
+        var _this8;
+        _classCallCheck(this, ErrorEvent);
+        _this8 = _callSuper(this, ErrorEvent, ["error", target]);
+        _this8.message = error.message;
+        _this8.error = error;
+        return _this8;
+      }
+      _inherits(ErrorEvent, _Event4);
+      return _createClass(ErrorEvent);
+    }(Event);
+    var EventTarget = {
+      /**
+       * Register an event listener.
+       *
+       * @param {String} method A string representing the event type to listen for
+       * @param {Function} listener The listener to add
+       * @public
+       */
+      addEventListener(method, listener) {
+        if (typeof listener !== "function") return;
+        function onMessage(data) {
+          listener.call(this, new MessageEvent(data, this));
+        }
+        function onClose(code, message) {
+          listener.call(this, new CloseEvent(code, message, this));
+        }
+        function onError(error) {
+          listener.call(this, new ErrorEvent(error, this));
+        }
+        function onOpen() {
+          listener.call(this, new OpenEvent(this));
+        }
+        if (method === "message") {
+          onMessage._listener = listener;
+          this.on(method, onMessage);
+        } else if (method === "close") {
+          onClose._listener = listener;
+          this.on(method, onClose);
+        } else if (method === "error") {
+          onError._listener = listener;
+          this.on(method, onError);
+        } else if (method === "open") {
+          onOpen._listener = listener;
+          this.on(method, onOpen);
+        } else {
+          this.on(method, listener);
+        }
+      },
+      /**
+       * Remove an event listener.
+       *
+       * @param {String} method A string representing the event type to remove
+       * @param {Function} listener The listener to remove
+       * @public
+       */
+      removeEventListener(method, listener) {
+        var listeners = this.listeners(method);
+        for (var i = 0; i < listeners.length; i++) {
+          if (listeners[i] === listener || listeners[i]._listener === listener) {
+            this.removeListener(method, listeners[i]);
+          }
+        }
+      }
+    };
+    module2.exports = EventTarget;
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/extension.js
+var require_extension = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/extension.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var tokenChars = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    // 0 - 15
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    // 16 - 31
+    0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0,
+    // 32 - 47
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+    // 48 - 63
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    // 64 - 79
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
+    // 80 - 95
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    // 96 - 111
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0
+    // 112 - 127
+    ];
+    function push(dest, name, elem) {
+      if (Object.prototype.hasOwnProperty.call(dest, name)) dest[name].push(elem);else dest[name] = [elem];
+    }
+    function parse(header) {
+      var offers = {};
+      if (header === void 0 || header === "") return offers;
+      var params = {};
+      var mustUnescape = false;
+      var isEscaping = false;
+      var inQuotes = false;
+      var extensionName;
+      var paramName;
+      var start = -1;
+      var end = -1;
+      for (var i = 0; i < header.length; i++) {
+        var code = header.charCodeAt(i);
+        if (extensionName === void 0) {
+          if (end === -1 && tokenChars[code] === 1) {
+            if (start === -1) start = i;
+          } else if (code === 32 || code === 9) {
+            if (end === -1 && start !== -1) end = i;
+          } else if (code === 59 || code === 44) {
+            if (start === -1) {
+              throw new SyntaxError(`Unexpected character at index ${i}`);
+            }
+            if (end === -1) end = i;
+            var name = header.slice(start, end);
+            if (code === 44) {
+              push(offers, name, params);
+              params = {};
+            } else {
+              extensionName = name;
+            }
+            start = end = -1;
+          } else {
+            throw new SyntaxError(`Unexpected character at index ${i}`);
+          }
+        } else if (paramName === void 0) {
+          if (end === -1 && tokenChars[code] === 1) {
+            if (start === -1) start = i;
+          } else if (code === 32 || code === 9) {
+            if (end === -1 && start !== -1) end = i;
+          } else if (code === 59 || code === 44) {
+            if (start === -1) {
+              throw new SyntaxError(`Unexpected character at index ${i}`);
+            }
+            if (end === -1) end = i;
+            push(params, header.slice(start, end), true);
+            if (code === 44) {
+              push(offers, extensionName, params);
+              params = {};
+              extensionName = void 0;
+            }
+            start = end = -1;
+          } else if (code === 61 && start !== -1 && end === -1) {
+            paramName = header.slice(start, i);
+            start = end = -1;
+          } else {
+            throw new SyntaxError(`Unexpected character at index ${i}`);
+          }
+        } else {
+          if (isEscaping) {
+            if (tokenChars[code] !== 1) {
+              throw new SyntaxError(`Unexpected character at index ${i}`);
+            }
+            if (start === -1) start = i;else if (!mustUnescape) mustUnescape = true;
+            isEscaping = false;
+          } else if (inQuotes) {
+            if (tokenChars[code] === 1) {
+              if (start === -1) start = i;
+            } else if (code === 34 && start !== -1) {
+              inQuotes = false;
+              end = i;
+            } else if (code === 92) {
+              isEscaping = true;
+            } else {
+              throw new SyntaxError(`Unexpected character at index ${i}`);
+            }
+          } else if (code === 34 && header.charCodeAt(i - 1) === 61) {
+            inQuotes = true;
+          } else if (end === -1 && tokenChars[code] === 1) {
+            if (start === -1) start = i;
+          } else if (start !== -1 && (code === 32 || code === 9)) {
+            if (end === -1) end = i;
+          } else if (code === 59 || code === 44) {
+            if (start === -1) {
+              throw new SyntaxError(`Unexpected character at index ${i}`);
+            }
+            if (end === -1) end = i;
+            var value = header.slice(start, end);
+            if (mustUnescape) {
+              value = value.replace(/\\/g, "");
+              mustUnescape = false;
+            }
+            push(params, paramName, value);
+            if (code === 44) {
+              push(offers, extensionName, params);
+              params = {};
+              extensionName = void 0;
+            }
+            paramName = void 0;
+            start = end = -1;
+          } else {
+            throw new SyntaxError(`Unexpected character at index ${i}`);
+          }
+        }
+      }
+      if (start === -1 || inQuotes) {
+        throw new SyntaxError("Unexpected end of input");
+      }
+      if (end === -1) end = i;
+      var token = header.slice(start, end);
+      if (extensionName === void 0) {
+        push(offers, token, {});
+      } else {
+        if (paramName === void 0) {
+          push(params, token, true);
+        } else if (mustUnescape) {
+          push(params, paramName, token.replace(/\\/g, ""));
+        } else {
+          push(params, paramName, token);
+        }
+        push(offers, extensionName, params);
+      }
+      return offers;
+    }
+    function format(extensions) {
+      return Object.keys(extensions).map(function (extension) {
+        var configurations = extensions[extension];
+        if (!Array.isArray(configurations)) configurations = [configurations];
+        return configurations.map(function (params) {
+          return [extension].concat(Object.keys(params).map(function (k) {
+            var values = params[k];
+            if (!Array.isArray(values)) values = [values];
+            return values.map(function (v) {
+              return v === true ? k : `${k}=${v}`;
+            }).join("; ");
+          })).join("; ");
+        }).join(", ");
+      }).join(", ");
+    }
+    module2.exports = {
+      format,
+      parse
+    };
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/constants.js
+var require_constants = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/constants.js"(exports2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var Buffer2 = safeBuffer.Buffer;
+    exports2.BINARY_TYPES = ["nodebuffer", "arraybuffer", "fragments"];
+    exports2.GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    exports2.EMPTY_BUFFER = Buffer2.alloc(0);
+    exports2.NOOP = function () {};
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/validation.js
+var require_validation = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/validation.js"(exports2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    try {
+      var isValidUTF8 = require("utf-8-validate");
+      exports2.isValidUTF8 = _typeof(isValidUTF8) === "object" ? isValidUTF8.Validation.isValidUTF8 : isValidUTF8;
+    } catch (e) {
+      exports2.isValidUTF8 = function () {
+        return true;
+      };
+    }
+    exports2.isValidStatusCode = function (code) {
+      return code >= 1e3 && code <= 1013 && code !== 1004 && code !== 1005 && code !== 1006 || code >= 3e3 && code <= 4999;
+    };
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/receiver.js
+var require_receiver = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/receiver.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var PerMessageDeflate = require_permessage_deflate();
+    var bufferUtil = require_buffer_util();
+    var validation = require_validation();
+    var constants = require_constants();
+    var Buffer2 = safeBuffer.Buffer;
+    var GET_INFO = 0;
+    var GET_PAYLOAD_LENGTH_16 = 1;
+    var GET_PAYLOAD_LENGTH_64 = 2;
+    var GET_MASK = 3;
+    var GET_DATA = 4;
+    var INFLATING = 5;
+    var Receiver = /*#__PURE__*/function () {
+      /**
+       * Creates a Receiver instance.
+       *
+       * @param {Object} extensions An object containing the negotiated extensions
+       * @param {Number} maxPayload The maximum allowed message length
+       * @param {String} binaryType The type for binary data
+       */
+      function Receiver(extensions, maxPayload, binaryType) {
+        _classCallCheck(this, Receiver);
+        this._binaryType = binaryType || constants.BINARY_TYPES[0];
+        this._extensions = extensions || {};
+        this._maxPayload = maxPayload | 0;
+        this._bufferedBytes = 0;
+        this._buffers = [];
+        this._compressed = false;
+        this._payloadLength = 0;
+        this._fragmented = 0;
+        this._masked = false;
+        this._fin = false;
+        this._mask = null;
+        this._opcode = 0;
+        this._totalPayloadLength = 0;
+        this._messageLength = 0;
+        this._fragments = [];
+        this._cleanupCallback = null;
+        this._isCleaningUp = false;
+        this._hadError = false;
+        this._loop = false;
+        this.add = this.add.bind(this);
+        this.onmessage = null;
+        this.onclose = null;
+        this.onerror = null;
+        this.onping = null;
+        this.onpong = null;
+        this._state = GET_INFO;
+      }
+      /**
+       * Consumes `n` bytes from the buffered data, calls `cleanup` if necessary.
+       *
+       * @param {Number} n The number of bytes to consume
+       * @return {(Buffer|null)} The consumed bytes or `null` if `n` bytes are not
+       *     available
+       * @private
+       */
+      return _createClass(Receiver, [{
+        key: "consume",
+        value: function consume(n) {
+          if (this._bufferedBytes < n) {
+            this._loop = false;
+            if (this._isCleaningUp) this.cleanup(this._cleanupCallback);
+            return null;
+          }
+          this._bufferedBytes -= n;
+          if (n === this._buffers[0].length) return this._buffers.shift();
+          if (n < this._buffers[0].length) {
+            var buf = this._buffers[0];
+            this._buffers[0] = buf.slice(n);
+            return buf.slice(0, n);
+          }
+          var dst = Buffer2.allocUnsafe(n);
+          do {
+            var _buf = this._buffers[0];
+            if (n >= _buf.length) {
+              this._buffers.shift().copy(dst, dst.length - n);
+            } else {
+              _buf.copy(dst, dst.length - n, 0, n);
+              this._buffers[0] = _buf.slice(n);
+            }
+            n -= _buf.length;
+          } while (n > 0);
+          return dst;
+        }
+        /**
+         * Adds new data to the parser.
+         *
+         * @param {Buffer} chunk A chunk of data
+         * @public
+         */
+      }, {
+        key: "add",
+        value: function add(chunk) {
+          this._bufferedBytes += chunk.length;
+          this._buffers.push(chunk);
+          this.startLoop();
+        }
+        /**
+         * Starts the parsing loop.
+         *
+         * @private
+         */
+      }, {
+        key: "startLoop",
+        value: function startLoop() {
+          this._loop = true;
+          do {
+            switch (this._state) {
+              case GET_INFO:
+                this.getInfo();
+                break;
+              case GET_PAYLOAD_LENGTH_16:
+                this.getPayloadLength16();
+                break;
+              case GET_PAYLOAD_LENGTH_64:
+                this.getPayloadLength64();
+                break;
+              case GET_MASK:
+                this.getMask();
+                break;
+              case GET_DATA:
+                this.getData();
+                break;
+              default:
+                this._loop = false;
+            }
+          } while (this._loop);
+        }
+        /**
+         * Reads the first two bytes of a frame.
+         *
+         * @private
+         */
+      }, {
+        key: "getInfo",
+        value: function getInfo() {
+          var buf = this.consume(2);
+          if (buf === null) return;
+          if ((buf[0] & 48) !== 0) {
+            this.error(new RangeError("Invalid WebSocket frame: RSV2 and RSV3 must be clear"), 1002);
+            return;
+          }
+          var compressed = (buf[0] & 64) === 64;
+          if (compressed && !this._extensions[PerMessageDeflate.extensionName]) {
+            this.error(new RangeError("Invalid WebSocket frame: RSV1 must be clear"), 1002);
+            return;
+          }
+          this._fin = (buf[0] & 128) === 128;
+          this._opcode = buf[0] & 15;
+          this._payloadLength = buf[1] & 127;
+          if (this._opcode === 0) {
+            if (compressed) {
+              this.error(new RangeError("Invalid WebSocket frame: RSV1 must be clear"), 1002);
+              return;
+            }
+            if (!this._fragmented) {
+              this.error(new RangeError("Invalid WebSocket frame: invalid opcode 0"), 1002);
+              return;
+            } else {
+              this._opcode = this._fragmented;
+            }
+          } else if (this._opcode === 1 || this._opcode === 2) {
+            if (this._fragmented) {
+              this.error(new RangeError(`Invalid WebSocket frame: invalid opcode ${this._opcode}`), 1002);
+              return;
+            }
+            this._compressed = compressed;
+          } else if (this._opcode > 7 && this._opcode < 11) {
+            if (!this._fin) {
+              this.error(new RangeError("Invalid WebSocket frame: FIN must be set"), 1002);
+              return;
+            }
+            if (compressed) {
+              this.error(new RangeError("Invalid WebSocket frame: RSV1 must be clear"), 1002);
+              return;
+            }
+            if (this._payloadLength > 125) {
+              this.error(new RangeError(`Invalid WebSocket frame: invalid payload length ${this._payloadLength}`), 1002);
+              return;
+            }
+          } else {
+            this.error(new RangeError(`Invalid WebSocket frame: invalid opcode ${this._opcode}`), 1002);
+            return;
+          }
+          if (!this._fin && !this._fragmented) this._fragmented = this._opcode;
+          this._masked = (buf[1] & 128) === 128;
+          if (this._payloadLength === 126) this._state = GET_PAYLOAD_LENGTH_16;else if (this._payloadLength === 127) this._state = GET_PAYLOAD_LENGTH_64;else this.haveLength();
+        }
+        /**
+         * Gets extended payload length (7+16).
+         *
+         * @private
+         */
+      }, {
+        key: "getPayloadLength16",
+        value: function getPayloadLength16() {
+          var buf = this.consume(2);
+          if (buf === null) return;
+          this._payloadLength = buf.readUInt16BE(0, true);
+          this.haveLength();
+        }
+        /**
+         * Gets extended payload length (7+64).
+         *
+         * @private
+         */
+      }, {
+        key: "getPayloadLength64",
+        value: function getPayloadLength64() {
+          var buf = this.consume(8);
+          if (buf === null) return;
+          var num = buf.readUInt32BE(0, true);
+          if (num > Math.pow(2, 53 - 32) - 1) {
+            this.error(new RangeError("Unsupported WebSocket frame: payload length > 2^53 - 1"), 1009);
+            return;
+          }
+          this._payloadLength = num * Math.pow(2, 32) + buf.readUInt32BE(4, true);
+          this.haveLength();
+        }
+        /**
+         * Payload length has been read.
+         *
+         * @private
+         */
+      }, {
+        key: "haveLength",
+        value: function haveLength() {
+          if (this._opcode < 8 && this.maxPayloadExceeded(this._payloadLength)) {
+            return;
+          }
+          if (this._masked) this._state = GET_MASK;else this._state = GET_DATA;
+        }
+        /**
+         * Reads mask bytes.
+         *
+         * @private
+         */
+      }, {
+        key: "getMask",
+        value: function getMask() {
+          this._mask = this.consume(4);
+          if (this._mask === null) return;
+          this._state = GET_DATA;
+        }
+        /**
+         * Reads data bytes.
+         *
+         * @private
+         */
+      }, {
+        key: "getData",
+        value: function getData() {
+          var data = constants.EMPTY_BUFFER;
+          if (this._payloadLength) {
+            data = this.consume(this._payloadLength);
+            if (data === null) return;
+            if (this._masked) bufferUtil.unmask(data, this._mask);
+          }
+          if (this._opcode > 7) {
+            this.controlMessage(data);
+          } else if (this._compressed) {
+            this._state = INFLATING;
+            this.decompress(data);
+          } else if (this.pushFragment(data)) {
+            this.dataMessage();
+          }
+        }
+        /**
+         * Decompresses data.
+         *
+         * @param {Buffer} data Compressed data
+         * @private
+         */
+      }, {
+        key: "decompress",
+        value: function decompress(data) {
+          var _this9 = this;
+          var perMessageDeflate = this._extensions[PerMessageDeflate.extensionName];
+          perMessageDeflate.decompress(data, this._fin, function (err, buf) {
+            if (err) {
+              _this9.error(err, err.closeCode === 1009 ? 1009 : 1007);
+              return;
+            }
+            if (_this9.pushFragment(buf)) _this9.dataMessage();
+            _this9.startLoop();
+          });
+        }
+        /**
+         * Handles a data message.
+         *
+         * @private
+         */
+      }, {
+        key: "dataMessage",
+        value: function dataMessage() {
+          if (this._fin) {
+            var messageLength = this._messageLength;
+            var fragments = this._fragments;
+            this._totalPayloadLength = 0;
+            this._messageLength = 0;
+            this._fragmented = 0;
+            this._fragments = [];
+            if (this._opcode === 2) {
+              var data;
+              if (this._binaryType === "nodebuffer") {
+                data = toBuffer(fragments, messageLength);
+              } else if (this._binaryType === "arraybuffer") {
+                data = toArrayBuffer(toBuffer(fragments, messageLength));
+              } else {
+                data = fragments;
+              }
+              this.onmessage(data);
+            } else {
+              var buf = toBuffer(fragments, messageLength);
+              if (!validation.isValidUTF8(buf)) {
+                this.error(new Error("Invalid WebSocket frame: invalid UTF-8 sequence"), 1007);
+                return;
+              }
+              this.onmessage(buf.toString());
+            }
+          }
+          this._state = GET_INFO;
+        }
+        /**
+         * Handles a control message.
+         *
+         * @param {Buffer} data Data to handle
+         * @private
+         */
+      }, {
+        key: "controlMessage",
+        value: function controlMessage(data) {
+          if (this._opcode === 8) {
+            if (data.length === 0) {
+              this._loop = false;
+              this.onclose(1005, "");
+              this.cleanup(this._cleanupCallback);
+            } else if (data.length === 1) {
+              this.error(new RangeError("Invalid WebSocket frame: invalid payload length 1"), 1002);
+            } else {
+              var code = data.readUInt16BE(0, true);
+              if (!validation.isValidStatusCode(code)) {
+                this.error(new RangeError(`Invalid WebSocket frame: invalid status code ${code}`), 1002);
+                return;
+              }
+              var buf = data.slice(2);
+              if (!validation.isValidUTF8(buf)) {
+                this.error(new Error("Invalid WebSocket frame: invalid UTF-8 sequence"), 1007);
+                return;
+              }
+              this._loop = false;
+              this.onclose(code, buf.toString());
+              this.cleanup(this._cleanupCallback);
+            }
+            return;
+          }
+          if (this._opcode === 9) this.onping(data);else this.onpong(data);
+          this._state = GET_INFO;
+        }
+        /**
+         * Handles an error.
+         *
+         * @param {Error} err The error
+         * @param {Number} code Close code
+         * @private
+         */
+      }, {
+        key: "error",
+        value: function error(err, code) {
+          this._hadError = true;
+          this._loop = false;
+          this.onerror(err, code);
+          this.cleanup(this._cleanupCallback);
+        }
+        /**
+         * Checks payload size, disconnects socket when it exceeds `maxPayload`.
+         *
+         * @param {Number} length Payload length
+         * @private
+         */
+      }, {
+        key: "maxPayloadExceeded",
+        value: function maxPayloadExceeded(length) {
+          if (length === 0 || this._maxPayload < 1) return false;
+          var fullLength = this._totalPayloadLength + length;
+          if (fullLength <= this._maxPayload) {
+            this._totalPayloadLength = fullLength;
+            return false;
+          }
+          this.error(new RangeError("Max payload size exceeded"), 1009);
+          return true;
+        }
+        /**
+         * Appends a fragment in the fragments array after checking that the sum of
+         * fragment lengths does not exceed `maxPayload`.
+         *
+         * @param {Buffer} fragment The fragment to add
+         * @return {Boolean} `true` if `maxPayload` is not exceeded, else `false`
+         * @private
+         */
+      }, {
+        key: "pushFragment",
+        value: function pushFragment(fragment) {
+          if (fragment.length === 0) return true;
+          var totalLength = this._messageLength + fragment.length;
+          if (this._maxPayload < 1 || totalLength <= this._maxPayload) {
+            this._messageLength = totalLength;
+            this._fragments.push(fragment);
+            return true;
+          }
+          this.error(new RangeError("Max payload size exceeded"), 1009);
+          return false;
+        }
+        /**
+         * Releases resources used by the receiver.
+         *
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "cleanup",
+        value: function cleanup(cb) {
+          if (this._extensions === null) {
+            if (cb) cb();
+            return;
+          }
+          if (!this._hadError && (this._loop || this._state === INFLATING)) {
+            this._cleanupCallback = cb;
+            this._isCleaningUp = true;
+            return;
+          }
+          this._extensions = null;
+          this._fragments = null;
+          this._buffers = null;
+          this._mask = null;
+          this._cleanupCallback = null;
+          this.onmessage = null;
+          this.onclose = null;
+          this.onerror = null;
+          this.onping = null;
+          this.onpong = null;
+          if (cb) cb();
+        }
+      }]);
+    }();
+    module2.exports = Receiver;
+    function toBuffer(fragments, messageLength) {
+      if (fragments.length === 1) return fragments[0];
+      if (fragments.length > 1) return bufferUtil.concat(fragments, messageLength);
+      return constants.EMPTY_BUFFER;
+    }
+    function toArrayBuffer(buf) {
+      if (buf.byteOffset === 0 && buf.byteLength === buf.buffer.byteLength) {
+        return buf.buffer;
+      }
+      return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/sender.js
+var require_sender = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/sender.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var crypto2 = require("crypto");
+    var PerMessageDeflate = require_permessage_deflate();
+    var bufferUtil = require_buffer_util();
+    var validation = require_validation();
+    var constants = require_constants();
+    var Buffer2 = safeBuffer.Buffer;
+    var Sender = /*#__PURE__*/function () {
+      /**
+       * Creates a Sender instance.
+       *
+       * @param {net.Socket} socket The connection socket
+       * @param {Object} extensions An object containing the negotiated extensions
+       */
+      function _Sender(socket, extensions) {
+        _classCallCheck(this, _Sender);
+        this._extensions = extensions || {};
+        this._socket = socket;
+        this._firstFragment = true;
+        this._compress = false;
+        this._bufferedBytes = 0;
+        this._deflating = false;
+        this._queue = [];
+      }
+      /**
+       * Frames a piece of data according to the HyBi WebSocket protocol.
+       *
+       * @param {Buffer} data The data to frame
+       * @param {Object} options Options object
+       * @param {Number} options.opcode The opcode
+       * @param {Boolean} options.readOnly Specifies whether `data` can be modified
+       * @param {Boolean} options.fin Specifies whether or not to set the FIN bit
+       * @param {Boolean} options.mask Specifies whether or not to mask `data`
+       * @param {Boolean} options.rsv1 Specifies whether or not to set the RSV1 bit
+       * @return {Buffer[]} The framed data as a list of `Buffer` instances
+       * @public
+       */
+      return _createClass(_Sender, [{
+        key: "close",
+        value:
+        /**
+         * Sends a close message to the other peer.
+         *
+         * @param {(Number|undefined)} code The status code component of the body
+         * @param {String} data The message component of the body
+         * @param {Boolean} mask Specifies whether or not to mask the message
+         * @param {Function} cb Callback
+         * @public
+         */
+        function close(code, data, mask, cb) {
+          var buf;
+          if (code === void 0) {
+            buf = constants.EMPTY_BUFFER;
+          } else if (typeof code !== "number" || !validation.isValidStatusCode(code)) {
+            throw new TypeError("First argument must be a valid error code number");
+          } else if (data === void 0 || data === "") {
+            buf = Buffer2.allocUnsafe(2);
+            buf.writeUInt16BE(code, 0, true);
+          } else {
+            buf = Buffer2.allocUnsafe(2 + Buffer2.byteLength(data));
+            buf.writeUInt16BE(code, 0, true);
+            buf.write(data, 2);
+          }
+          if (this._deflating) {
+            this.enqueue([this.doClose, buf, mask, cb]);
+          } else {
+            this.doClose(buf, mask, cb);
+          }
+        }
+        /**
+         * Frames and sends a close message.
+         *
+         * @param {Buffer} data The message to send
+         * @param {Boolean} mask Specifies whether or not to mask `data`
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "doClose",
+        value: function doClose(data, mask, cb) {
+          this.sendFrame(_Sender.frame(data, {
+            fin: true,
+            rsv1: false,
+            opcode: 8,
+            mask,
+            readOnly: false
+          }), cb);
+        }
+        /**
+         * Sends a ping message to the other peer.
+         *
+         * @param {*} data The message to send
+         * @param {Boolean} mask Specifies whether or not to mask `data`
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "ping",
+        value: function ping(data, mask, cb) {
+          var readOnly = true;
+          if (!Buffer2.isBuffer(data)) {
+            if (data instanceof ArrayBuffer) {
+              data = Buffer2.from(data);
+            } else if (ArrayBuffer.isView(data)) {
+              data = viewToBuffer(data);
+            } else {
+              data = Buffer2.from(data);
+              readOnly = false;
+            }
+          }
+          if (this._deflating) {
+            this.enqueue([this.doPing, data, mask, readOnly, cb]);
+          } else {
+            this.doPing(data, mask, readOnly, cb);
+          }
+        }
+        /**
+         * Frames and sends a ping message.
+         *
+         * @param {*} data The message to send
+         * @param {Boolean} mask Specifies whether or not to mask `data`
+         * @param {Boolean} readOnly Specifies whether `data` can be modified
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "doPing",
+        value: function doPing(data, mask, readOnly, cb) {
+          this.sendFrame(_Sender.frame(data, {
+            fin: true,
+            rsv1: false,
+            opcode: 9,
+            mask,
+            readOnly
+          }), cb);
+        }
+        /**
+         * Sends a pong message to the other peer.
+         *
+         * @param {*} data The message to send
+         * @param {Boolean} mask Specifies whether or not to mask `data`
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "pong",
+        value: function pong(data, mask, cb) {
+          var readOnly = true;
+          if (!Buffer2.isBuffer(data)) {
+            if (data instanceof ArrayBuffer) {
+              data = Buffer2.from(data);
+            } else if (ArrayBuffer.isView(data)) {
+              data = viewToBuffer(data);
+            } else {
+              data = Buffer2.from(data);
+              readOnly = false;
+            }
+          }
+          if (this._deflating) {
+            this.enqueue([this.doPong, data, mask, readOnly, cb]);
+          } else {
+            this.doPong(data, mask, readOnly, cb);
+          }
+        }
+        /**
+         * Frames and sends a pong message.
+         *
+         * @param {*} data The message to send
+         * @param {Boolean} mask Specifies whether or not to mask `data`
+         * @param {Boolean} readOnly Specifies whether `data` can be modified
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "doPong",
+        value: function doPong(data, mask, readOnly, cb) {
+          this.sendFrame(_Sender.frame(data, {
+            fin: true,
+            rsv1: false,
+            opcode: 10,
+            mask,
+            readOnly
+          }), cb);
+        }
+        /**
+         * Sends a data message to the other peer.
+         *
+         * @param {*} data The message to send
+         * @param {Object} options Options object
+         * @param {Boolean} options.compress Specifies whether or not to compress `data`
+         * @param {Boolean} options.binary Specifies whether `data` is binary or text
+         * @param {Boolean} options.fin Specifies whether the fragment is the last one
+         * @param {Boolean} options.mask Specifies whether or not to mask `data`
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "send",
+        value: function send(data, options, cb) {
+          var opcode = options.binary ? 2 : 1;
+          var rsv1 = options.compress;
+          var readOnly = true;
+          if (!Buffer2.isBuffer(data)) {
+            if (data instanceof ArrayBuffer) {
+              data = Buffer2.from(data);
+            } else if (ArrayBuffer.isView(data)) {
+              data = viewToBuffer(data);
+            } else {
+              data = Buffer2.from(data);
+              readOnly = false;
+            }
+          }
+          var perMessageDeflate = this._extensions[PerMessageDeflate.extensionName];
+          if (this._firstFragment) {
+            this._firstFragment = false;
+            if (rsv1 && perMessageDeflate) {
+              rsv1 = data.length >= perMessageDeflate._threshold;
+            }
+            this._compress = rsv1;
+          } else {
+            rsv1 = false;
+            opcode = 0;
+          }
+          if (options.fin) this._firstFragment = true;
+          if (perMessageDeflate) {
+            var opts = {
+              fin: options.fin,
+              rsv1,
+              opcode,
+              mask: options.mask,
+              readOnly
+            };
+            if (this._deflating) {
+              this.enqueue([this.dispatch, data, this._compress, opts, cb]);
+            } else {
+              this.dispatch(data, this._compress, opts, cb);
+            }
+          } else {
+            this.sendFrame(_Sender.frame(data, {
+              fin: options.fin,
+              rsv1: false,
+              opcode,
+              mask: options.mask,
+              readOnly
+            }), cb);
+          }
+        }
+        /**
+         * Dispatches a data message.
+         *
+         * @param {Buffer} data The message to send
+         * @param {Boolean} compress Specifies whether or not to compress `data`
+         * @param {Object} options Options object
+         * @param {Number} options.opcode The opcode
+         * @param {Boolean} options.readOnly Specifies whether `data` can be modified
+         * @param {Boolean} options.fin Specifies whether or not to set the FIN bit
+         * @param {Boolean} options.mask Specifies whether or not to mask `data`
+         * @param {Boolean} options.rsv1 Specifies whether or not to set the RSV1 bit
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "dispatch",
+        value: function dispatch(data, compress, options, cb) {
+          var _this0 = this;
+          if (!compress) {
+            this.sendFrame(_Sender.frame(data, options), cb);
+            return;
+          }
+          var perMessageDeflate = this._extensions[PerMessageDeflate.extensionName];
+          this._deflating = true;
+          perMessageDeflate.compress(data, options.fin, function (_, buf) {
+            options.readOnly = false;
+            _this0.sendFrame(_Sender.frame(buf, options), cb);
+            _this0._deflating = false;
+            _this0.dequeue();
+          });
+        }
+        /**
+         * Executes queued send operations.
+         *
+         * @private
+         */
+      }, {
+        key: "dequeue",
+        value: function dequeue() {
+          while (!this._deflating && this._queue.length) {
+            var params = this._queue.shift();
+            this._bufferedBytes -= params[1].length;
+            params[0].apply(this, params.slice(1));
+          }
+        }
+        /**
+         * Enqueues a send operation.
+         *
+         * @param {Array} params Send operation parameters.
+         * @private
+         */
+      }, {
+        key: "enqueue",
+        value: function enqueue(params) {
+          this._bufferedBytes += params[1].length;
+          this._queue.push(params);
+        }
+        /**
+         * Sends a frame.
+         *
+         * @param {Buffer[]} list The frame to send
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "sendFrame",
+        value: function sendFrame(list, cb) {
+          if (list.length === 2) {
+            this._socket.write(list[0]);
+            this._socket.write(list[1], cb);
+          } else {
+            this._socket.write(list[0], cb);
+          }
+        }
+      }], [{
+        key: "frame",
+        value: function frame(data, options) {
+          var merge = data.length < 1024 || options.mask && options.readOnly;
+          var offset = options.mask ? 6 : 2;
+          var payloadLength = data.length;
+          if (data.length >= 65536) {
+            offset += 8;
+            payloadLength = 127;
+          } else if (data.length > 125) {
+            offset += 2;
+            payloadLength = 126;
+          }
+          var target = Buffer2.allocUnsafe(merge ? data.length + offset : offset);
+          target[0] = options.fin ? options.opcode | 128 : options.opcode;
+          if (options.rsv1) target[0] |= 64;
+          if (payloadLength === 126) {
+            target.writeUInt16BE(data.length, 2, true);
+          } else if (payloadLength === 127) {
+            target.writeUInt32BE(0, 2, true);
+            target.writeUInt32BE(data.length, 6, true);
+          }
+          if (!options.mask) {
+            target[1] = payloadLength;
+            if (merge) {
+              data.copy(target, offset);
+              return [target];
+            }
+            return [target, data];
+          }
+          var mask = crypto2.randomBytes(4);
+          target[1] = payloadLength | 128;
+          target[offset - 4] = mask[0];
+          target[offset - 3] = mask[1];
+          target[offset - 2] = mask[2];
+          target[offset - 1] = mask[3];
+          if (merge) {
+            bufferUtil.mask(data, mask, target, offset, data.length);
+            return [target];
+          }
+          bufferUtil.mask(data, mask, data, 0, data.length);
+          return [target, data];
+        }
+      }]);
+    }();
+    module2.exports = Sender;
+    function viewToBuffer(view) {
+      var buf = Buffer2.from(view.buffer);
+      if (view.byteLength !== view.buffer.byteLength) {
+        return buf.slice(view.byteOffset, view.byteOffset + view.byteLength);
+      }
+      return buf;
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/websocket.js
+var require_websocket = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/websocket.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var EventEmitter = require("events");
+    var crypto2 = require("crypto");
+    var https = require("https");
+    var http2 = require("http");
+    var url = require("url");
+    var PerMessageDeflate = require_permessage_deflate();
+    var EventTarget = require_event_target();
+    var extension = require_extension();
+    var constants = require_constants();
+    var Receiver = require_receiver();
+    var Sender = require_sender();
+    var readyStates = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
+    var protocolVersions = [8, 13];
+    var closeTimeout = 30 * 1e3;
+    var WebSocket2 = /*#__PURE__*/function (_EventEmitter) {
+      /**
+       * Create a new `WebSocket`.
+       *
+       * @param {String} address The URL to which to connect
+       * @param {(String|String[])} protocols The subprotocols
+       * @param {Object} options Connection options
+       */
+      function _WebSocket(address, protocols, options) {
+        var _this1;
+        _classCallCheck(this, _WebSocket);
+        _this1 = _callSuper(this, _WebSocket);
+        _this1.readyState = _WebSocket.CONNECTING;
+        _this1.protocol = "";
+        _this1._binaryType = constants.BINARY_TYPES[0];
+        _this1._finalize = _this1.finalize.bind(_this1);
+        _this1._closeFrameReceived = false;
+        _this1._closeFrameSent = false;
+        _this1._closeMessage = "";
+        _this1._closeTimer = null;
+        _this1._finalized = false;
+        _this1._closeCode = 1006;
+        _this1._extensions = {};
+        _this1._isServer = true;
+        _this1._receiver = null;
+        _this1._sender = null;
+        _this1._socket = null;
+        _this1._error = null;
+        if (address !== null) {
+          if (!protocols) {
+            protocols = [];
+          } else if (typeof protocols === "string") {
+            protocols = [protocols];
+          } else if (!Array.isArray(protocols)) {
+            options = protocols;
+            protocols = [];
+          }
+          initAsClient.call(_this1, address, protocols, options);
+        }
+        return _this1;
+      }
+      _inherits(_WebSocket, _EventEmitter);
+      return _createClass(_WebSocket, [{
+        key: "CONNECTING",
+        get: function get() {
+          return _WebSocket.CONNECTING;
+        }
+      }, {
+        key: "CLOSING",
+        get: function get() {
+          return _WebSocket.CLOSING;
+        }
+      }, {
+        key: "CLOSED",
+        get: function get() {
+          return _WebSocket.CLOSED;
+        }
+      }, {
+        key: "OPEN",
+        get: function get() {
+          return _WebSocket.OPEN;
+        }
+        /**
+         * This deviates from the WHATWG interface since ws doesn't support the required
+         * default "blob" type (instead we define a custom "nodebuffer" type).
+         *
+         * @type {String}
+         */
+      }, {
+        key: "binaryType",
+        get: function get() {
+          return this._binaryType;
+        },
+        set: function set(type) {
+          if (constants.BINARY_TYPES.indexOf(type) < 0) return;
+          this._binaryType = type;
+          if (this._receiver) this._receiver._binaryType = type;
+        }
+        /**
+         * @type {Number}
+         */
+      }, {
+        key: "bufferedAmount",
+        get: function get() {
+          if (!this._socket) return 0;
+          return (this._socket.bufferSize || 0) + this._sender._bufferedBytes;
+        }
+        /**
+         * @type {String}
+         */
+      }, {
+        key: "extensions",
+        get: function get() {
+          return Object.keys(this._extensions).join();
+        }
+        /**
+         * Set up the socket and the internal resources.
+         *
+         * @param {net.Socket} socket The network socket between the server and client
+         * @param {Buffer} head The first packet of the upgraded stream
+         * @param {Number} maxPayload The maximum allowed message size
+         * @private
+         */
+      }, {
+        key: "setSocket",
+        value: function setSocket(socket, head, maxPayload) {
+          var _this10 = this;
+          socket.setTimeout(0);
+          socket.setNoDelay();
+          socket.on("close", this._finalize);
+          socket.on("error", this._finalize);
+          socket.on("end", this._finalize);
+          this._receiver = new Receiver(this._extensions, maxPayload, this.binaryType);
+          this._sender = new Sender(socket, this._extensions);
+          this._socket = socket;
+          if (head.length > 0) socket.unshift(head);
+          socket.on("data", this._receiver.add);
+          this._receiver.onmessage = function (data) {
+            return _this10.emit("message", data);
+          };
+          this._receiver.onping = function (data) {
+            _this10.pong(data, !_this10._isServer, constants.NOOP);
+            _this10.emit("ping", data);
+          };
+          this._receiver.onpong = function (data) {
+            return _this10.emit("pong", data);
+          };
+          this._receiver.onclose = function (code, reason) {
+            _this10._socket.removeListener("data", _this10._receiver.add);
+            _this10._closeFrameReceived = true;
+            _this10._closeMessage = reason;
+            _this10._closeCode = code;
+            if (code === 1005) _this10.close();else _this10.close(code, reason);
+          };
+          this._receiver.onerror = function (error, code) {
+            if (_this10._error) return;
+            _this10._closeCode = code;
+            if (!_this10._finalized) _this10.finalize(error);else _this10.emit("error", error);
+          };
+          this.readyState = _WebSocket.OPEN;
+          this.emit("open");
+        }
+        /**
+         * Clean up internal resources and emit the `'close'` event.
+         *
+         * @param {(Boolean|Error)} error Indicates whether or not an error occurred
+         * @private
+         */
+      }, {
+        key: "finalize",
+        value: function finalize(error) {
+          var _this11 = this;
+          if (this._finalized) return;
+          this.readyState = _WebSocket.CLOSING;
+          this._finalized = true;
+          if (!this._socket) {
+            this.emit("error", error);
+            this.readyState = _WebSocket.CLOSED;
+            this.emit("close", this._closeCode, this._closeMessage);
+            return;
+          }
+          clearTimeout(this._closeTimer);
+          this._socket.removeListener("data", this._receiver.add);
+          this._socket.removeListener("close", this._finalize);
+          this._socket.removeListener("error", this._finalize);
+          this._socket.removeListener("end", this._finalize);
+          this._socket.on("error", constants.NOOP);
+          if (error) {
+            if (error !== true) this._error = error;
+            this._socket.destroy();
+          } else {
+            this._socket.end();
+          }
+          this._receiver.cleanup(function () {
+            var err = _this11._error;
+            if (err) {
+              _this11._error = null;
+              _this11.emit("error", err);
+            }
+            _this11.readyState = _WebSocket.CLOSED;
+            if (_this11._extensions[PerMessageDeflate.extensionName]) {
+              _this11._extensions[PerMessageDeflate.extensionName].cleanup();
+            }
+            _this11.emit("close", _this11._closeCode, _this11._closeMessage);
+          });
+        }
+        /**
+         * Start a closing handshake.
+         *
+         *            +----------+     +-----------+   +----------+
+         *     + - - -|ws.close()|---->|close frame|-->|ws.close()|- - - -
+         *            +----------+     +-----------+   +----------+       |
+         *     |      +----------+     +-----------+         |
+         *            |ws.close()|<----|close frame|<--------+            |
+         *            +----------+     +-----------+         |
+         *  CLOSING         |              +---+             |         CLOSING
+         *                  |          +---|fin|<------------+
+         *     |            |          |   +---+                          |
+         *                  |          |   +---+      +-------------+
+         *     |            +----------+-->|fin|----->|ws.finalize()| - - +
+         *                             |   +---+      +-------------+
+         *     |     +-------------+   |
+         *      - - -|ws.finalize()|<--+
+         *           +-------------+
+         *
+         * @param {Number} code Status code explaining why the connection is closing
+         * @param {String} data A string explaining why the connection is closing
+         * @public
+         */
+      }, {
+        key: "close",
+        value: function close(code, data) {
+          var _this12 = this;
+          if (this.readyState === _WebSocket.CLOSED) return;
+          if (this.readyState === _WebSocket.CONNECTING) {
+            this._req.abort();
+            this.finalize(new Error("WebSocket was closed before the connection was established"));
+            return;
+          }
+          if (this.readyState === _WebSocket.CLOSING) {
+            if (this._closeFrameSent && this._closeFrameReceived) this._socket.end();
+            return;
+          }
+          this.readyState = _WebSocket.CLOSING;
+          this._sender.close(code, data, !this._isServer, function (err) {
+            if (err) return;
+            _this12._closeFrameSent = true;
+            if (!_this12._finalized) {
+              if (_this12._closeFrameReceived) _this12._socket.end();
+              _this12._closeTimer = setTimeout(_this12._finalize, closeTimeout, true);
+            }
+          });
+        }
+        /**
+         * Send a ping.
+         *
+         * @param {*} data The data to send
+         * @param {Boolean} mask Indicates whether or not to mask `data`
+         * @param {Function} cb Callback which is executed when the ping is sent
+         * @public
+         */
+      }, {
+        key: "ping",
+        value: function ping(data, mask, cb) {
+          if (typeof data === "function") {
+            cb = data;
+            data = mask = void 0;
+          } else if (typeof mask === "function") {
+            cb = mask;
+            mask = void 0;
+          }
+          if (this.readyState !== _WebSocket.OPEN) {
+            var err = new Error(`WebSocket is not open: readyState ${this.readyState} (${readyStates[this.readyState]})`);
+            if (cb) return cb(err);
+            throw err;
+          }
+          if (typeof data === "number") data = data.toString();
+          if (mask === void 0) mask = !this._isServer;
+          this._sender.ping(data || constants.EMPTY_BUFFER, mask, cb);
+        }
+        /**
+         * Send a pong.
+         *
+         * @param {*} data The data to send
+         * @param {Boolean} mask Indicates whether or not to mask `data`
+         * @param {Function} cb Callback which is executed when the pong is sent
+         * @public
+         */
+      }, {
+        key: "pong",
+        value: function pong(data, mask, cb) {
+          if (typeof data === "function") {
+            cb = data;
+            data = mask = void 0;
+          } else if (typeof mask === "function") {
+            cb = mask;
+            mask = void 0;
+          }
+          if (this.readyState !== _WebSocket.OPEN) {
+            var err = new Error(`WebSocket is not open: readyState ${this.readyState} (${readyStates[this.readyState]})`);
+            if (cb) return cb(err);
+            throw err;
+          }
+          if (typeof data === "number") data = data.toString();
+          if (mask === void 0) mask = !this._isServer;
+          this._sender.pong(data || constants.EMPTY_BUFFER, mask, cb);
+        }
+        /**
+         * Send a data message.
+         *
+         * @param {*} data The message to send
+         * @param {Object} options Options object
+         * @param {Boolean} options.compress Specifies whether or not to compress `data`
+         * @param {Boolean} options.binary Specifies whether `data` is binary or text
+         * @param {Boolean} options.fin Specifies whether the fragment is the last one
+         * @param {Boolean} options.mask Specifies whether or not to mask `data`
+         * @param {Function} cb Callback which is executed when data is written out
+         * @public
+         */
+      }, {
+        key: "send",
+        value: function send(data, options, cb) {
+          if (typeof options === "function") {
+            cb = options;
+            options = {};
+          }
+          if (this.readyState !== _WebSocket.OPEN) {
+            var err = new Error(`WebSocket is not open: readyState ${this.readyState} (${readyStates[this.readyState]})`);
+            if (cb) return cb(err);
+            throw err;
+          }
+          if (typeof data === "number") data = data.toString();
+          var opts = Object.assign({
+            binary: typeof data !== "string",
+            mask: !this._isServer,
+            compress: true,
+            fin: true
+          }, options);
+          if (!this._extensions[PerMessageDeflate.extensionName]) {
+            opts.compress = false;
+          }
+          this._sender.send(data || constants.EMPTY_BUFFER, opts, cb);
+        }
+        /**
+         * Forcibly close the connection.
+         *
+         * @public
+         */
+      }, {
+        key: "terminate",
+        value: function terminate() {
+          if (this.readyState === _WebSocket.CLOSED) return;
+          if (this.readyState === _WebSocket.CONNECTING) {
+            this._req.abort();
+            this.finalize(new Error("WebSocket was closed before the connection was established"));
+            return;
+          }
+          this.finalize(true);
+        }
+      }]);
+    }(EventEmitter);
+    readyStates.forEach(function (readyState, i) {
+      WebSocket2[readyStates[i]] = i;
+    });
+    ["open", "error", "close", "message"].forEach(function (method) {
+      Object.defineProperty(WebSocket2.prototype, `on${method}`, {
+        /**
+         * Return the listener of the event.
+         *
+         * @return {(Function|undefined)} The event listener or `undefined`
+         * @public
+         */
+        get() {
+          var listeners = this.listeners(method);
+          for (var i = 0; i < listeners.length; i++) {
+            if (listeners[i]._listener) return listeners[i]._listener;
+          }
+        },
+        /**
+         * Add a listener for the event.
+         *
+         * @param {Function} listener The listener to add
+         * @public
+         */
+        set(listener) {
+          var listeners = this.listeners(method);
+          for (var i = 0; i < listeners.length; i++) {
+            if (listeners[i]._listener) this.removeListener(method, listeners[i]);
+          }
+          this.addEventListener(method, listener);
+        }
+      });
+    });
+    WebSocket2.prototype.addEventListener = EventTarget.addEventListener;
+    WebSocket2.prototype.removeEventListener = EventTarget.removeEventListener;
+    module2.exports = WebSocket2;
+    function initAsClient(address, protocols, options) {
+      var _this13 = this;
+      options = Object.assign({
+        protocolVersion: protocolVersions[1],
+        protocol: protocols.join(","),
+        perMessageDeflate: true,
+        handshakeTimeout: null,
+        localAddress: null,
+        headers: null,
+        family: null,
+        origin: null,
+        agent: null,
+        host: null,
+        //
+        // SSL options.
+        //
+        checkServerIdentity: null,
+        rejectUnauthorized: null,
+        passphrase: null,
+        ciphers: null,
+        ecdhCurve: null,
+        cert: null,
+        key: null,
+        pfx: null,
+        ca: null
+      }, options);
+      if (protocolVersions.indexOf(options.protocolVersion) === -1) {
+        throw new RangeError(`Unsupported protocol version: ${options.protocolVersion} (supported versions: ${protocolVersions.join(", ")})`);
+      }
+      this._isServer = false;
+      this.url = address;
+      var serverUrl = url.parse(address);
+      var isUnixSocket = serverUrl.protocol === "ws+unix:";
+      if (!serverUrl.host && (!isUnixSocket || !serverUrl.path)) {
+        throw new Error(`Invalid URL: ${address}`);
+      }
+      var isSecure = serverUrl.protocol === "wss:" || serverUrl.protocol === "https:";
+      var key = crypto2.randomBytes(16).toString("base64");
+      var httpObj = isSecure ? https : http2;
+      var perMessageDeflate;
+      var requestOptions = {
+        port: serverUrl.port || (isSecure ? 443 : 80),
+        host: serverUrl.hostname,
+        path: "/",
+        headers: {
+          "Sec-WebSocket-Version": options.protocolVersion,
+          "Sec-WebSocket-Key": key,
+          "Connection": "Upgrade",
+          "Upgrade": "websocket"
+        }
+      };
+      if (options.headers) Object.assign(requestOptions.headers, options.headers);
+      if (options.perMessageDeflate) {
+        perMessageDeflate = new PerMessageDeflate(options.perMessageDeflate !== true ? options.perMessageDeflate : {}, false);
+        requestOptions.headers["Sec-WebSocket-Extensions"] = extension.format({
+          [PerMessageDeflate.extensionName]: perMessageDeflate.offer()
+        });
+      }
+      if (options.protocol) {
+        requestOptions.headers["Sec-WebSocket-Protocol"] = options.protocol;
+      }
+      if (options.origin) {
+        if (options.protocolVersion < 13) {
+          requestOptions.headers["Sec-WebSocket-Origin"] = options.origin;
+        } else {
+          requestOptions.headers.Origin = options.origin;
+        }
+      }
+      if (options.host) requestOptions.headers.Host = options.host;
+      if (serverUrl.auth) requestOptions.auth = serverUrl.auth;
+      if (options.localAddress) requestOptions.localAddress = options.localAddress;
+      if (options.family) requestOptions.family = options.family;
+      if (isUnixSocket) {
+        var parts = serverUrl.path.split(":");
+        requestOptions.socketPath = parts[0];
+        requestOptions.path = parts[1];
+      } else if (serverUrl.path) {
+        if (serverUrl.path.charAt(0) !== "/") {
+          requestOptions.path = `/${serverUrl.path}`;
+        } else {
+          requestOptions.path = serverUrl.path;
+        }
+      }
+      var agent = options.agent;
+      if (options.rejectUnauthorized != null || options.checkServerIdentity || options.passphrase || options.ciphers || options.ecdhCurve || options.cert || options.key || options.pfx || options.ca) {
+        if (options.passphrase) requestOptions.passphrase = options.passphrase;
+        if (options.ciphers) requestOptions.ciphers = options.ciphers;
+        if (options.ecdhCurve) requestOptions.ecdhCurve = options.ecdhCurve;
+        if (options.cert) requestOptions.cert = options.cert;
+        if (options.key) requestOptions.key = options.key;
+        if (options.pfx) requestOptions.pfx = options.pfx;
+        if (options.ca) requestOptions.ca = options.ca;
+        if (options.checkServerIdentity) {
+          requestOptions.checkServerIdentity = options.checkServerIdentity;
+        }
+        if (options.rejectUnauthorized != null) {
+          requestOptions.rejectUnauthorized = options.rejectUnauthorized;
+        }
+        if (!agent) agent = new httpObj.Agent(requestOptions);
+      }
+      if (agent) requestOptions.agent = agent;
+      this._req = httpObj.get(requestOptions);
+      if (options.handshakeTimeout) {
+        this._req.setTimeout(options.handshakeTimeout, function () {
+          _this13._req.abort();
+          _this13.finalize(new Error("Opening handshake has timed out"));
+        });
+      }
+      this._req.on("error", function (error) {
+        if (_this13._req.aborted) return;
+        _this13._req = null;
+        _this13.finalize(error);
+      });
+      this._req.on("response", function (res) {
+        if (!_this13.emit("unexpected-response", _this13._req, res)) {
+          _this13._req.abort();
+          _this13.finalize(new Error(`Unexpected server response: ${res.statusCode}`));
+        }
+      });
+      this._req.on("upgrade", function (res, socket, head) {
+        _this13.emit("upgrade", res);
+        if (_this13.readyState !== WebSocket2.CONNECTING) return;
+        _this13._req = null;
+        var digest = crypto2.createHash("sha1").update(key + constants.GUID, "binary").digest("base64");
+        if (res.headers["sec-websocket-accept"] !== digest) {
+          socket.destroy();
+          return _this13.finalize(new Error("Invalid Sec-WebSocket-Accept header"));
+        }
+        var serverProt = res.headers["sec-websocket-protocol"];
+        var protList = (options.protocol || "").split(/, */);
+        var protError;
+        if (!options.protocol && serverProt) {
+          protError = "Server sent a subprotocol but none was requested";
+        } else if (options.protocol && !serverProt) {
+          protError = "Server sent no subprotocol";
+        } else if (serverProt && protList.indexOf(serverProt) === -1) {
+          protError = "Server sent an invalid subprotocol";
+        }
+        if (protError) {
+          socket.destroy();
+          return _this13.finalize(new Error(protError));
+        }
+        if (serverProt) _this13.protocol = serverProt;
+        if (perMessageDeflate) {
+          try {
+            var extensions = extension.parse(res.headers["sec-websocket-extensions"]);
+            if (extensions[PerMessageDeflate.extensionName]) {
+              perMessageDeflate.accept(extensions[PerMessageDeflate.extensionName]);
+              _this13._extensions[PerMessageDeflate.extensionName] = perMessageDeflate;
+            }
+          } catch (err) {
+            socket.destroy();
+            _this13.finalize(new Error("Invalid Sec-WebSocket-Extensions header"));
+            return;
+          }
+        }
+        _this13.setSocket(socket, head, 0);
+      });
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/websocket-server.js
+var require_websocket_server = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/lib/websocket-server.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var safeBuffer = require_safe_buffer();
+    var EventEmitter = require("events");
+    var crypto2 = require("crypto");
+    var http2 = require("http");
+    var url = require("url");
+    var PerMessageDeflate = require_permessage_deflate();
+    var extension = require_extension();
+    var constants = require_constants();
+    var WebSocket2 = require_websocket();
+    var Buffer2 = safeBuffer.Buffer;
+    var WebSocketServer2 = /*#__PURE__*/function (_EventEmitter2) {
+      /**
+       * Create a `WebSocketServer` instance.
+       *
+       * @param {Object} options Configuration options
+       * @param {String} options.host The hostname where to bind the server
+       * @param {Number} options.port The port where to bind the server
+       * @param {http.Server} options.server A pre-created HTTP/S server to use
+       * @param {Function} options.verifyClient An hook to reject connections
+       * @param {Function} options.handleProtocols An hook to handle protocols
+       * @param {String} options.path Accept only connections matching this path
+       * @param {Boolean} options.noServer Enable no server mode
+       * @param {Boolean} options.clientTracking Specifies whether or not to track clients
+       * @param {(Boolean|Object)} options.perMessageDeflate Enable/disable permessage-deflate
+       * @param {Number} options.maxPayload The maximum allowed message size
+       * @param {Function} callback A listener for the `listening` event
+       */
+      function WebSocketServer2(options, callback) {
+        var _this14;
+        _classCallCheck(this, WebSocketServer2);
+        _this14 = _callSuper(this, WebSocketServer2);
+        options = Object.assign({
+          maxPayload: 100 * 1024 * 1024,
+          perMessageDeflate: false,
+          handleProtocols: null,
+          clientTracking: true,
+          verifyClient: null,
+          noServer: false,
+          backlog: null,
+          // use default (511 as implemented in net.js)
+          server: null,
+          host: null,
+          path: null,
+          port: null
+        }, options);
+        if (options.port == null && !options.server && !options.noServer) {
+          throw new TypeError('One of the "port", "server", or "noServer" options must be specified');
+        }
+        if (options.port != null) {
+          _this14._server = http2.createServer(function (req, res) {
+            var body = http2.STATUS_CODES[426];
+            res.writeHead(426, {
+              "Content-Length": body.length,
+              "Content-Type": "text/plain"
+            });
+            res.end(body);
+          });
+          _this14._server.listen(options.port, options.host, options.backlog, callback);
+        } else if (options.server) {
+          _this14._server = options.server;
+        }
+        if (_this14._server) {
+          _this14._removeListeners = addListeners(_this14._server, {
+            listening: _this14.emit.bind(_this14, "listening"),
+            error: _this14.emit.bind(_this14, "error"),
+            upgrade: function upgrade(req, socket, head) {
+              _this14.handleUpgrade(req, socket, head, function (ws) {
+                _this14.emit("connection", ws, req);
+              });
+            }
+          });
+        }
+        if (options.perMessageDeflate === true) options.perMessageDeflate = {};
+        if (options.clientTracking) _this14.clients = /* @__PURE__ */new Set();
+        _this14.options = options;
+        return _this14;
+      }
+      /**
+       * Returns the bound address, the address family name, and port of the server
+       * as reported by the operating system if listening on an IP socket.
+       * If the server is listening on a pipe or UNIX domain socket, the name is
+       * returned as a string.
+       *
+       * @return {(Object|String|null)} The address of the server
+       * @public
+       */
+      _inherits(WebSocketServer2, _EventEmitter2);
+      return _createClass(WebSocketServer2, [{
+        key: "address",
+        value: function address() {
+          if (this.options.noServer) {
+            throw new Error('The server is operating in "noServer" mode');
+          }
+          if (!this._server) return null;
+          return this._server.address();
+        }
+        /**
+         * Close the server.
+         *
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "close",
+        value: function close(cb) {
+          if (this.clients) {
+            var _iterator = _createForOfIteratorHelper(this.clients),
+              _step;
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var client = _step.value;
+                client.terminate();
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+          }
+          var server = this._server;
+          if (server) {
+            this._removeListeners();
+            this._removeListeners = this._server = null;
+            if (this.options.port != null) return server.close(cb);
+          }
+          if (cb) cb();
+        }
+        /**
+         * See if a given request should be handled by this server instance.
+         *
+         * @param {http.IncomingMessage} req Request object to inspect
+         * @return {Boolean} `true` if the request is valid, else `false`
+         * @public
+         */
+      }, {
+        key: "shouldHandle",
+        value: function shouldHandle(req) {
+          if (this.options.path && url.parse(req.url).pathname !== this.options.path) {
+            return false;
+          }
+          return true;
+        }
+        /**
+         * Handle a HTTP Upgrade request.
+         *
+         * @param {http.IncomingMessage} req The request object
+         * @param {net.Socket} socket The network socket between the server and client
+         * @param {Buffer} head The first packet of the upgraded stream
+         * @param {Function} cb Callback
+         * @public
+         */
+      }, {
+        key: "handleUpgrade",
+        value: function handleUpgrade(req, socket, head, cb) {
+          var _this15 = this;
+          socket.on("error", socketOnError);
+          var version = +req.headers["sec-websocket-version"];
+          var extensions = {};
+          if (req.method !== "GET" || req.headers.upgrade.toLowerCase() !== "websocket" || !req.headers["sec-websocket-key"] || version !== 8 && version !== 13 || !this.shouldHandle(req)) {
+            return abortConnection(socket, 400);
+          }
+          if (this.options.perMessageDeflate) {
+            var perMessageDeflate = new PerMessageDeflate(this.options.perMessageDeflate, true, this.options.maxPayload);
+            try {
+              var offers = extension.parse(req.headers["sec-websocket-extensions"]);
+              if (offers[PerMessageDeflate.extensionName]) {
+                perMessageDeflate.accept(offers[PerMessageDeflate.extensionName]);
+                extensions[PerMessageDeflate.extensionName] = perMessageDeflate;
+              }
+            } catch (err) {
+              return abortConnection(socket, 400);
+            }
+          }
+          var protocol = (req.headers["sec-websocket-protocol"] || "").split(/, */);
+          if (this.options.handleProtocols) {
+            protocol = this.options.handleProtocols(protocol, req);
+            if (protocol === false) return abortConnection(socket, 401);
+          } else {
+            protocol = protocol[0];
+          }
+          if (this.options.verifyClient) {
+            var info = {
+              origin: req.headers[`${version === 8 ? "sec-websocket-origin" : "origin"}`],
+              secure: !!(req.connection.authorized || req.connection.encrypted),
+              req
+            };
+            if (this.options.verifyClient.length === 2) {
+              this.options.verifyClient(info, function (verified, code, message) {
+                if (!verified) return abortConnection(socket, code || 401, message);
+                _this15.completeUpgrade(protocol, extensions, req, socket, head, cb);
+              });
+              return;
+            }
+            if (!this.options.verifyClient(info)) return abortConnection(socket, 401);
+          }
+          this.completeUpgrade(protocol, extensions, req, socket, head, cb);
+        }
+        /**
+         * Upgrade the connection to WebSocket.
+         *
+         * @param {String} protocol The chosen subprotocol
+         * @param {Object} extensions The accepted extensions
+         * @param {http.IncomingMessage} req The request object
+         * @param {net.Socket} socket The network socket between the server and client
+         * @param {Buffer} head The first packet of the upgraded stream
+         * @param {Function} cb Callback
+         * @private
+         */
+      }, {
+        key: "completeUpgrade",
+        value: function completeUpgrade(protocol, extensions, req, socket, head, cb) {
+          var _this16 = this;
+          if (!socket.readable || !socket.writable) return socket.destroy();
+          var key = crypto2.createHash("sha1").update(req.headers["sec-websocket-key"] + constants.GUID, "binary").digest("base64");
+          var headers = ["HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: Upgrade", `Sec-WebSocket-Accept: ${key}`];
+          var ws = new WebSocket2(null);
+          if (protocol) {
+            headers.push(`Sec-WebSocket-Protocol: ${protocol}`);
+            ws.protocol = protocol;
+          }
+          if (extensions[PerMessageDeflate.extensionName]) {
+            var params = extensions[PerMessageDeflate.extensionName].params;
+            var value = extension.format({
+              [PerMessageDeflate.extensionName]: [params]
+            });
+            headers.push(`Sec-WebSocket-Extensions: ${value}`);
+            ws._extensions = extensions;
+          }
+          this.emit("headers", headers, req);
+          socket.write(headers.concat("\r\n").join("\r\n"));
+          socket.removeListener("error", socketOnError);
+          ws.setSocket(socket, head, this.options.maxPayload);
+          if (this.clients) {
+            this.clients.add(ws);
+            ws.on("close", function () {
+              return _this16.clients.delete(ws);
+            });
+          }
+          cb(ws);
+        }
+      }]);
+    }(EventEmitter);
+    module2.exports = WebSocketServer2;
+    function addListeners(server, map) {
+      for (var _i = 0, _Object$keys = Object.keys(map); _i < _Object$keys.length; _i++) {
+        var event = _Object$keys[_i];
+        server.on(event, map[event]);
+      }
+      return function removeListeners() {
+        for (var _i2 = 0, _Object$keys2 = Object.keys(map); _i2 < _Object$keys2.length; _i2++) {
+          var _event = _Object$keys2[_i2];
+          server.removeListener(_event, map[_event]);
+        }
+      };
+    }
+    function socketOnError() {
+      this.destroy();
+    }
+    function abortConnection(socket, code, message) {
+      if (socket.writable) {
+        message = message || http2.STATUS_CODES[code];
+        socket.write(`HTTP/1.1 ${code} ${http2.STATUS_CODES[code]}\r
+Connection: close\r
+Content-type: text/html\r
+Content-Length: ${Buffer2.byteLength(message)}\r
+\r
+` + message);
+      }
+      socket.removeListener("error", socketOnError);
+      socket.destroy();
+    }
+  }
+});
+
+// node_modules/.pnpm/ws@4.1.0/node_modules/ws/index.js
+var require_ws = __commonJS({
+  "node_modules/.pnpm/ws@4.1.0/node_modules/ws/index.js"(exports2, module2) {
+    "use strict";
+
+    init_define_WEB_REMOTE_CONTROLLER_ASSETS();
+    var WebSocket2 = require_websocket();
+    WebSocket2.Server = require_websocket_server();
+    WebSocket2.Receiver = require_receiver();
+    WebSocket2.Sender = require_sender();
+    module2.exports = WebSocket2;
   }
 });
 
@@ -543,12 +3167,7 @@ var http = require("http");
 var os = require("os");
 var path = require("path");
 var urlLibrary = require("url");
-var WebSocket;
-try {
-  WebSocket = process.version === "v4.4.3" ? require("ws-old") : require("ws-new");
-} catch (_unused2) {
-  WebSocket = require("ws");
-}
+var WebSocket = require_ws();
 var WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
 var WS_OPEN = 1;
 var _require_protocol = require_protocol(),
@@ -558,7 +3177,7 @@ var _require_protocol = require_protocol(),
   sanitizeTvMessage = _require_protocol.sanitizeTvMessage,
   text = _require_protocol.text;
 var DEFAULT_PORT = 8182;
-var APP_VERSION = "0.2.2";
+var APP_VERSION = "0.2.3";
 var BODY_LIMIT = 32 * 1024;
 var TOKEN_TTL = 30 * 24 * 60 * 60 * 1e3;
 var PIN_TTL = 10 * 60 * 1e3;
@@ -590,7 +3209,7 @@ function hasSameOrigin(request) {
   if (!origin) return true;
   try {
     return parseRequestUrl(origin, origin).host === String(request.headers.host || "");
-  } catch (_unused3) {
+  } catch (_unused2) {
     return false;
   }
 }
@@ -655,7 +3274,7 @@ function readBody(request) {
       try {
         var raw = Buffer.concat(chunks).toString("utf8");
         resolve(raw ? JSON.parse(raw) : {});
-      } catch (_unused4) {
+      } catch (_unused3) {
         reject(Object.assign(new Error("Request body must be valid JSON."), {
           statusCode: 400
         }));
@@ -667,20 +3286,20 @@ function readBody(request) {
 function findLanAddresses() {
   var found = [];
   var interfaces = os.networkInterfaces();
-  for (var _i = 0, _Object$keys = Object.keys(interfaces); _i < _Object$keys.length; _i++) {
-    var name = _Object$keys[_i];
+  for (var _i3 = 0, _Object$keys3 = Object.keys(interfaces); _i3 < _Object$keys3.length; _i3++) {
+    var name = _Object$keys3[_i3];
     var entries = interfaces[name];
-    var _iterator = _createForOfIteratorHelper(entries || []),
-      _step;
+    var _iterator2 = _createForOfIteratorHelper(entries || []),
+      _step2;
     try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var entry = _step.value;
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var entry = _step2.value;
         if (entry && entry.family === "IPv4" && !entry.internal && entry.address) found.push(entry.address);
       }
     } catch (err) {
-      _iterator.e(err);
+      _iterator2.e(err);
     } finally {
-      _iterator.f();
+      _iterator2.f();
     }
   }
   return _toConsumableArray(new Set(found)).sort(function (left, right) {
@@ -784,19 +3403,19 @@ function createRemoteServer() {
   }
   function pruneTokens() {
     var cutoff = Date.now() - TOKEN_TTL;
-    var _iterator2 = _createForOfIteratorHelper(tokens),
-      _step2;
+    var _iterator3 = _createForOfIteratorHelper(tokens),
+      _step3;
     try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var _step2$value = _slicedToArray(_step2.value, 2),
-          token = _step2$value[0],
-          session = _step2$value[1];
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _step3$value = _slicedToArray(_step3.value, 2),
+          token = _step3$value[0],
+          session = _step3$value[1];
         if (session.lastUsed < cutoff) tokens.delete(token);
       }
     } catch (err) {
-      _iterator2.e(err);
+      _iterator3.e(err);
     } finally {
-      _iterator2.f();
+      _iterator3.f();
     }
   }
   function authenticate(request) {
@@ -839,17 +3458,17 @@ function createRemoteServer() {
     if (socket && socket.readyState === WS_OPEN) socket.send(JSON.stringify(message));
   }
   function broadcastPhones(message) {
-    var _iterator3 = _createForOfIteratorHelper(phoneSockets),
-      _step3;
+    var _iterator4 = _createForOfIteratorHelper(phoneSockets),
+      _step4;
     try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var socket = _step3.value;
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var socket = _step4.value;
         send(socket, message);
       }
     } catch (err) {
-      _iterator3.e(err);
+      _iterator4.e(err);
     } finally {
-      _iterator3.f();
+      _iterator4.f();
     }
   }
   function tvIsConnected() {
@@ -1323,7 +3942,7 @@ function createRemoteServer() {
     var url;
     try {
       url = parseRequestUrl(request.url || "/", `http://${request.headers.host || "localhost"}`);
-    } catch (_unused6) {
+    } catch (_unused5) {
       socket.destroy();
       return;
     }
@@ -1353,7 +3972,7 @@ function createRemoteServer() {
             socket.destroy();
             return;
           }
-        } catch (_unused7) {
+        } catch (_unused6) {
           socket.destroy();
           return;
         }
@@ -1381,7 +4000,7 @@ function createRemoteServer() {
       socket.on("message", function (payload) {
         try {
           updateFromTv(JSON.parse(payload.toString("utf8")));
-        } catch (_unused8) {}
+        } catch (_unused7) {}
       });
       socket.on("close", function () {
         if (tvSocket === socket) tvSocket = null;
@@ -1429,17 +4048,17 @@ function createRemoteServer() {
       actualPort = server.address().port;
       rotatePin(true);
       console.log(`[Web Remote TV] Service listening on port ${actualPort}`);
-      var _iterator4 = _createForOfIteratorHelper(lanAddresses),
-        _step4;
+      var _iterator5 = _createForOfIteratorHelper(lanAddresses),
+        _step5;
       try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var address = _step4.value;
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var address = _step5.value;
           console.log(`[Web Remote TV] Controller: http://${address}:${actualPort}/`);
         }
       } catch (err) {
-        _iterator4.e(err);
+        _iterator5.e(err);
       } finally {
-        _iterator4.f();
+        _iterator5.f();
       }
       resolve({
         port: actualPort,
@@ -1470,17 +4089,17 @@ function createRemoteServer() {
   if (typeof maintenance.unref === "function") maintenance.unref();
   function close() {
     clearInterval(maintenance);
-    var _iterator5 = _createForOfIteratorHelper(phoneSockets),
-      _step5;
+    var _iterator6 = _createForOfIteratorHelper(phoneSockets),
+      _step6;
     try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var socket = _step5.value;
+      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+        var socket = _step6.value;
         socket.close();
       }
     } catch (err) {
-      _iterator5.e(err);
+      _iterator6.e(err);
     } finally {
-      _iterator5.f();
+      _iterator6.f();
     }
     if (tvSocket) tvSocket.close();
     if (tvPollWaiter) {
@@ -1521,7 +4140,7 @@ function addTizenNetworkAddress(instance) {
         }
       }, function () {});
     });
-  } catch (_unused9) {}
+  } catch (_unused8) {}
 }
 if (process.env.WEB_REMOTE_NO_AUTOSTART !== "1") {
   var instance = createRemoteServer();

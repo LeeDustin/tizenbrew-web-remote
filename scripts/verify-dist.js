@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
-assert.equal(packageJson.version, '0.2.2');
+assert.equal(packageJson.version, '0.2.3');
 assert.equal(packageJson.websiteURL, 'https://www.bilibili.com/');
 assert.notEqual(
   packageJson.evaluateScriptOnDocumentStart,
@@ -81,5 +81,6 @@ if (previousAutostart === undefined) delete process.env.WEB_REMOTE_NO_AUTOSTART;
 else process.env.WEB_REMOTE_NO_AUTOSTART = previousAutostart;
 
 assert.doesNotMatch(service, /require\(["']node:/);
+assert.doesNotMatch(service, /require\(["']ws(?:-old|-new)?["']\)/, 'WebSocket must be bundled for TizenBrew\'s VM loader.');
 
 console.log('Distribution verification passed.');

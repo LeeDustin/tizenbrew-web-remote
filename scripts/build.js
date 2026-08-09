@@ -28,7 +28,6 @@ async function build() {
       format: 'cjs',
       minify: false,
       sourcemap: false,
-      external: ['ws-old', 'ws-new', 'ws'],
       define: {
         __WEB_REMOTE_CONTROLLER_ASSETS__: JSON.stringify(controllerAssets)
       },
