@@ -14,7 +14,7 @@ async function build() {
 
   const controllerAssets = {};
   for (const file of ['index.html', 'app.js', 'styles.css', 'manifest.webmanifest', 'icon.svg']) {
-    controllerAssets[file] = fs.readFileSync(path.join(root, 'src/controller', file), 'utf8');
+    controllerAssets[file] = fs.readFileSync(path.join(root, 'src/controller', file), 'utf8').replace(/\r\n/g, '\n');
   }
 
   const modernService = path.join(dist, 'service-modern.js');
@@ -28,7 +28,6 @@ async function build() {
       format: 'cjs',
       minify: false,
       sourcemap: false,
-      external: ['ws-old', 'ws-new', 'ws'],
       define: {
         __WEB_REMOTE_CONTROLLER_ASSETS__: JSON.stringify(controllerAssets)
       },

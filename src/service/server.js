@@ -6,12 +6,7 @@ const http = require('http');
 const os = require('os');
 const path = require('path');
 const urlLibrary = require('url');
-let WebSocket;
-try {
-  WebSocket = require(process.version === 'v4.4.3' ? 'ws-old' : 'ws-new');
-} catch {
-  WebSocket = require('ws');
-}
+const WebSocket = require('ws-old');
 const WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
 const WS_OPEN = 1;
 const {
@@ -23,7 +18,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
-const APP_VERSION = '0.2.2';
+const APP_VERSION = '0.2.3';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;

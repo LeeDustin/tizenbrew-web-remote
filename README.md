@@ -67,6 +67,10 @@ The manifest intentionally uses TizenBrew 2.0.5's normal injection mode. Its
 document-start mode can leave the module picker waiting for a debugger event
 instead of navigating to the selected website.
 
+The generated service bundles its legacy WebSocket implementation. TizenBrew's
+VM loader only provides a dependable runtime `require` path for Node core
+modules, so downloaded services must not depend on host package resolution.
+
 ## Security model
 
 Remote websites are untrusted. The local service therefore:
