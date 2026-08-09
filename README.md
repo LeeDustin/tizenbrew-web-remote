@@ -41,6 +41,9 @@ need to compile the source.
 
 ## Phone controls
 
+- If no phone is available, press **Up, Up, Down, Down, OK** on the Samsung TV
+  remote to force the pairing QR and PIN open. This works over site pages and
+  Fill TV, and the manually opened panel stays visible until **Hide** is chosen.
 - Smart view is the default: it opens the relevant player, Bilibili, page-item,
   or manual-control section and hides sections that do not apply. Every section
   remains individually collapsible, and **Show all controls** restores the full
@@ -68,6 +71,25 @@ availability, and subscription-only content remain controlled by Bilibili.
 Cross-origin players are handled by a small, bounded frame bridge. Player sites
 can still reject synthetic clicks, programmatic playback, or fullscreen, so the
 touchpad, directional pad, and activation controls remain the fallback.
+
+## Smart view sections
+
+- **Switch site** is always available and starts collapsed.
+- **Search or enter text** appears when the page exposes a text field, and on
+  Bilibili pages without an active player. It is hidden during playback.
+- **Bilibili site controls** appears only on Bilibili. It opens automatically
+  before playback; during playback it remains collapsed for login, home,
+  quality, and speed settings.
+- **Player controls** appears and opens when a video or supported embedded
+  player is detected. Bilibili also adds danmu, previous/next, and wide mode.
+- **Visible controls** appears on non-player pages when semantic links, buttons,
+  or inputs have been discovered.
+- **Navigation and pointer** appears only when no player or semantic controls
+  were found, unless **Show all controls** is enabled.
+- **Diagnostics and connection** is always available and starts collapsed.
+
+Opening or closing a section is remembered by that phone. **Show all controls**
+reveals every generally applicable section without changing those preferences.
 
 The manifest intentionally uses TizenBrew 2.0.5's normal injection mode. Its
 document-start mode can leave the module picker waiting for a debugger event

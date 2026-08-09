@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.equal(packageJson.packageType, 'mods');
-assert.equal(packageJson.version, '0.2.4');
+assert.equal(packageJson.version, '0.2.5');
 assert.equal(packageJson.websiteURL, 'https://www.bilibili.com/');
 assert.notEqual(
   packageJson.evaluateScriptOnDocumentStart,
@@ -40,6 +40,8 @@ assert.match(injected, /overlay\.qr\.appendChild\(canvas\)/);
 assert.match(injected, /api\/tv-info/);
 assert.match(injected, /keyCode === 10009/);
 assert.match(injected, /tizenhwkey/);
+assert.match(injected, /PAIRING_SEQUENCE/);
+assert.match(injected, /Remote recovery/);
 assert.match(injected, /web-remote-tv-frame-v1/);
 assert.match(injected, /window\.top !== window\.self/);
 

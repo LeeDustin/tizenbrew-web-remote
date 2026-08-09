@@ -464,6 +464,51 @@
     }
   });
 
+  // src/injected/recovery.js
+  var require_recovery = __commonJS({
+    "src/injected/recovery.js"(exports, module) {
+      "use strict";
+      var PAIRING_SEQUENCE = ["up", "up", "down", "down", "ok"];
+      function remoteKey(event) {
+        const code = Number(event && (event.keyCode || event.which));
+        if (code === 38) return "up";
+        if (code === 40) return "down";
+        if (code === 13) return "ok";
+        const key = String(event && (event.key || event.keyName) || "").toLowerCase();
+        if (key === "arrowup" || key === "up") return "up";
+        if (key === "arrowdown" || key === "down") return "down";
+        if (key === "enter" || key === "ok" || key === "done") return "ok";
+        return "";
+      }
+      function createPairingShortcut2(onComplete, options) {
+        const settings = options || {};
+        const now = typeof settings.now === "function" ? settings.now : Date.now;
+        const maximumGap = Number(settings.maximumGap) || 2500;
+        let index = 0;
+        let lastAt = 0;
+        return function pairingShortcut(event) {
+          if (!event || event.repeat) return false;
+          const key = remoteKey(event);
+          const currentTime = now();
+          if (!key || lastAt && currentTime - lastAt > maximumGap) index = 0;
+          lastAt = currentTime;
+          if (!key) return false;
+          if (key === PAIRING_SEQUENCE[index]) index += 1;
+          else index = key === PAIRING_SEQUENCE[0] ? 1 : 0;
+          if (index < PAIRING_SEQUENCE.length) return false;
+          index = 0;
+          lastAt = 0;
+          if (typeof event.preventDefault === "function") event.preventDefault();
+          if (typeof event.stopPropagation === "function") event.stopPropagation();
+          if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+          onComplete();
+          return true;
+        };
+      }
+      module.exports = { PAIRING_SEQUENCE, createPairingShortcut: createPairingShortcut2, remoteKey };
+    }
+  });
+
   // node_modules/.pnpm/qrcode-generator@1.4.4/node_modules/qrcode-generator/qrcode.js
   var require_qrcode = __commonJS({
     "node_modules/.pnpm/qrcode-generator@1.4.4/node_modules/qrcode-generator/qrcode.js"(exports, module) {
@@ -2154,6 +2199,7 @@
   // src/injected/index.js
   var { createPageAdapter, cleanText } = require_adapters();
   var { createQrCanvas } = require_qr();
+  var { createPairingShortcut } = require_recovery();
   var qrcode = require_qrcode();
   var FRAME_CHANNEL = "web-remote-tv-frame-v1";
   var BILIBILI_HOME = "https://www.bilibili.com/";
@@ -2258,6 +2304,8 @@
     let serviceInfo = null;
     let overlay = null;
     let overlayVisible = true;
+    let overlayPinned = false;
+    let overlayHideTimer = null;
     let focusedElement = null;
     let pointerX = Math.round(window.innerWidth / 2);
     let pointerY = Math.round(window.innerHeight / 2);
@@ -2398,10 +2446,11 @@
         <div class="pointer"></div>
         <div class="focus"></div>
       </div>`;
+      root.querySelector(".sub").textContent = "Scan on the same Wi-Fi \xB7 Remote recovery: \u2191 \u2191 \u2193 \u2193 OK";
       const panel = root.querySelector(".panel");
       const chip = root.querySelector(".chip");
       root.querySelector(".min").addEventListener("click", () => setOverlay(false));
-      chip.addEventListener("click", () => setOverlay(true));
+      chip.addEventListener("click", () => setOverlay(true, true));
       document.documentElement.appendChild(host);
       overlay = {
         host,
@@ -2419,13 +2468,16 @@
       updateOverlay();
       syncOverlayVisibility();
     }
-    function setOverlay(show) {
+    function setOverlay(show, pinned) {
+      clearTimeout(overlayHideTimer);
+      overlayHideTimer = null;
       overlayVisible = show;
+      overlayPinned = Boolean(show && pinned);
       syncOverlayVisibility();
     }
     function syncOverlayVisibility() {
       if (!overlay) return;
-      overlay.panel.classList.toggle("hidden", !overlayVisible || siteFillTvActive);
+      overlay.panel.classList.toggle("hidden", !overlayVisible || siteFillTvActive && !overlayPinned);
       overlay.chip.classList.toggle("visible", !overlayVisible && !siteFillTvActive);
     }
     function updateOverlay() {
@@ -2449,6 +2501,7 @@
         ["Site adapter", adapter.id],
         ["Bridge", transport],
         ["Phone", data.phoneCount ? `${data.phoneCount} connected` : "not connected"],
+        ["Recovery", "Remote: \u2191 \u2191 \u2193 \u2193 OK"],
         ["Page", cleanText(window.location.hostname, 80)],
         ["Last error", lastError || "none"]
       ];
@@ -2460,7 +2513,12 @@
         line.appendChild(document.createTextNode(row[1]));
         overlay.diag.appendChild(line);
       }
-      if (data.phoneCount && overlayVisible) setTimeout(() => setOverlay(false), 1300);
+      if (data.phoneCount && overlayVisible && !overlayPinned && !overlayHideTimer) {
+        overlayHideTimer = setTimeout(() => {
+          overlayHideTimer = null;
+          if (overlayVisible && !overlayPinned) setOverlay(false);
+        }, 1300);
+      }
     }
     function updatePointer() {
       if (!overlay) return;
@@ -2646,7 +2704,10 @@
           adapter.activate(element);
         }
         if (command.type === "requestSnapshot") snapshot();
-        if (command.type === "overlay") setOverlay(command.action === "toggle" ? !overlayVisible : command.action === "show");
+        if (command.type === "overlay") {
+          const show = command.action === "toggle" ? !overlayVisible : command.action === "show";
+          setOverlay(show, show);
+        }
         scheduleSnapshot();
       } catch (error) {
         lastError = cleanText(error.message, 260);
@@ -2774,6 +2835,11 @@
       event.stopPropagation();
       window.location.replace(BILIBILI_HOME);
     }
+    const pairingShortcut = createPairingShortcut(() => {
+      setOverlay(true, true);
+      updateOverlay();
+    });
+    window.addEventListener("keydown", pairingShortcut, true);
     window.addEventListener("keydown", emergencyHome, true);
     document.addEventListener("tizenhwkey", emergencyHome, true);
     if (document.documentElement) initializeDom();

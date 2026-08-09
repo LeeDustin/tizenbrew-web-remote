@@ -2,6 +2,7 @@
 
 const { createPageAdapter, cleanText } = require('./adapters');
 const { createQrCanvas } = require('./qr');
+const { createPairingShortcut } = require('./recovery');
 const qrcode = require('qrcode-generator');
 const FRAME_CHANNEL = 'web-remote-tv-frame-v1';
 const BILIBILI_HOME = 'https://www.bilibili.com/';
@@ -108,6 +109,8 @@ function startEmbeddedFrameBridge() {
   let serviceInfo = null;
   let overlay = null;
   let overlayVisible = true;
+  let overlayPinned = false;
+  let overlayHideTimer = null;
   let focusedElement = null;
   let pointerX = Math.round(window.innerWidth / 2);
   let pointerY = Math.round(window.innerHeight / 2);
@@ -255,10 +258,11 @@ function startEmbeddedFrameBridge() {
         <div class="pointer"></div>
         <div class="focus"></div>
       </div>`;
+    root.querySelector('.sub').textContent = 'Scan on the same Wi-Fi · Remote recovery: ↑ ↑ ↓ ↓ OK';
     const panel = root.querySelector('.panel');
     const chip = root.querySelector('.chip');
     root.querySelector('.min').addEventListener('click', () => setOverlay(false));
-    chip.addEventListener('click', () => setOverlay(true));
+    chip.addEventListener('click', () => setOverlay(true, true));
     document.documentElement.appendChild(host);
     overlay = {
       host,
@@ -277,14 +281,17 @@ function startEmbeddedFrameBridge() {
     syncOverlayVisibility();
   }
 
-  function setOverlay(show) {
+  function setOverlay(show, pinned) {
+    clearTimeout(overlayHideTimer);
+    overlayHideTimer = null;
     overlayVisible = show;
+    overlayPinned = Boolean(show && pinned);
     syncOverlayVisibility();
   }
 
   function syncOverlayVisibility() {
     if (!overlay) return;
-    overlay.panel.classList.toggle('hidden', !overlayVisible || siteFillTvActive);
+    overlay.panel.classList.toggle('hidden', !overlayVisible || (siteFillTvActive && !overlayPinned));
     overlay.chip.classList.toggle('visible', !overlayVisible && !siteFillTvActive);
   }
 
@@ -309,6 +316,7 @@ function startEmbeddedFrameBridge() {
       ['Site adapter', adapter.id],
       ['Bridge', transport],
       ['Phone', data.phoneCount ? `${data.phoneCount} connected` : 'not connected'],
+      ['Recovery', 'Remote: ↑ ↑ ↓ ↓ OK'],
       ['Page', cleanText(window.location.hostname, 80)],
       ['Last error', lastError || 'none']
     ];
@@ -320,7 +328,12 @@ function startEmbeddedFrameBridge() {
       line.appendChild(document.createTextNode(row[1]));
       overlay.diag.appendChild(line);
     }
-    if (data.phoneCount && overlayVisible) setTimeout(() => setOverlay(false), 1300);
+    if (data.phoneCount && overlayVisible && !overlayPinned && !overlayHideTimer) {
+      overlayHideTimer = setTimeout(() => {
+        overlayHideTimer = null;
+        if (overlayVisible && !overlayPinned) setOverlay(false);
+      }, 1300);
+    }
   }
 
   function updatePointer() {
@@ -511,7 +524,10 @@ function startEmbeddedFrameBridge() {
         adapter.activate(element);
       }
       if (command.type === 'requestSnapshot') snapshot();
-      if (command.type === 'overlay') setOverlay(command.action === 'toggle' ? !overlayVisible : command.action === 'show');
+      if (command.type === 'overlay') {
+        const show = command.action === 'toggle' ? !overlayVisible : command.action === 'show';
+        setOverlay(show, show);
+      }
       scheduleSnapshot();
     } catch (error) {
       lastError = cleanText(error.message, 260);
@@ -644,6 +660,11 @@ function startEmbeddedFrameBridge() {
     window.location.replace(BILIBILI_HOME);
   }
 
+  const pairingShortcut = createPairingShortcut(() => {
+    setOverlay(true, true);
+    updateOverlay();
+  });
+  window.addEventListener('keydown', pairingShortcut, true);
   window.addEventListener('keydown', emergencyHome, true);
   document.addEventListener('tizenhwkey', emergencyHome, true);
 

@@ -94,7 +94,7 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
         </div>
         <div class="header-actions">
           <button id="toggleAllSections" class="ghost compact" type="button" aria-pressed="false">Show all controls</button>
-          <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+          <button id="showTvOverlay" class="ghost compact" type="button" title="Stays visible on the TV until Hide is selected">Pair another phone</button>
         </div>
       </section>
 
@@ -3384,7 +3384,7 @@ var _require_protocol = require_protocol(),
   sanitizeTvMessage = _require_protocol.sanitizeTvMessage,
   text = _require_protocol.text;
 var DEFAULT_PORT = 8182;
-var APP_VERSION = "0.2.4";
+var APP_VERSION = "0.2.5";
 var BODY_LIMIT = 32 * 1024;
 var TOKEN_TTL = 30 * 24 * 60 * 60 * 1e3;
 var PIN_TTL = 10 * 60 * 1e3;
@@ -4229,15 +4229,8 @@ function createRemoteServer() {
       return;
     }
     phoneSockets.add(socket);
-    send(socket, {
-      kind: "service_info",
-      info: info(request)
-    });
-    send(socket, {
-      kind: "state",
-      state
-    });
     broadcastState();
+    broadcastServiceInfo();
     socket.on("message", function (payload) {
       try {
         var message = JSON.parse(payload.toString("utf8"));
@@ -4262,6 +4255,7 @@ function createRemoteServer() {
       phoneDisconnected = true;
       phoneSockets.delete(socket);
       broadcastState();
+      broadcastServiceInfo();
     };
     socket.on("error", function () {
       disconnectPhone();
