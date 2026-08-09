@@ -92,16 +92,25 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
           <h2 id="pageTitle">Waiting for page\u2026</h2>
           <p id="pageUrl" class="muted ellipsis"></p>
         </div>
-        <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+        <div class="header-actions">
+          <button id="toggleAllSections" class="ghost compact" type="button" aria-pressed="false">Show all controls</button>
+          <button id="showTvOverlay" class="ghost compact" type="button">Pairing screen</button>
+        </div>
       </section>
 
-      <section class="panel">
+      <details id="sitesPanel" class="panel collapsible" data-section="sites">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Website</span><span class="summary-title">Switch site</span></span>
+          <span id="sitesStatus" class="summary-status">Current site</span>
+        </summary>
+        <div class="section-body">
         <div class="section-heading">
-          <div><p class="eyebrow">Website</p><h2>Choose source</h2></div>
+          <p class="muted section-intro">Open another service or edit its fallback domains.</p>
           <button id="editSitesButton" class="ghost compact" type="button">Edit domains</button>
         </div>
         <div id="profiles" class="profiles"></div>
-      </section>
+        </div>
+      </details>
 
       <section id="sitesEditor" class="panel" hidden>
         <div class="section-heading">
@@ -119,31 +128,31 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
         <p id="sitesError" class="error" role="alert"></p>
       </section>
 
-      <section class="panel">
-        <p class="eyebrow">Keyboard</p>
-        <h2>Search or enter text</h2>
+      <details id="textPanel" class="panel collapsible" data-section="text">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Keyboard</span><span class="summary-title">Search or enter text</span></span>
+          <span id="textStatus" class="summary-status">Available</span>
+        </summary>
+        <div class="section-body">
         <form id="textForm" class="text-form">
           <input id="textInput" type="search" autocomplete="off" placeholder="Movie, show, or text\u2026">
           <button class="ghost" type="button" id="sendTextButton">Send</button>
           <button class="primary" type="submit">Search</button>
         </form>
-      </section>
-
-      <section id="bilibiliPanel" class="panel bilibili-panel" hidden>
-        <div class="section-heading">
-          <div><p class="eyebrow">Bilibili</p><h2>Desktop web controls</h2></div>
-          <span id="bilibiliStatus" class="site-status">Ready</span>
         </div>
+      </details>
+
+      <details id="bilibiliPanel" class="panel collapsible bilibili-panel" data-section="bilibili" hidden>
+        <summary class="section-summary">
+          <span><span class="eyebrow">Bilibili</span><span class="summary-title">Site controls</span></span>
+          <span id="bilibiliStatus" class="site-status">Ready</span>
+        </summary>
+        <div class="section-body">
         <div class="site-actions">
           <button class="primary" data-bilibili-action="login" type="button">Login / QR</button>
           <button data-bilibili-action="home" type="button">Bilibili home</button>
-          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
-          <button data-bilibili-action="previous" type="button">Previous</button>
-          <button data-bilibili-action="next" type="button">Next</button>
-          <button data-bilibili-action="wide" type="button">Wide mode</button>
-          <button data-bilibili-action="webFullscreen" type="button">Web fullscreen</button>
         </div>
-        <div class="site-selectors">
+        <div id="bilibiliPlaybackSettings" class="site-selectors" hidden>
           <label for="bilibiliQuality">Quality
             <select id="bilibiliQuality">
               <option value="0">Auto</option>
@@ -167,11 +176,17 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
           </label>
           <button id="applyBilibiliSpeed" type="button">Apply speed</button>
         </div>
-        <p class="hint">Login opens Bilibili's own dialog on the TV. Scan its QR code with the Bilibili app; credentials never pass through this remote.</p>
-      </section>
+        <p class="hint">Login opens Bilibili's own dialog on the TV. Playback-specific controls appear automatically when a player is detected.</p>
+        </div>
+      </details>
 
-      <section class="control-grid">
-        <div class="panel dpad-panel">
+      <details id="manualPanel" class="panel collapsible" data-section="manual">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Manual control</span><span class="summary-title">Navigation and pointer</span></span>
+          <span id="manualStatus" class="summary-status">Advanced</span>
+        </summary>
+        <div class="section-body control-grid">
+        <div class="control-surface dpad-panel">
           <p class="eyebrow">Navigation</p>
           <div class="dpad" aria-label="Directional navigation">
             <button data-focus="up" class="up" type="button" aria-label="Up">\u25B2</button>
@@ -187,7 +202,7 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
           </div>
         </div>
 
-        <div class="panel touch-panel">
+        <div class="control-surface touch-panel">
           <div class="section-heading">
             <div><p class="eyebrow">Touchpad</p><h2>Pointer</h2></div>
             <label class="mode"><span>Mode</span><select id="touchMode"><option value="pointer">Pointer</option><option value="scroll">Scroll</option></select></label>
@@ -196,13 +211,16 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
             <span>Drag to move \xB7 Tap to click</span>
           </div>
         </div>
-      </section>
-
-      <section class="panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">Playback</p><h2 id="playerStatus">No accessible player</h2></div>
-          <span id="playerTime" class="time">--:-- / --:--</span>
         </div>
+      </details>
+
+      <details id="playerPanel" class="panel collapsible" data-section="player">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Playback</span><span class="summary-title">Player controls</span></span>
+          <span id="playerStatus" class="summary-status">No player</span>
+        </summary>
+        <div class="section-body">
+        <div class="player-meta"><span id="playerTime" class="time">--:-- / --:--</span></div>
         <div class="media-controls">
           <button data-media="seekBy" data-value="-30" type="button">\u221230s</button>
           <button data-media="toggle" class="primary play" type="button">Play / Pause</button>
@@ -210,21 +228,34 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
           <button data-media="volumeBy" data-value="-0.1" type="button">Vol \u2212</button>
           <button data-media="captions" type="button">CC</button>
           <button data-media="volumeBy" data-value="0.1" type="button">Vol +</button>
-          <button data-media="fullscreen" class="wide-control" type="button">Fullscreen</button>
+          <button id="fillTvButton" data-media="fullscreen" class="wide-control primary" type="button">Fill TV</button>
         </div>
-        <p class="hint">If the player is inside a protected cross-origin frame, use site buttons or the TV remote for its internal controls.</p>
-      </section>
+        <div id="bilibiliPlayerActions" class="site-actions player-site-actions" hidden>
+          <button data-bilibili-action="danmaku" type="button">Toggle danmu</button>
+          <button data-bilibili-action="previous" type="button">Previous</button>
+          <button data-bilibili-action="next" type="button">Next</button>
+          <button data-bilibili-action="wide" type="button">Wide mode</button>
+        </div>
+        <p class="hint">Fill TV uses the site's own viewport mode when available. Other sites fall back to browser fullscreen.</p>
+        </div>
+      </details>
 
-      <section class="panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">Current page</p><h2>Visible controls</h2></div>
+      <details id="itemsPanel" class="panel collapsible" data-section="items">
+        <summary class="section-summary">
+          <span><span class="eyebrow">Current page</span><span class="summary-title">Visible controls</span></span>
+          <span id="itemsStatus" class="summary-status">Waiting</span>
+        </summary>
+        <div class="section-body">
+        <div class="section-heading compact-heading">
+          <p class="muted section-intro">Buttons and titles detected on the TV page.</p>
           <button id="refreshItems" class="ghost compact" type="button">Refresh</button>
         </div>
         <input id="itemFilter" class="filter" type="search" placeholder="Filter visible buttons and titles\u2026">
         <div id="pageItems" class="page-items"><p class="muted">Waiting for the television\u2026</p></div>
-      </section>
+        </div>
+      </details>
 
-      <details class="panel diagnostics">
+      <details id="diagnosticsPanel" class="panel diagnostics" data-section="diagnostics">
         <summary>Diagnostics and connection</summary>
         <dl>
           <div><dt>TV bridge</dt><dd id="diagTv">\u2014</dd></div>
@@ -244,8 +275,182 @@ var init_define_WEB_REMOTE_CONTROLLER_ASSETS = __esm({
 </body>
 </html>
 `,
-      "app.js": "'use strict';\n\n(function startController() {\n  const TOKEN_KEY = 'webRemoteTvToken';\n  const CONFIG_KEY = 'webRemoteTvProfiles';\n  const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';\n  const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };\n  const dom = {};\n  let token = localStorage.getItem(TOKEN_KEY) || '';\n  let socket = null;\n  let reconnectTimer = null;\n  let state = null;\n  let serviceInfo = null;\n  let editorProfiles = [];\n  let toastTimer = null;\n  let configRestored = false;\n  let pointerSession = null;\n  let pointerPending = { dx: 0, dy: 0 };\n  let pointerFrame = null;\n\n  function byId(id) { return document.getElementById(id); }\n\n  function cacheDom() {\n    for (const id of [\n      'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',\n      'pageTitle', 'pageUrl', 'showTvOverlay', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',\n      'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',\n      'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',\n      'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime', 'refreshItems', 'itemFilter',\n      'pageItems', 'diagTv', 'diagNavigation', 'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'\n    ]) dom[id] = byId(id);\n  }\n\n  function showToast(message) {\n    clearTimeout(toastTimer);\n    dom.toast.textContent = message;\n    dom.toast.classList.add('visible');\n    toastTimer = setTimeout(() => dom.toast.classList.remove('visible'), 2400);\n  }\n\n  async function api(path, options) {\n    const response = await fetch(path, {\n      cache: 'no-store',\n      ...options,\n      headers: {\n        ...(token ? { Authorization: `Bearer ${token}` } : {}),\n        ...(options && options.body ? { 'Content-Type': 'application/json' } : {}),\n        ...((options && options.headers) || {})\n      }\n    });\n    const payload = await response.json().catch(() => ({}));\n    if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);\n    return payload;\n  }\n\n  function setConnection() {\n    const phoneConnected = socket && socket.readyState === WebSocket.OPEN;\n    const tvConnected = Boolean(state && state.tvConnected);\n    dom.connectionDot.classList.toggle('connected', phoneConnected && tvConnected);\n    dom.connectionDot.classList.toggle('partial', phoneConnected && !tvConnected);\n    dom.connectionDot.setAttribute('aria-label', phoneConnected && tvConnected ? 'Connected' : 'Disconnected');\n    dom.connectionLabel.textContent = !token ? 'Pair this phone'\n      : !phoneConnected ? 'Reconnecting to local service\u2026'\n        : tvConnected ? 'Phone and television connected'\n          : 'Phone connected \xB7 TV page bridge unavailable';\n    dom.diagSocket.textContent = phoneConnected ? 'connected' : 'disconnected';\n  }\n\n  function formatTime(seconds) {\n    if (!Number.isFinite(seconds) || seconds <= 0) return '--:--';\n    const whole = Math.floor(seconds);\n    const hours = Math.floor(whole / 3600);\n    const minutes = Math.floor((whole % 3600) / 60);\n    const rest = whole % 60;\n    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}` : `${minutes}:${String(rest).padStart(2, '0')}`;\n  }\n\n  function renderState() {\n    setConnection();\n    if (!state) return;\n    const page = state.page || {};\n    const player = state.player || {};\n    dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page\u2026';\n    dom.pageUrl.textContent = page.url || '';\n    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : 'No accessible top-level player';\n    dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;\n    dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';\n    dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';\n    dom.diagAdapter.textContent = page.adapter || 'unknown';\n    dom.diagError.textContent = state.lastLog ? state.lastLog.message : 'none';\n    renderBilibili(page);\n    renderProfiles();\n    renderItems();\n  }\n\n  function renderBilibili(page) {\n    const active = page.adapter === 'bilibili';\n    dom.bilibiliPanel.hidden = !active;\n    if (!active) return;\n    const site = page.site || {};\n    const status = [];\n    status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');\n    if (typeof site.danmakuEnabled === 'boolean') status.push(site.danmakuEnabled ? 'Danmu on' : 'Danmu off');\n    if (site.quality) status.push(site.quality);\n    dom.bilibiliStatus.textContent = status.join(' \xB7 ');\n\n    const rate = String(site.playbackRate || '');\n    if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;\n    const quality = String(site.quality || '').toLowerCase();\n    const qualityValue = /\u81EA\u52A8|auto/.test(quality) ? '0'\n      : /1080p\\s*60/.test(quality) ? '116'\n        : /1080p/.test(quality) ? '80'\n          : /720p/.test(quality) ? '64'\n            : /480p/.test(quality) ? '32'\n              : /360p/.test(quality) ? '16' : '';\n    if (qualityValue) dom.bilibiliQuality.value = qualityValue;\n  }\n\n  function renderProfiles() {\n    if (!serviceInfo || !Array.isArray(serviceInfo.profiles)) return;\n    dom.profiles.textContent = '';\n    for (const profile of serviceInfo.profiles) {\n      const row = document.createElement('div');\n      row.className = `profile${state && state.activeProfileId === profile.id ? ' active' : ''}`;\n      const name = document.createElement('span');\n      name.className = 'profile-name';\n      name.textContent = profile.name;\n      const select = document.createElement('select');\n      select.setAttribute('aria-label', `${profile.name} domain`);\n      profile.urls.forEach((url, index) => {\n        const option = document.createElement('option');\n        option.value = url;\n        option.textContent = profile.urls.length > 1 ? `${index + 1}. ${new URL(url).hostname}` : new URL(url).hostname;\n        select.appendChild(option);\n      });\n      const open = document.createElement('button');\n      open.type = 'button';\n      open.textContent = state && state.activeProfileId === profile.id ? 'Reload' : 'Open';\n      open.addEventListener('click', () => command({ type: 'navigate', profileId: profile.id, url: select.value }));\n      row.append(name, select, open);\n      dom.profiles.appendChild(row);\n    }\n  }\n\n  function renderItems() {\n    if (!state) return;\n    const query = dom.itemFilter.value.trim().toLowerCase();\n    const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));\n    dom.pageItems.textContent = '';\n    if (!items.length) {\n      const empty = document.createElement('p');\n      empty.className = 'muted';\n      empty.textContent = state.items && state.items.length ? 'No matching controls.' : 'No visible controls were discovered yet.';\n      dom.pageItems.appendChild(empty);\n      return;\n    }\n    for (const item of items) {\n      const button = document.createElement('button');\n      button.type = 'button';\n      button.className = 'page-item';\n      const kind = document.createElement('span');\n      kind.className = 'kind';\n      kind.textContent = item.kind;\n      const copy = document.createElement('span');\n      const label = document.createElement('span');\n      label.className = 'label';\n      label.textContent = item.label;\n      copy.appendChild(label);\n      if (item.detail) {\n        const detail = document.createElement('span');\n        detail.className = 'detail';\n        detail.textContent = item.detail;\n        copy.appendChild(detail);\n      }\n      button.append(kind, copy);\n      button.addEventListener('click', () => command({ type: 'select', id: item.id }));\n      dom.pageItems.appendChild(button);\n    }\n  }\n\n  function renderProfileEditors() {\n    dom.profileEditors.textContent = '';\n    editorProfiles.forEach((profile, index) => {\n      const fieldset = document.createElement('div');\n      fieldset.className = 'profile-editor';\n      const grid = document.createElement('div');\n      grid.className = 'profile-editor-grid';\n      const nameLabel = document.createElement('label');\n      nameLabel.textContent = 'Name';\n      const nameInput = document.createElement('input');\n      nameInput.value = profile.name;\n      nameInput.maxLength = 40;\n      nameInput.addEventListener('input', () => { profile.name = nameInput.value; });\n      nameLabel.appendChild(nameInput);\n      const urlsLabel = document.createElement('label');\n      urlsLabel.textContent = 'HTTPS domains (one per line)';\n      const urlsInput = document.createElement('textarea');\n      urlsInput.value = profile.urls.join('\\n');\n      urlsInput.addEventListener('input', () => { profile.urls = urlsInput.value.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean); });\n      urlsLabel.appendChild(urlsInput);\n      grid.append(nameLabel, urlsLabel);\n      fieldset.appendChild(grid);\n      if (!['1shows', 'cineby', 'bilibili'].includes(profile.id)) {\n        const remove = document.createElement('button');\n        remove.type = 'button';\n        remove.className = 'danger compact';\n        remove.textContent = 'Remove custom site';\n        remove.addEventListener('click', () => {\n          editorProfiles.splice(index, 1);\n          renderProfileEditors();\n        });\n        fieldset.appendChild(remove);\n      }\n      dom.profileEditors.appendChild(fieldset);\n    });\n  }\n\n  function openEditor() {\n    editorProfiles = JSON.parse(JSON.stringify((serviceInfo && serviceInfo.profiles) || []));\n    renderProfileEditors();\n    dom.sitesEditor.hidden = false;\n    dom.sitesEditor.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  async function saveProfiles(event) {\n    event.preventDefault();\n    dom.sitesError.textContent = '';\n    try {\n      const active = editorProfiles.some((profile) => profile.id === (state && state.activeProfileId)) ? state.activeProfileId : editorProfiles[0].id;\n      const result = await api('/api/config', {\n        method: 'PUT',\n        body: JSON.stringify({ profiles: editorProfiles, activeProfileId: active })\n      });\n      serviceInfo.profiles = result.profiles;\n      serviceInfo.activeProfileId = result.activeProfileId;\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      dom.sitesEditor.hidden = true;\n      renderProfiles();\n      showToast('Domains saved on this TV session');\n    } catch (error) {\n      dom.sitesError.textContent = error.message;\n    }\n  }\n\n  async function restoreSavedConfig() {\n    if (configRestored || !token) return;\n    configRestored = true;\n    const raw = localStorage.getItem(CONFIG_KEY);\n    if (!raw) {\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n      return;\n    }\n    try {\n      const saved = JSON.parse(raw);\n      if (Array.isArray(saved.profiles) && !saved.profiles.some((profile) => profile.id === 'bilibili')) {\n        saved.profiles.push(BILIBILI_PROFILE);\n      }\n      if (!localStorage.getItem(BILIBILI_DEFAULT_MIGRATION_KEY) && Array.isArray(saved.profiles)) {\n        saved.profiles = saved.profiles.slice().sort((left, right) => {\n          if (left.id === 'bilibili') return -1;\n          if (right.id === 'bilibili') return 1;\n          return 0;\n        });\n        saved.activeProfileId = 'bilibili';\n      }\n      const result = await api('/api/config', { method: 'PUT', body: JSON.stringify(saved) });\n      if (serviceInfo) {\n        serviceInfo.profiles = result.profiles;\n        serviceInfo.activeProfileId = result.activeProfileId;\n      }\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n    } catch (error) {\n      showToast(`Saved domains were not restored: ${error.message}`);\n    }\n  }\n\n  function handleMessage(message) {\n    if (message.kind === 'state') state = message.state;\n    if (message.kind === 'service_info') serviceInfo = message.info;\n    if (message.kind === 'error') showToast(message.error || 'Command failed');\n    renderState();\n  }\n\n  function connectSocket() {\n    clearTimeout(reconnectTimer);\n    if (!token) return;\n    if (socket) {\n      socket.onclose = null;\n      try { socket.close(); } catch { /* Already closed. */ }\n    }\n    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';\n    socket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);\n    socket.addEventListener('open', () => {\n      setConnection();\n      command({ type: 'requestSnapshot' }, false);\n    });\n    socket.addEventListener('message', (event) => {\n      try { handleMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }\n    });\n    socket.addEventListener('close', () => {\n      setConnection();\n      reconnectTimer = setTimeout(connectSocket, 1800);\n    });\n    socket.addEventListener('error', setConnection);\n  }\n\n  async function command(value, announce = true) {\n    try {\n      if (socket && socket.readyState === WebSocket.OPEN) {\n        socket.send(JSON.stringify({ kind: 'command', requestId: String(Date.now()), command: value }));\n      } else {\n        await api('/api/command', { method: 'POST', body: JSON.stringify({ command: value }) });\n      }\n      if (announce && value.type === 'navigate') showToast(`Opening ${new URL(value.url).hostname}`);\n      if (announce && value.type === 'site') showToast('Bilibili control sent');\n    } catch (error) {\n      showToast(error.message);\n    }\n  }\n\n  async function pair(event) {\n    event.preventDefault();\n    dom.pairError.textContent = '';\n    try {\n      const payload = await api('/api/pair', {\n        method: 'POST',\n        body: JSON.stringify({ pin: dom.pinInput.value.trim(), clientName: navigator.userAgent.slice(0, 60) })\n      });\n      token = payload.token;\n      localStorage.setItem(TOKEN_KEY, token);\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch (error) {\n      dom.pairError.textContent = error.message;\n    }\n  }\n\n  function flushPointer() {\n    pointerFrame = null;\n    const dx = pointerPending.dx;\n    const dy = pointerPending.dy;\n    pointerPending = { dx: 0, dy: 0 };\n    if (!dx && !dy) return;\n    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * 2, dy: -dy * 2 }, false);\n    else command({ type: 'pointer', dx: dx * 1.4, dy: dy * 1.4 }, false);\n  }\n\n  function pointerDown(event) {\n    dom.touchpad.setPointerCapture(event.pointerId);\n    dom.touchpad.classList.add('active');\n    pointerSession = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY };\n  }\n\n  function pointerMove(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    pointerPending.dx += event.clientX - pointerSession.x;\n    pointerPending.dy += event.clientY - pointerSession.y;\n    pointerSession.x = event.clientX;\n    pointerSession.y = event.clientY;\n    if (!pointerFrame) pointerFrame = requestAnimationFrame(flushPointer);\n  }\n\n  function pointerUp(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    const distance = Math.hypot(event.clientX - pointerSession.startX, event.clientY - pointerSession.startY);\n    if (distance < 9 && dom.touchMode.value === 'pointer') command({ type: 'pointerClick' }, false);\n    pointerSession = null;\n    dom.touchpad.classList.remove('active');\n  }\n\n  function bindEvents() {\n    dom.pairForm.addEventListener('submit', pair);\n    dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));\n    dom.editSitesButton.addEventListener('click', openEditor);\n    dom.closeSitesButton.addEventListener('click', () => { dom.sitesEditor.hidden = true; });\n    dom.sitesForm.addEventListener('submit', saveProfiles);\n    dom.addProfileButton.addEventListener('click', () => {\n      const id = `custom-${Date.now().toString(36)}`;\n      editorProfiles.push({ id, name: 'Custom site', urls: ['https://example.com/'] });\n      renderProfileEditors();\n    });\n    dom.textForm.addEventListener('submit', (event) => {\n      event.preventDefault();\n      command({ type: 'text', value: dom.textInput.value, submit: true }, false);\n    });\n    dom.sendTextButton.addEventListener('click', () => command({ type: 'text', value: dom.textInput.value, submit: false }, false));\n    document.querySelectorAll('[data-bilibili-action]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'site',\n      site: 'bilibili',\n      action: button.dataset.bilibiliAction\n    })));\n    dom.applyBilibiliQuality.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'quality', value: dom.bilibiliQuality.value }));\n    dom.applyBilibiliSpeed.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'speed', value: dom.bilibiliSpeed.value }));\n    document.querySelectorAll('[data-focus]').forEach((button) => button.addEventListener('click', () => command({ type: 'focus', direction: button.dataset.focus }, false)));\n    document.querySelectorAll('[data-history]').forEach((button) => button.addEventListener('click', () => command({ type: 'history', action: button.dataset.history }, false)));\n    dom.activateButton.addEventListener('click', () => command({ type: 'activate' }, false));\n    document.querySelectorAll('[data-media]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'media',\n      action: button.dataset.media,\n      value: Number(button.dataset.value || 0)\n    }, false)));\n    dom.refreshItems.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));\n    dom.itemFilter.addEventListener('input', renderItems);\n    dom.touchpad.addEventListener('pointerdown', pointerDown);\n    dom.touchpad.addEventListener('pointermove', pointerMove);\n    dom.touchpad.addEventListener('pointerup', pointerUp);\n    dom.touchpad.addEventListener('pointercancel', pointerUp);\n    dom.forgetButton.addEventListener('click', async () => {\n      try { await api('/api/session', { method: 'DELETE' }); } catch { /* Local cleanup still proceeds. */ }\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      if (socket) socket.close();\n      location.reload();\n    });\n  }\n\n  async function initialize() {\n    cacheDom();\n    bindEvents();\n    const pin = new URLSearchParams(location.search).get('pin');\n    if (pin) dom.pinInput.value = pin.replace(/\\D/g, '').slice(0, 6);\n    if (!token) {\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n      if (pin && dom.pinInput.value.length === 6) dom.pinInput.focus();\n      return;\n    }\n    try {\n      const payload = await api('/api/state');\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch {\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n    }\n  }\n\n  document.addEventListener('DOMContentLoaded', initialize, { once: true });\n})();\n",
-      "styles.css": ':root {\n  color-scheme: dark;\n  --bg: #07111f;\n  --panel: #101d2d;\n  --panel-2: #14253a;\n  --line: #263b52;\n  --text: #eef6ff;\n  --muted: #96abc1;\n  --accent: #38bdf8;\n  --accent-2: #0ea5e9;\n  --danger: #fb7185;\n  --safe-bottom: env(safe-area-inset-bottom, 0px);\n  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n}\n\n* { box-sizing: border-box; }\nhtml { background: var(--bg); }\nbody { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 20% -10%, #12395a 0, transparent 37rem), var(--bg); }\nbutton, input, select, textarea { font: inherit; }\nbutton, select { touch-action: manipulation; }\n\n.app-header {\n  position: sticky;\n  top: 0;\n  z-index: 20;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  min-height: 72px;\n  padding: max(12px, env(safe-area-inset-top)) 18px 12px;\n  background: rgba(7, 17, 31, .91);\n  border-bottom: 1px solid rgba(77, 111, 145, .35);\n  backdrop-filter: blur(18px);\n}\n.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto; border-radius: 13px; color: #00131d; background: var(--accent); font-size: 25px; font-weight: 900; }\n.brand-copy { min-width: 0; flex: 1; }\n.brand-copy h1 { margin: 0; font-size: 18px; }\n.brand-copy p { margin: 2px 0 0; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n.status-dot { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; background: #64748b; box-shadow: 0 0 0 5px rgba(100, 116, 139, .15); }\n.status-dot.connected { background: #34d399; box-shadow: 0 0 0 5px rgba(52, 211, 153, .15); }\n.status-dot.partial { background: #fbbf24; box-shadow: 0 0 0 5px rgba(251, 191, 36, .15); }\n\nmain { width: min(920px, 100%); margin: 0 auto; padding: 16px 12px calc(30px + var(--safe-bottom)); }\n.panel { margin-bottom: 13px; padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, rgba(20, 37, 58, .96), rgba(12, 27, 43, .98)); box-shadow: 0 14px 45px rgba(0, 0, 0, .16); }\n.pair-panel { max-width: 480px; margin: 8vh auto 0; padding: 24px; }\n.pair-panel h2 { font-size: 25px; }\nh2 { margin: 2px 0 6px; font-size: 20px; line-height: 1.2; }\n.eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }\n.muted, .hint { color: var(--muted); }\n.hint { margin: 12px 0 0; font-size: 12px; line-height: 1.45; }\n.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\nlabel { display: grid; gap: 7px; color: #c4d3e2; font-size: 13px; font-weight: 700; }\ninput, select, textarea { width: 100%; min-height: 48px; border: 1px solid #35506c; border-radius: 12px; outline: none; color: var(--text); background: #091725; padding: 11px 13px; }\ninput:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, .15); }\ntextarea { min-height: 92px; resize: vertical; line-height: 1.45; }\n.pair-panel input { margin: 8px 0 12px; text-align: center; font-size: 30px; font-weight: 800; letter-spacing: .22em; }\n\nbutton { min-height: 46px; border: 1px solid #38536d; border-radius: 12px; color: var(--text); background: #19304a; padding: 9px 13px; font-weight: 750; cursor: pointer; }\nbutton:active { transform: scale(.975); filter: brightness(1.18); }\nbutton:focus-visible { outline: 3px solid rgba(56, 189, 248, .8); outline-offset: 2px; }\nbutton.primary { border-color: #38bdf8; color: #00151f; background: linear-gradient(145deg, #67d4ff, #0ea5e9); }\nbutton.ghost { background: transparent; }\nbutton.danger { border-color: rgba(251, 113, 133, .6); color: #fecdd3; background: rgba(136, 19, 55, .25); }\nbutton.compact { min-height: 38px; padding: 6px 10px; font-size: 12px; }\nbutton.wide { width: 100%; }\n.error { min-height: 1.25em; margin: 10px 0 0; color: #fda4af; font-size: 13px; }\n.section-heading, .now-playing { display: flex; align-items: center; justify-content: space-between; gap: 14px; }\n.section-heading > div:first-child, .now-playing > div:first-child { min-width: 0; }\n\n.profiles { display: grid; gap: 10px; margin-top: 14px; }\n.profile { display: grid; grid-template-columns: minmax(90px, .7fr) minmax(130px, 1.5fr) auto; gap: 9px; align-items: center; padding: 11px; border: 1px solid #2b455f; border-radius: 14px; background: rgba(5, 15, 26, .35); }\n.profile.active { border-color: var(--accent); background: rgba(14, 165, 233, .1); }\n.profile-name { font-weight: 800; }\n.profile select { min-height: 42px; padding: 8px 10px; font-size: 12px; }\n.profile button { min-height: 42px; }\n.profile-editor { margin: 13px 0; padding: 13px; border: 1px solid var(--line); border-radius: 14px; }\n.profile-editor-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }\n.inline-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 9px; margin-top: 12px; }\n\n.text-form { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-top: 13px; }\n.site-status { flex: 0 0 auto; color: #f9a8d4; font-size: 12px; font-weight: 800; }\n.site-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 13px; }\n.site-selectors { display: grid; grid-template-columns: minmax(150px, 1fr) auto minmax(130px, .8fr) auto; gap: 8px; align-items: end; margin-top: 10px; }\n.site-selectors select { min-height: 42px; padding: 8px 10px; }\n.site-selectors button { min-height: 42px; }\n.control-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 13px; }\n.dpad-panel, .touch-panel { min-width: 0; }\n.dpad { display: grid; grid-template: repeat(3, 60px) / repeat(3, 60px); justify-content: center; gap: 7px; margin: 12px auto; }\n.dpad button { min-height: 60px; padding: 0; font-size: 20px; }\n.dpad .up { grid-area: 1 / 2; }\n.dpad .left { grid-area: 2 / 1; }\n.dpad .ok { grid-area: 2 / 2; border-radius: 50%; color: #00131d; background: var(--accent); }\n.dpad .right { grid-area: 2 / 3; }\n.dpad .down { grid-area: 3 / 2; }\n.three-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }\n.mode { display: flex; align-items: center; gap: 7px; font-size: 11px; }\n.mode select { width: auto; min-height: 38px; padding: 6px 9px; }\n.touchpad { display: grid; place-items: center; height: 224px; margin-top: 12px; border: 1px solid #3c5a76; border-radius: 17px; color: #8ca8c1; background: radial-gradient(circle at 50% 42%, rgba(56, 189, 248, .11), transparent 55%), #081522; user-select: none; touch-action: none; }\n.touchpad.active { border-color: var(--accent); color: #d9f4ff; }\n\n.time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }\n.media-controls { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 13px; }\n.media-controls .play { grid-column: span 2; }\n.media-controls .wide-control { grid-column: span 6; }\n.page-items { display: grid; gap: 8px; max-height: 54vh; overflow: auto; margin-top: 10px; padding-right: 2px; }\n.page-item { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: center; width: 100%; min-height: 56px; text-align: left; }\n.page-item .kind { color: var(--accent); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }\n.page-item .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.page-item .detail { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.filter { margin-top: 10px; }\n.diagnostics summary { cursor: pointer; font-weight: 800; }\n.diagnostics dl { display: grid; gap: 7px; }\n.diagnostics dl div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; }\n.diagnostics dt { color: var(--muted); }\n.diagnostics dd { margin: 0; overflow-wrap: anywhere; }\n.toast { position: fixed; z-index: 30; left: 50%; bottom: calc(18px + var(--safe-bottom)); transform: translateX(-50%) translateY(20px); width: max-content; max-width: calc(100% - 28px); margin: 0; padding: 11px 15px; border: 1px solid #3a5872; border-radius: 999px; color: white; background: rgba(7, 17, 31, .96); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; box-shadow: 0 12px 35px rgba(0,0,0,.4); }\n.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }\n\n@media (max-width: 680px) {\n  .control-grid { grid-template-columns: 1fr; }\n  .profile { grid-template-columns: 86px 1fr; }\n  .profile button { grid-column: 1 / -1; }\n  .profile-editor-grid { grid-template-columns: 1fr; }\n  .text-form { grid-template-columns: 1fr 1fr; }\n  .text-form input { grid-column: 1 / -1; }\n  .site-actions { grid-template-columns: repeat(2, 1fr); }\n  .site-selectors { grid-template-columns: 1fr auto; }\n  .media-controls { grid-template-columns: repeat(3, 1fr); }\n  .media-controls .play { grid-column: span 1; }\n  .media-controls .wide-control { grid-column: span 3; }\n  .now-playing { align-items: flex-start; }\n}\n\n@media (max-width: 390px) {\n  main { padding-left: 8px; padding-right: 8px; }\n  .panel { padding: 14px; border-radius: 15px; }\n  .dpad { grid-template: repeat(3, 56px) / repeat(3, 56px); }\n  .dpad button { min-height: 56px; }\n  .three-buttons button { padding-left: 5px; padding-right: 5px; font-size: 12px; }\n}\n',
+      "app.js": "'use strict';\n\n(function startController() {\n  const TOKEN_KEY = 'webRemoteTvToken';\n  const CONFIG_KEY = 'webRemoteTvProfiles';\n  const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';\n  const SECTION_PREFERENCES_KEY = 'webRemoteTvSectionPreferencesV1';\n  const SHOW_ALL_SECTIONS_KEY = 'webRemoteTvShowAllSectionsV1';\n  const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };\n  const dom = {};\n  let token = localStorage.getItem(TOKEN_KEY) || '';\n  let socket = null;\n  let reconnectTimer = null;\n  let state = null;\n  let serviceInfo = null;\n  let editorProfiles = [];\n  let toastTimer = null;\n  let configRestored = false;\n  let pointerSession = null;\n  let pointerPending = { dx: 0, dy: 0 };\n  let pointerFrame = null;\n  let showAllSections = localStorage.getItem(SHOW_ALL_SECTIONS_KEY) === '1';\n  let sectionContext = '';\n  let sectionPreferences = {};\n  try {\n    const savedSectionPreferences = JSON.parse(localStorage.getItem(SECTION_PREFERENCES_KEY) || '{}');\n    sectionPreferences = savedSectionPreferences && typeof savedSectionPreferences === 'object' && !Array.isArray(savedSectionPreferences)\n      ? savedSectionPreferences : {};\n  } catch { sectionPreferences = {}; }\n\n  function byId(id) { return document.getElementById(id); }\n\n  function cacheDom() {\n    for (const id of [\n      'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',\n      'pageTitle', 'pageUrl', 'showTvOverlay', 'toggleAllSections', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',\n      'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',\n      'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',\n      'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime',\n      'refreshItems', 'itemFilter', 'pageItems', 'sitesPanel', 'sitesStatus', 'textPanel', 'textStatus', 'manualPanel',\n      'manualStatus', 'playerPanel', 'itemsPanel', 'itemsStatus', 'diagnosticsPanel', 'diagTv', 'diagNavigation',\n      'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'\n    ]) dom[id] = byId(id);\n  }\n\n  function showToast(message) {\n    clearTimeout(toastTimer);\n    dom.toast.textContent = message;\n    dom.toast.classList.add('visible');\n    toastTimer = setTimeout(() => dom.toast.classList.remove('visible'), 2400);\n  }\n\n  async function api(path, options) {\n    const response = await fetch(path, {\n      cache: 'no-store',\n      ...options,\n      headers: {\n        ...(token ? { Authorization: `Bearer ${token}` } : {}),\n        ...(options && options.body ? { 'Content-Type': 'application/json' } : {}),\n        ...((options && options.headers) || {})\n      }\n    });\n    const payload = await response.json().catch(() => ({}));\n    if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);\n    return payload;\n  }\n\n  function setConnection() {\n    const phoneConnected = socket && socket.readyState === WebSocket.OPEN;\n    const tvConnected = Boolean(state && state.tvConnected);\n    dom.connectionDot.classList.toggle('connected', phoneConnected && tvConnected);\n    dom.connectionDot.classList.toggle('partial', phoneConnected && !tvConnected);\n    dom.connectionDot.setAttribute('aria-label', phoneConnected && tvConnected ? 'Connected' : 'Disconnected');\n    dom.connectionLabel.textContent = !token ? 'Pair this phone'\n      : !phoneConnected ? 'Reconnecting to local service\u2026'\n        : tvConnected ? 'Phone and television connected'\n          : 'Phone connected \xB7 TV page bridge unavailable';\n    dom.diagSocket.textContent = phoneConnected ? 'connected' : 'disconnected';\n  }\n\n  function formatTime(seconds) {\n    if (!Number.isFinite(seconds) || seconds <= 0) return '--:--';\n    const whole = Math.floor(seconds);\n    const hours = Math.floor(whole / 3600);\n    const minutes = Math.floor((whole % 3600) / 60);\n    const rest = whole % 60;\n    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}` : `${minutes}:${String(rest).padStart(2, '0')}`;\n  }\n\n  function renderState() {\n    setConnection();\n    if (!state) return;\n    const page = state.page || {};\n    const player = state.player || {};\n    dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page\u2026';\n    dom.pageUrl.textContent = page.url || '';\n    const playerAvailable = player.found || Boolean(page.site && page.site.playerAvailable);\n    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : playerAvailable ? 'Player loading' : 'No player';\n    dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;\n    dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';\n    dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';\n    dom.diagAdapter.textContent = page.adapter || 'unknown';\n    dom.diagError.textContent = state.lastLog ? state.lastLog.message : 'none';\n    renderBilibili(page);\n    renderProfiles();\n    renderItems();\n    renderSectionLayout(page, player);\n  }\n\n  function renderBilibili(page) {\n    const active = page.adapter === 'bilibili';\n    dom.bilibiliPanel.hidden = !active;\n    if (!active) return;\n    const site = page.site || {};\n    const status = [];\n    if (!site.playerAvailable) status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');\n    if (site.webFullscreenActive) status.push('Fill TV');\n    if (typeof site.danmakuEnabled === 'boolean') status.push(site.danmakuEnabled ? 'Danmu on' : 'Danmu off');\n    if (site.quality) status.push(site.quality);\n    if (!status.length) status.push(site.playerAvailable ? 'Player ready' : 'Ready');\n    dom.bilibiliStatus.textContent = status.join(' \xB7 ');\n\n    dom.bilibiliStatus.title = dom.bilibiliStatus.textContent;\n    const fillLabel = site.webFullscreenActive ? 'Exit Fill TV' : 'Fill TV';\n    dom.fillTvButton.textContent = fillLabel;\n\n    const rate = String(site.playbackRate || '');\n    if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;\n    const quality = String(site.quality || '').toLowerCase();\n    const qualityValue = /\u81EA\u52A8|auto/.test(quality) ? '0'\n      : /1080p\\s*60/.test(quality) ? '116'\n        : /1080p/.test(quality) ? '80'\n          : /720p/.test(quality) ? '64'\n            : /480p/.test(quality) ? '32'\n              : /360p/.test(quality) ? '16' : '';\n    if (qualityValue) dom.bilibiliQuality.value = qualityValue;\n  }\n\n  function renderProfiles() {\n    if (!serviceInfo || !Array.isArray(serviceInfo.profiles)) return;\n    const activeProfile = serviceInfo.profiles.find((profile) => state && state.activeProfileId === profile.id);\n    dom.sitesStatus.textContent = activeProfile ? activeProfile.name : 'Switch site';\n    dom.profiles.textContent = '';\n    for (const profile of serviceInfo.profiles) {\n      const row = document.createElement('div');\n      row.className = `profile${state && state.activeProfileId === profile.id ? ' active' : ''}`;\n      const name = document.createElement('span');\n      name.className = 'profile-name';\n      name.textContent = profile.name;\n      const select = document.createElement('select');\n      select.setAttribute('aria-label', `${profile.name} domain`);\n      profile.urls.forEach((url, index) => {\n        const option = document.createElement('option');\n        option.value = url;\n        option.textContent = profile.urls.length > 1 ? `${index + 1}. ${new URL(url).hostname}` : new URL(url).hostname;\n        select.appendChild(option);\n      });\n      const open = document.createElement('button');\n      open.type = 'button';\n      open.textContent = state && state.activeProfileId === profile.id ? 'Reload' : 'Open';\n      open.addEventListener('click', () => command({ type: 'navigate', profileId: profile.id, url: select.value }));\n      row.append(name, select, open);\n      dom.profiles.appendChild(row);\n    }\n  }\n\n  function renderItems() {\n    if (!state) return;\n    const query = dom.itemFilter.value.trim().toLowerCase();\n    const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));\n    dom.itemsStatus.textContent = `${state.items ? state.items.length : 0} found`;\n    dom.pageItems.textContent = '';\n    if (!items.length) {\n      const empty = document.createElement('p');\n      empty.className = 'muted';\n      empty.textContent = state.items && state.items.length ? 'No matching controls.' : 'No visible controls were discovered yet.';\n      dom.pageItems.appendChild(empty);\n      return;\n    }\n    for (const item of items) {\n      const button = document.createElement('button');\n      button.type = 'button';\n      button.className = 'page-item';\n      const kind = document.createElement('span');\n      kind.className = 'kind';\n      kind.textContent = item.kind;\n      const copy = document.createElement('span');\n      const label = document.createElement('span');\n      label.className = 'label';\n      label.textContent = item.label;\n      copy.appendChild(label);\n      if (item.detail) {\n        const detail = document.createElement('span');\n        detail.className = 'detail';\n        detail.textContent = item.detail;\n        copy.appendChild(detail);\n      }\n      button.append(kind, copy);\n      button.addEventListener('click', () => command({ type: 'select', id: item.id }));\n      dom.pageItems.appendChild(button);\n    }\n  }\n\n  function hasSectionPreference(panel) {\n    return Boolean(panel && Object.prototype.hasOwnProperty.call(sectionPreferences, panel.dataset.section));\n  }\n\n  function setAutomaticOpen(panel, open) {\n    if (!panel || hasSectionPreference(panel) || panel.open === open) return;\n    panel.dataset.automaticToggle = 'true';\n    panel.open = open;\n    setTimeout(() => { delete panel.dataset.automaticToggle; }, 0);\n  }\n\n  function renderSectionLayout(page, player) {\n    const site = page.site || {};\n    const isBilibili = page.adapter === 'bilibili';\n    const playerAvailable = Boolean(player.found || site.playerAvailable);\n    const items = state && Array.isArray(state.items) ? state.items : [];\n    const hasTextInput = isBilibili || items.some((item) => item.kind === 'input');\n    const hasPageItems = items.length > 0;\n\n    dom.toggleAllSections.textContent = showAllSections ? 'Use smart view' : 'Show all controls';\n    dom.toggleAllSections.setAttribute('aria-pressed', String(showAllSections));\n    dom.textStatus.textContent = hasTextInput ? (isBilibili ? 'Bilibili search' : 'Input detected') : 'No input detected';\n    dom.manualStatus.textContent = showAllSections ? 'Manual' : 'Fallback only';\n    if (!isBilibili) dom.fillTvButton.textContent = 'Fullscreen';\n    dom.bilibiliPlayerActions.hidden = !(isBilibili && playerAvailable);\n    dom.bilibiliPlaybackSettings.hidden = !(isBilibili && playerAvailable);\n\n    dom.bilibiliPanel.hidden = !isBilibili;\n    dom.textPanel.hidden = !(showAllSections || (hasTextInput && !playerAvailable));\n    dom.playerPanel.hidden = !(showAllSections || playerAvailable);\n    dom.itemsPanel.hidden = !(showAllSections || (hasPageItems && !playerAvailable));\n    dom.manualPanel.hidden = !(showAllSections || (!playerAvailable && !hasPageItems));\n\n    const nextContext = playerAvailable ? 'player' : isBilibili ? 'bilibili' : hasPageItems ? 'items' : 'manual';\n    if (nextContext !== sectionContext) {\n      sectionContext = nextContext;\n      setAutomaticOpen(dom.playerPanel, nextContext === 'player');\n      setAutomaticOpen(dom.bilibiliPanel, nextContext === 'bilibili');\n      setAutomaticOpen(dom.itemsPanel, nextContext === 'items');\n      setAutomaticOpen(dom.manualPanel, nextContext === 'manual');\n      setAutomaticOpen(dom.textPanel, false);\n      setAutomaticOpen(dom.sitesPanel, false);\n    }\n  }\n\n  function bindSectionControls() {\n    for (const panel of document.querySelectorAll('details[data-section]')) {\n      const id = panel.dataset.section;\n      if (Object.prototype.hasOwnProperty.call(sectionPreferences, id)) panel.open = Boolean(sectionPreferences[id]);\n      panel.addEventListener('toggle', () => {\n        if (panel.dataset.automaticToggle) return;\n        sectionPreferences[id] = panel.open;\n        localStorage.setItem(SECTION_PREFERENCES_KEY, JSON.stringify(sectionPreferences));\n      });\n    }\n    dom.toggleAllSections.addEventListener('click', () => {\n      showAllSections = !showAllSections;\n      localStorage.setItem(SHOW_ALL_SECTIONS_KEY, showAllSections ? '1' : '0');\n      renderState();\n      showToast(showAllSections ? 'Showing every control section' : 'Smart view hides irrelevant sections');\n    });\n  }\n\n  function renderProfileEditors() {\n    dom.profileEditors.textContent = '';\n    editorProfiles.forEach((profile, index) => {\n      const fieldset = document.createElement('div');\n      fieldset.className = 'profile-editor';\n      const grid = document.createElement('div');\n      grid.className = 'profile-editor-grid';\n      const nameLabel = document.createElement('label');\n      nameLabel.textContent = 'Name';\n      const nameInput = document.createElement('input');\n      nameInput.value = profile.name;\n      nameInput.maxLength = 40;\n      nameInput.addEventListener('input', () => { profile.name = nameInput.value; });\n      nameLabel.appendChild(nameInput);\n      const urlsLabel = document.createElement('label');\n      urlsLabel.textContent = 'HTTPS domains (one per line)';\n      const urlsInput = document.createElement('textarea');\n      urlsInput.value = profile.urls.join('\\n');\n      urlsInput.addEventListener('input', () => { profile.urls = urlsInput.value.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean); });\n      urlsLabel.appendChild(urlsInput);\n      grid.append(nameLabel, urlsLabel);\n      fieldset.appendChild(grid);\n      if (!['1shows', 'cineby', 'bilibili'].includes(profile.id)) {\n        const remove = document.createElement('button');\n        remove.type = 'button';\n        remove.className = 'danger compact';\n        remove.textContent = 'Remove custom site';\n        remove.addEventListener('click', () => {\n          editorProfiles.splice(index, 1);\n          renderProfileEditors();\n        });\n        fieldset.appendChild(remove);\n      }\n      dom.profileEditors.appendChild(fieldset);\n    });\n  }\n\n  function openEditor() {\n    editorProfiles = JSON.parse(JSON.stringify((serviceInfo && serviceInfo.profiles) || []));\n    renderProfileEditors();\n    dom.sitesEditor.hidden = false;\n    dom.sitesEditor.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  async function saveProfiles(event) {\n    event.preventDefault();\n    dom.sitesError.textContent = '';\n    try {\n      const active = editorProfiles.some((profile) => profile.id === (state && state.activeProfileId)) ? state.activeProfileId : editorProfiles[0].id;\n      const result = await api('/api/config', {\n        method: 'PUT',\n        body: JSON.stringify({ profiles: editorProfiles, activeProfileId: active })\n      });\n      serviceInfo.profiles = result.profiles;\n      serviceInfo.activeProfileId = result.activeProfileId;\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      dom.sitesEditor.hidden = true;\n      renderProfiles();\n      showToast('Domains saved on this TV session');\n    } catch (error) {\n      dom.sitesError.textContent = error.message;\n    }\n  }\n\n  async function restoreSavedConfig() {\n    if (configRestored || !token) return;\n    configRestored = true;\n    const raw = localStorage.getItem(CONFIG_KEY);\n    if (!raw) {\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n      return;\n    }\n    try {\n      const saved = JSON.parse(raw);\n      if (Array.isArray(saved.profiles) && !saved.profiles.some((profile) => profile.id === 'bilibili')) {\n        saved.profiles.push(BILIBILI_PROFILE);\n      }\n      if (!localStorage.getItem(BILIBILI_DEFAULT_MIGRATION_KEY) && Array.isArray(saved.profiles)) {\n        saved.profiles = saved.profiles.slice().sort((left, right) => {\n          if (left.id === 'bilibili') return -1;\n          if (right.id === 'bilibili') return 1;\n          return 0;\n        });\n        saved.activeProfileId = 'bilibili';\n      }\n      const result = await api('/api/config', { method: 'PUT', body: JSON.stringify(saved) });\n      if (serviceInfo) {\n        serviceInfo.profiles = result.profiles;\n        serviceInfo.activeProfileId = result.activeProfileId;\n      }\n      localStorage.setItem(CONFIG_KEY, JSON.stringify(result));\n      localStorage.setItem(BILIBILI_DEFAULT_MIGRATION_KEY, '1');\n    } catch (error) {\n      showToast(`Saved domains were not restored: ${error.message}`);\n    }\n  }\n\n  function handleMessage(message) {\n    if (message.kind === 'state') state = message.state;\n    if (message.kind === 'service_info') serviceInfo = message.info;\n    if (message.kind === 'error') showToast(message.error || 'Command failed');\n    renderState();\n  }\n\n  function connectSocket() {\n    clearTimeout(reconnectTimer);\n    if (!token) return;\n    if (socket) {\n      socket.onclose = null;\n      try { socket.close(); } catch { /* Already closed. */ }\n    }\n    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';\n    socket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);\n    socket.addEventListener('open', () => {\n      setConnection();\n      command({ type: 'requestSnapshot' }, false);\n    });\n    socket.addEventListener('message', (event) => {\n      try { handleMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }\n    });\n    socket.addEventListener('close', () => {\n      setConnection();\n      reconnectTimer = setTimeout(connectSocket, 1800);\n    });\n    socket.addEventListener('error', setConnection);\n  }\n\n  async function command(value, announce = true) {\n    try {\n      if (socket && socket.readyState === WebSocket.OPEN) {\n        socket.send(JSON.stringify({ kind: 'command', requestId: String(Date.now()), command: value }));\n      } else {\n        await api('/api/command', { method: 'POST', body: JSON.stringify({ command: value }) });\n      }\n      if (announce && value.type === 'navigate') showToast(`Opening ${new URL(value.url).hostname}`);\n      if (announce && value.type === 'site') showToast('Bilibili control sent');\n    } catch (error) {\n      showToast(error.message);\n    }\n  }\n\n  async function pair(event) {\n    event.preventDefault();\n    dom.pairError.textContent = '';\n    try {\n      const payload = await api('/api/pair', {\n        method: 'POST',\n        body: JSON.stringify({ pin: dom.pinInput.value.trim(), clientName: navigator.userAgent.slice(0, 60) })\n      });\n      token = payload.token;\n      localStorage.setItem(TOKEN_KEY, token);\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch (error) {\n      dom.pairError.textContent = error.message;\n    }\n  }\n\n  function flushPointer() {\n    pointerFrame = null;\n    const dx = pointerPending.dx;\n    const dy = pointerPending.dy;\n    pointerPending = { dx: 0, dy: 0 };\n    if (!dx && !dy) return;\n    if (dom.touchMode.value === 'scroll') command({ type: 'scroll', dx: -dx * 2, dy: -dy * 2 }, false);\n    else command({ type: 'pointer', dx: dx * 1.4, dy: dy * 1.4 }, false);\n  }\n\n  function pointerDown(event) {\n    dom.touchpad.setPointerCapture(event.pointerId);\n    dom.touchpad.classList.add('active');\n    pointerSession = { id: event.pointerId, x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY };\n  }\n\n  function pointerMove(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    pointerPending.dx += event.clientX - pointerSession.x;\n    pointerPending.dy += event.clientY - pointerSession.y;\n    pointerSession.x = event.clientX;\n    pointerSession.y = event.clientY;\n    if (!pointerFrame) pointerFrame = requestAnimationFrame(flushPointer);\n  }\n\n  function pointerUp(event) {\n    if (!pointerSession || pointerSession.id !== event.pointerId) return;\n    const distance = Math.hypot(event.clientX - pointerSession.startX, event.clientY - pointerSession.startY);\n    if (distance < 9 && dom.touchMode.value === 'pointer') command({ type: 'pointerClick' }, false);\n    pointerSession = null;\n    dom.touchpad.classList.remove('active');\n  }\n\n  function bindEvents() {\n    bindSectionControls();\n    dom.pairForm.addEventListener('submit', pair);\n    dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));\n    dom.editSitesButton.addEventListener('click', openEditor);\n    dom.closeSitesButton.addEventListener('click', () => { dom.sitesEditor.hidden = true; });\n    dom.sitesForm.addEventListener('submit', saveProfiles);\n    dom.addProfileButton.addEventListener('click', () => {\n      const id = `custom-${Date.now().toString(36)}`;\n      editorProfiles.push({ id, name: 'Custom site', urls: ['https://example.com/'] });\n      renderProfileEditors();\n    });\n    dom.textForm.addEventListener('submit', (event) => {\n      event.preventDefault();\n      command({ type: 'text', value: dom.textInput.value, submit: true }, false);\n    });\n    dom.sendTextButton.addEventListener('click', () => command({ type: 'text', value: dom.textInput.value, submit: false }, false));\n    document.querySelectorAll('[data-bilibili-action]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'site',\n      site: 'bilibili',\n      action: button.dataset.bilibiliAction\n    })));\n    dom.applyBilibiliQuality.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'quality', value: dom.bilibiliQuality.value }));\n    dom.applyBilibiliSpeed.addEventListener('click', () => command({ type: 'site', site: 'bilibili', action: 'speed', value: dom.bilibiliSpeed.value }));\n    document.querySelectorAll('[data-focus]').forEach((button) => button.addEventListener('click', () => command({ type: 'focus', direction: button.dataset.focus }, false)));\n    document.querySelectorAll('[data-history]').forEach((button) => button.addEventListener('click', () => command({ type: 'history', action: button.dataset.history }, false)));\n    dom.activateButton.addEventListener('click', () => command({ type: 'activate' }, false));\n    document.querySelectorAll('[data-media]').forEach((button) => button.addEventListener('click', () => command({\n      type: 'media',\n      action: button.dataset.media,\n      value: Number(button.dataset.value || 0)\n    }, false)));\n    dom.refreshItems.addEventListener('click', () => command({ type: 'requestSnapshot' }, false));\n    dom.itemFilter.addEventListener('input', renderItems);\n    dom.touchpad.addEventListener('pointerdown', pointerDown);\n    dom.touchpad.addEventListener('pointermove', pointerMove);\n    dom.touchpad.addEventListener('pointerup', pointerUp);\n    dom.touchpad.addEventListener('pointercancel', pointerUp);\n    dom.forgetButton.addEventListener('click', async () => {\n      try { await api('/api/session', { method: 'DELETE' }); } catch { /* Local cleanup still proceeds. */ }\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      if (socket) socket.close();\n      location.reload();\n    });\n  }\n\n  async function initialize() {\n    cacheDom();\n    bindEvents();\n    const pin = new URLSearchParams(location.search).get('pin');\n    if (pin) dom.pinInput.value = pin.replace(/\\D/g, '').slice(0, 6);\n    if (!token) {\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n      if (pin && dom.pinInput.value.length === 6) dom.pinInput.focus();\n      return;\n    }\n    try {\n      const payload = await api('/api/state');\n      state = payload.state;\n      serviceInfo = payload.info;\n      dom.pairView.hidden = true;\n      dom.remoteView.hidden = false;\n      await restoreSavedConfig();\n      renderState();\n      connectSocket();\n    } catch {\n      localStorage.removeItem(TOKEN_KEY);\n      token = '';\n      dom.pairView.hidden = false;\n      dom.remoteView.hidden = true;\n      setConnection();\n    }\n  }\n\n  document.addEventListener('DOMContentLoaded', initialize, { once: true });\n})();\n",
+      "styles.css": `:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: #101d2d;
+  --panel-2: #14253a;
+  --line: #263b52;
+  --text: #eef6ff;
+  --muted: #96abc1;
+  --accent: #38bdf8;
+  --accent-2: #0ea5e9;
+  --danger: #fb7185;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 20% -10%, #12395a 0, transparent 37rem), var(--bg); }
+button, input, select, textarea { font: inherit; }
+button, select { touch-action: manipulation; }
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: max(12px, env(safe-area-inset-top)) 18px 12px;
+  background: rgba(7, 17, 31, .91);
+  border-bottom: 1px solid rgba(77, 111, 145, .35);
+  backdrop-filter: blur(18px);
+}
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto; border-radius: 13px; color: #00131d; background: var(--accent); font-size: 25px; font-weight: 900; }
+.brand-copy { min-width: 0; flex: 1; }
+.brand-copy h1 { margin: 0; font-size: 18px; }
+.brand-copy p { margin: 2px 0 0; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-dot { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; background: #64748b; box-shadow: 0 0 0 5px rgba(100, 116, 139, .15); }
+.status-dot.connected { background: #34d399; box-shadow: 0 0 0 5px rgba(52, 211, 153, .15); }
+.status-dot.partial { background: #fbbf24; box-shadow: 0 0 0 5px rgba(251, 191, 36, .15); }
+
+main { width: min(920px, 100%); margin: 0 auto; padding: 16px 12px calc(30px + var(--safe-bottom)); }
+.panel { margin-bottom: 13px; padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, rgba(20, 37, 58, .96), rgba(12, 27, 43, .98)); box-shadow: 0 14px 45px rgba(0, 0, 0, .16); }
+.collapsible { overflow: hidden; padding: 0; }
+.section-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 70px;
+  padding: 14px 17px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.section-summary::-webkit-details-marker { display: none; }
+.section-summary::after { content: '\u203A'; color: var(--muted); font-size: 28px; line-height: 1; transform: rotate(90deg); transition: transform .16s ease; }
+.collapsible[open] > .section-summary::after { transform: rotate(-90deg); }
+.section-summary .eyebrow { display: block; }
+.summary-title { display: block; overflow: hidden; color: var(--text); font-size: 18px; font-weight: 800; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.summary-status { max-width: 42vw; overflow: hidden; color: var(--muted); font-size: 12px; font-weight: 750; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.section-body { padding: 2px 17px 17px; border-top: 1px solid rgba(38, 59, 82, .72); }
+.section-intro { margin: 12px 0 0; font-size: 12px; }
+.header-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+.pair-panel { max-width: 480px; margin: 8vh auto 0; padding: 24px; }
+.pair-panel h2 { font-size: 25px; }
+h2 { margin: 2px 0 6px; font-size: 20px; line-height: 1.2; }
+.eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.muted, .hint { color: var(--muted); }
+.hint { margin: 12px 0 0; font-size: 12px; line-height: 1.45; }
+.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+label { display: grid; gap: 7px; color: #c4d3e2; font-size: 13px; font-weight: 700; }
+input, select, textarea { width: 100%; min-height: 48px; border: 1px solid #35506c; border-radius: 12px; outline: none; color: var(--text); background: #091725; padding: 11px 13px; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, .15); }
+textarea { min-height: 92px; resize: vertical; line-height: 1.45; }
+.pair-panel input { margin: 8px 0 12px; text-align: center; font-size: 30px; font-weight: 800; letter-spacing: .22em; }
+
+button { min-height: 46px; border: 1px solid #38536d; border-radius: 12px; color: var(--text); background: #19304a; padding: 9px 13px; font-weight: 750; cursor: pointer; }
+button:active { transform: scale(.975); filter: brightness(1.18); }
+button:focus-visible { outline: 3px solid rgba(56, 189, 248, .8); outline-offset: 2px; }
+button.primary { border-color: #38bdf8; color: #00151f; background: linear-gradient(145deg, #67d4ff, #0ea5e9); }
+button.ghost { background: transparent; }
+button.danger { border-color: rgba(251, 113, 133, .6); color: #fecdd3; background: rgba(136, 19, 55, .25); }
+button.compact { min-height: 38px; padding: 6px 10px; font-size: 12px; }
+button.wide { width: 100%; }
+.error { min-height: 1.25em; margin: 10px 0 0; color: #fda4af; font-size: 13px; }
+.section-heading, .now-playing { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.section-heading > div:first-child, .now-playing > div:first-child { min-width: 0; }
+
+.profiles { display: grid; gap: 10px; margin-top: 14px; }
+.profile { display: grid; grid-template-columns: minmax(90px, .7fr) minmax(130px, 1.5fr) auto; gap: 9px; align-items: center; padding: 11px; border: 1px solid #2b455f; border-radius: 14px; background: rgba(5, 15, 26, .35); }
+.profile.active { border-color: var(--accent); background: rgba(14, 165, 233, .1); }
+.profile-name { font-weight: 800; }
+.profile select { min-height: 42px; padding: 8px 10px; font-size: 12px; }
+.profile button { min-height: 42px; }
+.profile-editor { margin: 13px 0; padding: 13px; border: 1px solid var(--line); border-radius: 14px; }
+.profile-editor-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+.inline-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+
+.text-form { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-top: 13px; }
+.site-status { flex: 0 0 auto; color: #f9a8d4; font-size: 12px; font-weight: 800; }
+.site-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 13px; }
+.player-site-actions { grid-template-columns: repeat(4, 1fr); }
+.site-selectors { display: grid; grid-template-columns: minmax(150px, 1fr) auto minmax(130px, .8fr) auto; gap: 8px; align-items: end; margin-top: 10px; }
+.site-selectors select { min-height: 42px; padding: 8px 10px; }
+.site-selectors button { min-height: 42px; }
+.control-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 13px; padding-top: 13px; }
+.control-surface { min-width: 0; padding: 13px; border: 1px solid #2b455f; border-radius: 14px; background: rgba(5, 15, 26, .3); }
+.dpad-panel, .touch-panel { min-width: 0; }
+.dpad { display: grid; grid-template: repeat(3, 60px) / repeat(3, 60px); justify-content: center; gap: 7px; margin: 12px auto; }
+.dpad button { min-height: 60px; padding: 0; font-size: 20px; }
+.dpad .up { grid-area: 1 / 2; }
+.dpad .left { grid-area: 2 / 1; }
+.dpad .ok { grid-area: 2 / 2; border-radius: 50%; color: #00131d; background: var(--accent); }
+.dpad .right { grid-area: 2 / 3; }
+.dpad .down { grid-area: 3 / 2; }
+.three-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.mode { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+.mode select { width: auto; min-height: 38px; padding: 6px 9px; }
+.touchpad { display: grid; place-items: center; height: 224px; margin-top: 12px; border: 1px solid #3c5a76; border-radius: 17px; color: #8ca8c1; background: radial-gradient(circle at 50% 42%, rgba(56, 189, 248, .11), transparent 55%), #081522; user-select: none; touch-action: none; }
+.touchpad.active { border-color: var(--accent); color: #d9f4ff; }
+
+.time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }
+.player-meta { display: flex; justify-content: flex-end; padding-top: 11px; }
+.media-controls { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 13px; }
+.media-controls .play { grid-column: span 2; }
+.media-controls .wide-control { grid-column: span 6; }
+.page-items { display: grid; gap: 8px; max-height: 54vh; overflow: auto; margin-top: 10px; padding-right: 2px; }
+.page-item { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: center; width: 100%; min-height: 56px; text-align: left; }
+.page-item .kind { color: var(--accent); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.page-item .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page-item .detail { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filter { margin-top: 10px; }
+.diagnostics summary { cursor: pointer; font-weight: 800; }
+.diagnostics dl { display: grid; gap: 7px; }
+.diagnostics dl div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; }
+.diagnostics dt { color: var(--muted); }
+.diagnostics dd { margin: 0; overflow-wrap: anywhere; }
+.toast { position: fixed; z-index: 30; left: 50%; bottom: calc(18px + var(--safe-bottom)); transform: translateX(-50%) translateY(20px); width: max-content; max-width: calc(100% - 28px); margin: 0; padding: 11px 15px; border: 1px solid #3a5872; border-radius: 999px; color: white; background: rgba(7, 17, 31, .96); opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; box-shadow: 0 12px 35px rgba(0,0,0,.4); }
+.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 680px) {
+  .control-grid { grid-template-columns: 1fr; }
+  .profile { grid-template-columns: 86px 1fr; }
+  .profile button { grid-column: 1 / -1; }
+  .profile-editor-grid { grid-template-columns: 1fr; }
+  .text-form { grid-template-columns: 1fr 1fr; }
+  .text-form input { grid-column: 1 / -1; }
+  .site-actions { grid-template-columns: repeat(2, 1fr); }
+  .site-selectors { grid-template-columns: 1fr auto; }
+  .media-controls { grid-template-columns: repeat(3, 1fr); }
+  .media-controls .play { grid-column: span 1; }
+  .media-controls .wide-control { grid-column: span 3; }
+  .now-playing { align-items: flex-start; }
+  .now-playing { flex-direction: column; }
+  .header-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .summary-status { max-width: 34vw; }
+  .player-site-actions { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 390px) {
+  main { padding-left: 8px; padding-right: 8px; }
+  .panel { padding: 14px; border-radius: 15px; }
+  .collapsible { padding: 0; }
+  .section-summary { min-height: 64px; padding: 12px 14px; }
+  .section-body { padding: 2px 14px 14px; }
+  .summary-title { font-size: 16px; }
+  .header-actions button { min-height: 34px; padding: 5px 8px; font-size: 11px; }
+  .dpad { grid-template: repeat(3, 56px) / repeat(3, 56px); }
+  .dpad button { min-height: 56px; }
+  .three-buttons button { padding-left: 5px; padding-right: 5px; font-size: 12px; }
+}
+`,
       "manifest.webmanifest": '{\n  "name": "Web Remote TV",\n  "short_name": "TV Remote",\n  "description": "Local phone controller for Web Remote TV on TizenBrew.",\n  "start_url": "/",\n  "display": "standalone",\n  "background_color": "#07111f",\n  "theme_color": "#07111f",\n  "icons": [\n    {\n      "src": "/icon.svg",\n      "sizes": "any",\n      "type": "image/svg+xml",\n      "purpose": "any maskable"\n    }\n  ]\n}\n',
       "icon.svg": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">\n  <rect width="512" height="512" rx="112" fill="#07111f"/>\n  <rect x="72" y="94" width="368" height="252" rx="38" fill="#14253a" stroke="#38bdf8" stroke-width="20"/>\n  <path d="M188 418h136M256 346v72" stroke="#dff6ff" stroke-width="24" stroke-linecap="round"/>\n  <path d="M188 260l136-136M234 124h90v90" fill="none" stroke="#38bdf8" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>\n</svg>\n'
     };
@@ -3101,7 +3306,9 @@ var require_protocol = __commonJS({
           loggedIn: Boolean(rawSite.loggedIn),
           danmakuEnabled: typeof rawSite.danmakuEnabled === "boolean" ? rawSite.danmakuEnabled : null,
           quality: text2(rawSite.quality, 40),
-          playbackRate: clampNumber(rawSite.playbackRate, 0.5, 2, 1)
+          playbackRate: clampNumber(rawSite.playbackRate, 0.5, 2, 1),
+          playerAvailable: Boolean(rawSite.playerAvailable),
+          webFullscreenActive: Boolean(rawSite.webFullscreenActive)
         } : null;
         return {
           kind,
@@ -3177,7 +3384,7 @@ var _require_protocol = require_protocol(),
   sanitizeTvMessage = _require_protocol.sanitizeTvMessage,
   text = _require_protocol.text;
 var DEFAULT_PORT = 8182;
-var APP_VERSION = "0.2.3";
+var APP_VERSION = "0.2.4";
 var BODY_LIMIT = 32 * 1024;
 var TOKEN_TTL = 30 * 24 * 60 * 60 * 1e3;
 var PIN_TTL = 10 * 60 * 1e3;
@@ -3455,7 +3662,10 @@ function createRemoteServer() {
     };
   }
   function send(socket, message) {
-    if (socket && socket.readyState === WS_OPEN) socket.send(JSON.stringify(message));
+    if (!socket || socket.readyState !== WS_OPEN) return;
+    try {
+      socket.send(JSON.stringify(message), function () {});
+    } catch (_unused4) {}
   }
   function broadcastPhones(message) {
     var _iterator4 = _createForOfIteratorHelper(phoneSockets),
@@ -3942,7 +4152,7 @@ function createRemoteServer() {
     var url;
     try {
       url = parseRequestUrl(request.url || "/", `http://${request.headers.host || "localhost"}`);
-    } catch (_unused5) {
+    } catch (_unused6) {
       socket.destroy();
       return;
     }
@@ -3972,7 +4182,7 @@ function createRemoteServer() {
             socket.destroy();
             return;
           }
-        } catch (_unused6) {
+        } catch (_unused7) {
           socket.destroy();
           return;
         }
@@ -4000,12 +4210,22 @@ function createRemoteServer() {
       socket.on("message", function (payload) {
         try {
           updateFromTv(JSON.parse(payload.toString("utf8")));
-        } catch (_unused7) {}
+        } catch (_unused8) {}
       });
-      socket.on("close", function () {
+      var tvDisconnected = false;
+      var disconnectTv = function disconnectTv() {
+        if (tvDisconnected) return;
+        tvDisconnected = true;
         if (tvSocket === socket) tvSocket = null;
         broadcastState();
+      };
+      socket.on("error", function () {
+        disconnectTv();
+        try {
+          socket.terminate();
+        } catch (_unused9) {}
       });
+      socket.on("close", disconnectTv);
       return;
     }
     phoneSockets.add(socket);
@@ -4036,10 +4256,20 @@ function createRemoteServer() {
         });
       }
     });
-    socket.on("close", function () {
+    var phoneDisconnected = false;
+    var disconnectPhone = function disconnectPhone() {
+      if (phoneDisconnected) return;
+      phoneDisconnected = true;
       phoneSockets.delete(socket);
       broadcastState();
+    };
+    socket.on("error", function () {
+      disconnectPhone();
+      try {
+        socket.terminate();
+      } catch (_unused0) {}
     });
+    socket.on("close", disconnectPhone);
   });
   var ready = new Promise(function (resolve, reject) {
     server.once("error", reject);
@@ -4140,7 +4370,7 @@ function addTizenNetworkAddress(instance) {
         }
       }, function () {});
     });
-  } catch (_unused8) {}
+  } catch (_unused1) {}
 }
 if (process.env.WEB_REMOTE_NO_AUTOSTART !== "1") {
   var instance = createRemoteServer();

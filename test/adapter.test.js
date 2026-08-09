@@ -56,6 +56,7 @@ test('1Shows adapter discovers semantic controls and activates stable snapshot i
 
 test('Bilibili adapter exposes login, search, danmu, quality, speed, and player actions', async () => {
   const { window } = parseHTML(`<!doctype html><html><body>
+    <div class="bpx-player-container"></div>
     <input class="nav-search-input" type="text" placeholder="Search Bilibili">
     <div class="header-login-entry">登录</div>
     <div aria-label="哔哩哔哩播放器">
@@ -108,6 +109,7 @@ test('Bilibili adapter exposes login, search, danmu, quality, speed, and player 
       ['login', '.header-login-entry'],
       ['danmaku', '.bpx-player-dm-switch'],
       ['next', '.bpx-player-ctrl-next'],
+      ['webFullscreen', '.bpx-player-ctrl-web'],
       ['quality', '[data-value="64"]', '64'],
       ['speed', '[data-value="1.5"]', '1.5']
     ]) {
@@ -117,12 +119,14 @@ test('Bilibili adapter exposes login, search, danmu, quality, speed, and player 
       assert.equal(clicked, true, action);
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 180));
     const site = adapter.siteState();
     assert.equal(site.loginAvailable, true);
     assert.equal(site.danmakuEnabled, false);
     assert.match(site.quality, /720P/);
     assert.equal(site.playbackRate, 1);
+    assert.equal(site.playerAvailable, true);
+    assert.equal(site.webFullscreenActive, true);
   } finally {
     global.window = previousWindow;
     global.document = previousDocument;

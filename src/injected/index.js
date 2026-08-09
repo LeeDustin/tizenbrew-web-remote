@@ -117,6 +117,7 @@ function startEmbeddedFrameBridge() {
   let embeddedPlayer = null;
   let embeddedPlayerSeenAt = 0;
   let lastError = '';
+  let siteFillTvActive = false;
 
   function postState(message) {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -143,6 +144,8 @@ function startEmbeddedFrameBridge() {
       readyState: document.readyState,
       site: adapter.siteState ? adapter.siteState() : null
     };
+    siteFillTvActive = Boolean(page.site && page.site.webFullscreenActive);
+    syncOverlayVisibility();
     const signature = JSON.stringify(page);
     if (force || signature !== lastPageSignature) {
       lastPageSignature = signature;
@@ -152,6 +155,21 @@ function startEmbeddedFrameBridge() {
 
   function bestVideo() {
     const videos = Array.from(document.querySelectorAll('video'));
+    if (adapter.id === 'bilibili') {
+      const playerVideos = Array.from(document.querySelectorAll([
+        '.bpx-player-container video',
+        '#bilibili-player video',
+        '.bilibili-player-video video'
+      ].join(',')));
+      if (playerVideos.length) {
+        playerVideos.sort((left, right) => {
+          const a = left.getBoundingClientRect();
+          const b = right.getBoundingClientRect();
+          return b.width * b.height - a.width * a.height;
+        });
+        return playerVideos[0];
+      }
+    }
     videos.sort((left, right) => {
       const a = left.getBoundingClientRect();
       const b = right.getBoundingClientRect();
@@ -256,13 +274,18 @@ function startEmbeddedFrameBridge() {
     };
     updatePointer();
     updateOverlay();
+    syncOverlayVisibility();
   }
 
   function setOverlay(show) {
     overlayVisible = show;
+    syncOverlayVisibility();
+  }
+
+  function syncOverlayVisibility() {
     if (!overlay) return;
-    overlay.panel.classList.toggle('hidden', !show);
-    overlay.chip.classList.toggle('visible', !show);
+    overlay.panel.classList.toggle('hidden', !overlayVisible || siteFillTvActive);
+    overlay.chip.classList.toggle('visible', !overlayVisible && !siteFillTvActive);
   }
 
   function updateOverlay() {
@@ -406,8 +429,20 @@ function startEmbeddedFrameBridge() {
       tracks.forEach((track, index) => { track.mode = !showing && index === 0 ? 'showing' : 'disabled'; });
     }
     if (action === 'fullscreen') {
-      const request = video.requestFullscreen || video.webkitRequestFullscreen || video.webkitEnterFullscreen;
-      if (request) request.call(video);
+      if (adapter.id === 'bilibili' && adapter.siteAction && adapter.siteAction('webFullscreen')) {
+        setTimeout(() => {
+          pageState(true);
+          playerState(true);
+        }, 250);
+        return;
+      }
+      const target = video.closest('.bpx-player-container,[data-player],.player') || video;
+      const requestTarget = target.requestFullscreen || target.webkitRequestFullscreen ? target : video;
+      const request = requestTarget.requestFullscreen || requestTarget.webkitRequestFullscreen || requestTarget.webkitEnterFullscreen;
+      if (request) {
+        const result = request.call(requestTarget);
+        if (result && typeof result.catch === 'function') result.catch(() => {});
+      }
     }
     setTimeout(() => playerState(true), 100);
   }

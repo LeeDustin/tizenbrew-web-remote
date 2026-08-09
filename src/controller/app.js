@@ -4,6 +4,8 @@
   const TOKEN_KEY = 'webRemoteTvToken';
   const CONFIG_KEY = 'webRemoteTvProfiles';
   const BILIBILI_DEFAULT_MIGRATION_KEY = 'webRemoteTvBilibiliDefaultV1';
+  const SECTION_PREFERENCES_KEY = 'webRemoteTvSectionPreferencesV1';
+  const SHOW_ALL_SECTIONS_KEY = 'webRemoteTvShowAllSectionsV1';
   const BILIBILI_PROFILE = { id: 'bilibili', name: 'Bilibili', urls: ['https://www.bilibili.com/'] };
   const dom = {};
   let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -17,17 +19,27 @@
   let pointerSession = null;
   let pointerPending = { dx: 0, dy: 0 };
   let pointerFrame = null;
+  let showAllSections = localStorage.getItem(SHOW_ALL_SECTIONS_KEY) === '1';
+  let sectionContext = '';
+  let sectionPreferences = {};
+  try {
+    const savedSectionPreferences = JSON.parse(localStorage.getItem(SECTION_PREFERENCES_KEY) || '{}');
+    sectionPreferences = savedSectionPreferences && typeof savedSectionPreferences === 'object' && !Array.isArray(savedSectionPreferences)
+      ? savedSectionPreferences : {};
+  } catch { sectionPreferences = {}; }
 
   function byId(id) { return document.getElementById(id); }
 
   function cacheDom() {
     for (const id of [
       'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',
-      'pageTitle', 'pageUrl', 'showTvOverlay', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',
+      'pageTitle', 'pageUrl', 'showTvOverlay', 'toggleAllSections', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',
       'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',
       'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',
-      'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime', 'refreshItems', 'itemFilter',
-      'pageItems', 'diagTv', 'diagNavigation', 'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'
+      'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime',
+      'refreshItems', 'itemFilter', 'pageItems', 'sitesPanel', 'sitesStatus', 'textPanel', 'textStatus', 'manualPanel',
+      'manualStatus', 'playerPanel', 'itemsPanel', 'itemsStatus', 'diagnosticsPanel', 'diagTv', 'diagNavigation',
+      'diagAdapter', 'diagSocket', 'diagError', 'forgetButton', 'toast'
     ]) dom[id] = byId(id);
   }
 
@@ -82,7 +94,8 @@
     const player = state.player || {};
     dom.pageTitle.textContent = page.title || page.hostname || 'Waiting for page…';
     dom.pageUrl.textContent = page.url || '';
-    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : 'No accessible top-level player';
+    const playerAvailable = player.found || Boolean(page.site && page.site.playerAvailable);
+    dom.playerStatus.textContent = player.found ? (player.paused ? 'Paused' : 'Playing') : playerAvailable ? 'Player loading' : 'No player';
     dom.playerTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
     dom.diagTv.textContent = state.tvConnected ? 'connected' : 'not connected';
     dom.diagNavigation.textContent = state.navigation ? state.navigation.status : 'idle';
@@ -91,6 +104,7 @@
     renderBilibili(page);
     renderProfiles();
     renderItems();
+    renderSectionLayout(page, player);
   }
 
   function renderBilibili(page) {
@@ -99,10 +113,16 @@
     if (!active) return;
     const site = page.site || {};
     const status = [];
-    status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');
+    if (!site.playerAvailable) status.push(site.loggedIn ? 'Signed in' : site.loginAvailable ? 'Login available' : 'Account status unknown');
+    if (site.webFullscreenActive) status.push('Fill TV');
     if (typeof site.danmakuEnabled === 'boolean') status.push(site.danmakuEnabled ? 'Danmu on' : 'Danmu off');
     if (site.quality) status.push(site.quality);
+    if (!status.length) status.push(site.playerAvailable ? 'Player ready' : 'Ready');
     dom.bilibiliStatus.textContent = status.join(' · ');
+
+    dom.bilibiliStatus.title = dom.bilibiliStatus.textContent;
+    const fillLabel = site.webFullscreenActive ? 'Exit Fill TV' : 'Fill TV';
+    dom.fillTvButton.textContent = fillLabel;
 
     const rate = String(site.playbackRate || '');
     if (Array.from(dom.bilibiliSpeed.options).some((option) => option.value === rate)) dom.bilibiliSpeed.value = rate;
@@ -118,6 +138,8 @@
 
   function renderProfiles() {
     if (!serviceInfo || !Array.isArray(serviceInfo.profiles)) return;
+    const activeProfile = serviceInfo.profiles.find((profile) => state && state.activeProfileId === profile.id);
+    dom.sitesStatus.textContent = activeProfile ? activeProfile.name : 'Switch site';
     dom.profiles.textContent = '';
     for (const profile of serviceInfo.profiles) {
       const row = document.createElement('div');
@@ -146,6 +168,7 @@
     if (!state) return;
     const query = dom.itemFilter.value.trim().toLowerCase();
     const items = (state.items || []).filter((item) => !query || `${item.label} ${item.detail} ${item.kind}`.toLowerCase().includes(query));
+    dom.itemsStatus.textContent = `${state.items ? state.items.length : 0} found`;
     dom.pageItems.textContent = '';
     if (!items.length) {
       const empty = document.createElement('p');
@@ -176,6 +199,69 @@
       button.addEventListener('click', () => command({ type: 'select', id: item.id }));
       dom.pageItems.appendChild(button);
     }
+  }
+
+  function hasSectionPreference(panel) {
+    return Boolean(panel && Object.prototype.hasOwnProperty.call(sectionPreferences, panel.dataset.section));
+  }
+
+  function setAutomaticOpen(panel, open) {
+    if (!panel || hasSectionPreference(panel) || panel.open === open) return;
+    panel.dataset.automaticToggle = 'true';
+    panel.open = open;
+    setTimeout(() => { delete panel.dataset.automaticToggle; }, 0);
+  }
+
+  function renderSectionLayout(page, player) {
+    const site = page.site || {};
+    const isBilibili = page.adapter === 'bilibili';
+    const playerAvailable = Boolean(player.found || site.playerAvailable);
+    const items = state && Array.isArray(state.items) ? state.items : [];
+    const hasTextInput = isBilibili || items.some((item) => item.kind === 'input');
+    const hasPageItems = items.length > 0;
+
+    dom.toggleAllSections.textContent = showAllSections ? 'Use smart view' : 'Show all controls';
+    dom.toggleAllSections.setAttribute('aria-pressed', String(showAllSections));
+    dom.textStatus.textContent = hasTextInput ? (isBilibili ? 'Bilibili search' : 'Input detected') : 'No input detected';
+    dom.manualStatus.textContent = showAllSections ? 'Manual' : 'Fallback only';
+    if (!isBilibili) dom.fillTvButton.textContent = 'Fullscreen';
+    dom.bilibiliPlayerActions.hidden = !(isBilibili && playerAvailable);
+    dom.bilibiliPlaybackSettings.hidden = !(isBilibili && playerAvailable);
+
+    dom.bilibiliPanel.hidden = !isBilibili;
+    dom.textPanel.hidden = !(showAllSections || (hasTextInput && !playerAvailable));
+    dom.playerPanel.hidden = !(showAllSections || playerAvailable);
+    dom.itemsPanel.hidden = !(showAllSections || (hasPageItems && !playerAvailable));
+    dom.manualPanel.hidden = !(showAllSections || (!playerAvailable && !hasPageItems));
+
+    const nextContext = playerAvailable ? 'player' : isBilibili ? 'bilibili' : hasPageItems ? 'items' : 'manual';
+    if (nextContext !== sectionContext) {
+      sectionContext = nextContext;
+      setAutomaticOpen(dom.playerPanel, nextContext === 'player');
+      setAutomaticOpen(dom.bilibiliPanel, nextContext === 'bilibili');
+      setAutomaticOpen(dom.itemsPanel, nextContext === 'items');
+      setAutomaticOpen(dom.manualPanel, nextContext === 'manual');
+      setAutomaticOpen(dom.textPanel, false);
+      setAutomaticOpen(dom.sitesPanel, false);
+    }
+  }
+
+  function bindSectionControls() {
+    for (const panel of document.querySelectorAll('details[data-section]')) {
+      const id = panel.dataset.section;
+      if (Object.prototype.hasOwnProperty.call(sectionPreferences, id)) panel.open = Boolean(sectionPreferences[id]);
+      panel.addEventListener('toggle', () => {
+        if (panel.dataset.automaticToggle) return;
+        sectionPreferences[id] = panel.open;
+        localStorage.setItem(SECTION_PREFERENCES_KEY, JSON.stringify(sectionPreferences));
+      });
+    }
+    dom.toggleAllSections.addEventListener('click', () => {
+      showAllSections = !showAllSections;
+      localStorage.setItem(SHOW_ALL_SECTIONS_KEY, showAllSections ? '1' : '0');
+      renderState();
+      showToast(showAllSections ? 'Showing every control section' : 'Smart view hides irrelevant sections');
+    });
   }
 
   function renderProfileEditors() {
@@ -375,6 +461,7 @@
   }
 
   function bindEvents() {
+    bindSectionControls();
     dom.pairForm.addEventListener('submit', pair);
     dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));
     dom.editSitesButton.addEventListener('click', openEditor);
