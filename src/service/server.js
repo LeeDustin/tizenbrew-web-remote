@@ -18,7 +18,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
-const APP_VERSION = '0.2.4';
+const APP_VERSION = '0.2.5';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;
@@ -642,9 +642,8 @@ function createRemoteServer(options = {}) {
     }
 
     phoneSockets.add(socket);
-    send(socket, { kind: 'service_info', info: info(request) });
-    send(socket, { kind: 'state', state });
     broadcastState();
+    broadcastServiceInfo();
 
     socket.on('message', (payload) => {
       try {
@@ -662,6 +661,7 @@ function createRemoteServer(options = {}) {
       phoneDisconnected = true;
       phoneSockets.delete(socket);
       broadcastState();
+      broadcastServiceInfo();
     };
     socket.on('error', () => {
       disconnectPhone();

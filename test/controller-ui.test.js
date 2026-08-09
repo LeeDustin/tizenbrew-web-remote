@@ -19,6 +19,7 @@ test('phone remote groups secondary controls into collapsible smart-view section
   }
 
   assert.ok(document.getElementById('toggleAllSections'));
+  assert.equal(document.getElementById('showTvOverlay').textContent, 'Pair another phone');
   assert.equal(document.getElementById('fillTvButton').textContent, 'Fill TV');
   assert.equal(document.getElementById('fillTvButton').dataset.media, 'fullscreen');
   assert.equal(document.getElementById('bilibiliPlayerActions').closest('details').id, 'playerPanel');

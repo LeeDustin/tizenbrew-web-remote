@@ -65,11 +65,11 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const health = await request(base, '/api/health');
   assert.equal(health.body.ok, true);
-  assert.equal(health.body.version, '0.2.4');
+  assert.equal(health.body.version, '0.2.5');
 
   const info = instance.getInfo();
   assert.match(info.pin, /^\d{6}$/);
-  assert.equal(info.version, '0.2.4');
+  assert.equal(info.version, '0.2.5');
   assert.equal(info.activeProfileId, 'bilibili');
   assert.equal(info.profiles[0].urls[0], 'https://www.bilibili.com/');
   assert.equal(info.profiles.find((profile) => profile.id === 'bilibili').urls[0], 'https://www.bilibili.com/');
@@ -79,7 +79,7 @@ test('service exposes hardened static assets, pairing, state, and configuration'
 
   const tvInfo = await request(base, '/api/tv-info', { headers: { Origin: 'https://www.bilibili.com' } });
   assert.equal(tvInfo.response.status, 200);
-  assert.equal(tvInfo.body.version, '0.2.4');
+  assert.equal(tvInfo.body.version, '0.2.5');
   assert.match(tvInfo.body.pairUrl, /192\.168\.50\.20/);
   assert.equal(tvInfo.response.headers.get('access-control-allow-origin'), 'https://www.bilibili.com');
 
@@ -211,12 +211,17 @@ test('an abruptly disconnected phone does not terminate the local service', asyn
   const base = `http://127.0.0.1:${ready.port}`;
   const wsBase = `ws://127.0.0.1:${ready.port}`;
   const token = await pair(base, instance.getInfo().pin);
+  const tv = await openSocket(`${wsBase}/ws?role=tv`);
+  const connectedInfo = nextJson(tv, (message) => message.kind === 'service_info' && message.info.phoneCount === 1);
   const phone = await openSocket(`${wsBase}/ws?role=phone&token=${encodeURIComponent(token)}`);
+  await connectedInfo;
   t.after(() => instance.close());
 
   const closed = once(phone, 'close');
+  const disconnectedInfo = nextJson(tv, (message) => message.kind === 'service_info' && message.info.phoneCount === 0);
   phone.terminate();
   await closed;
+  await disconnectedInfo;
   await new Promise((resolve) => setTimeout(resolve, 30));
 
   const health = await request(base, '/api/health');
