@@ -41,9 +41,13 @@ need to compile the source.
 
 ## Phone controls
 
-- If no phone is available, press **Up, Up, Down, Down, OK** on the Samsung TV
-  remote to force the pairing QR and PIN open. This works over site pages and
-  Fill TV, and the manually opened panel stays visible until **Hide** is chosen.
+- The pairing QR and PIN now stay visible at startup until **Hide** is chosen;
+  they no longer disappear because of a stale phone count.
+- To recover pairing at any time, press the remote's **Red** key (open the
+  123/Color panel on a Samsung Smart Remote), or press **Up, Up, Down, Down,
+  OK**. Recovery is relayed out of embedded player frames and works over Fill TV.
+- Press **Back** while the pairing panel is visible, or tap **Hide pairing
+  screen** on a connected phone, to dismiss it.
 - Smart view is the default: it opens the relevant player, Bilibili, page-item,
   or manual-control section and hides sections that do not apply. Every section
   remains individually collapsible, and **Show all controls** restores the full

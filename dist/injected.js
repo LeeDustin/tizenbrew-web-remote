@@ -474,10 +474,12 @@
         if (code === 38) return "up";
         if (code === 40) return "down";
         if (code === 13) return "ok";
+        if (code === 403) return "recover";
         const key = String(event && (event.key || event.keyName) || "").toLowerCase();
         if (key === "arrowup" || key === "up") return "up";
         if (key === "arrowdown" || key === "down") return "down";
         if (key === "enter" || key === "ok" || key === "done") return "ok";
+        if (key === "colorf0red" || key === "red") return "recover";
         return "";
       }
       function createPairingShortcut2(onComplete, options) {
@@ -493,7 +495,8 @@
           if (!key || lastAt && currentTime - lastAt > maximumGap) index = 0;
           lastAt = currentTime;
           if (!key) return false;
-          if (key === PAIRING_SEQUENCE[index]) index += 1;
+          if (key === "recover") index = PAIRING_SEQUENCE.length;
+          else if (key === PAIRING_SEQUENCE[index]) index += 1;
           else index = key === PAIRING_SEQUENCE[0] ? 1 : 0;
           if (index < PAIRING_SEQUENCE.length) return false;
           index = 0;
@@ -2204,6 +2207,11 @@
   var FRAME_CHANNEL = "web-remote-tv-frame-v1";
   var BILIBILI_HOME = "https://www.bilibili.com/";
   function startEmbeddedFrameBridge() {
+    function requestRecovery() {
+      window.parent.postMessage({ channel: FRAME_CHANNEL, kind: "recovery" }, "*");
+    }
+    const pairingShortcut = createPairingShortcut(requestRecovery);
+    window.addEventListener("keydown", pairingShortcut, true);
     function frameVideo() {
       const videos = Array.from(document.querySelectorAll("video"));
       videos.sort((left, right) => {
@@ -2259,7 +2267,12 @@
     }
     window.addEventListener("message", (event) => {
       const message = event.data;
-      if (event.source !== window.parent || !message || message.channel !== FRAME_CHANNEL || message.kind !== "command") return;
+      if (!message || message.channel !== FRAME_CHANNEL) return;
+      if (message.kind === "recovery" && event.source !== window.parent) {
+        requestRecovery();
+        return;
+      }
+      if (event.source !== window.parent || message.kind !== "command") return;
       const command = message.command || {};
       if (command.type === "media") media(command);
       if (command.type === "pointerClick") {
@@ -2305,7 +2318,6 @@
     let overlay = null;
     let overlayVisible = true;
     let overlayPinned = false;
-    let overlayHideTimer = null;
     let focusedElement = null;
     let pointerX = Math.round(window.innerWidth / 2);
     let pointerY = Math.round(window.innerHeight / 2);
@@ -2316,6 +2328,7 @@
     let embeddedPlayerSeenAt = 0;
     let lastError = "";
     let siteFillTvActive = false;
+    let lastOverlayBackAt = 0;
     function postState(message) {
       if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify(message));
@@ -2446,7 +2459,7 @@
         <div class="pointer"></div>
         <div class="focus"></div>
       </div>`;
-      root.querySelector(".sub").textContent = "Scan on the same Wi-Fi \xB7 Remote recovery: \u2191 \u2191 \u2193 \u2193 OK";
+      root.querySelector(".sub").textContent = "Remote recovery: Red or \u2191 \u2191 \u2193 \u2193 OK \xB7 Back hides";
       const panel = root.querySelector(".panel");
       const chip = root.querySelector(".chip");
       root.querySelector(".min").addEventListener("click", () => setOverlay(false));
@@ -2469,8 +2482,6 @@
       syncOverlayVisibility();
     }
     function setOverlay(show, pinned) {
-      clearTimeout(overlayHideTimer);
-      overlayHideTimer = null;
       overlayVisible = show;
       overlayPinned = Boolean(show && pinned);
       syncOverlayVisibility();
@@ -2501,7 +2512,7 @@
         ["Site adapter", adapter.id],
         ["Bridge", transport],
         ["Phone", data.phoneCount ? `${data.phoneCount} connected` : "not connected"],
-        ["Recovery", "Remote: \u2191 \u2191 \u2193 \u2193 OK"],
+        ["Recovery", "Red key or \u2191 \u2191 \u2193 \u2193 OK"],
         ["Page", cleanText(window.location.hostname, 80)],
         ["Last error", lastError || "none"]
       ];
@@ -2512,12 +2523,6 @@
         line.appendChild(strong);
         line.appendChild(document.createTextNode(row[1]));
         overlay.diag.appendChild(line);
-      }
-      if (data.phoneCount && overlayVisible && !overlayPinned && !overlayHideTimer) {
-        overlayHideTimer = setTimeout(() => {
-          overlayHideTimer = null;
-          if (overlayVisible && !overlayPinned) setOverlay(false);
-        }, 1300);
       }
     }
     function updatePointer() {
@@ -2819,28 +2824,52 @@
     }
     window.addEventListener("message", (event) => {
       const message = event.data;
-      if (!message || message.channel !== FRAME_CHANNEL || message.kind !== "player") return;
+      if (!message || message.channel !== FRAME_CHANNEL) return;
       if (!frameWindows().some((entry) => entry.window === event.source)) return;
+      if (message.kind === "recovery") {
+        setOverlay(true, true);
+        updateOverlay();
+        return;
+      }
+      if (message.kind !== "player") return;
       embeddedPlayer = message.player;
       embeddedPlayerSeenAt = Date.now();
       playerState(true);
     });
     function emergencyHome(event) {
-      const keyCode = Number(event.keyCode || event.which);
-      const isBack = event.keyName === "back" || event.key === "Back" || event.key === "Escape" || keyCode === 10009;
+      const isBack = isBackKey(event);
       const hostname = String(window.location.hostname || "").toLowerCase();
       const onBilibili = hostname === "bilibili.com" || hostname.endsWith(".bilibili.com");
-      if (!isBack || onBilibili) return;
+      if (!isBack || Date.now() - lastOverlayBackAt < 500 || onBilibili) return;
       event.preventDefault();
       event.stopPropagation();
       window.location.replace(BILIBILI_HOME);
+    }
+    function isBackKey(event) {
+      const keyCode = Number(event && (event.keyCode || event.which));
+      const key = String(event && (event.keyName || event.key) || "").toLowerCase();
+      return key === "back" || key === "escape" || keyCode === 10009;
+    }
+    function hideOverlayWithBack(event) {
+      if (!overlayVisible || !isBackKey(event)) return;
+      lastOverlayBackAt = Date.now();
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+      setOverlay(false);
     }
     const pairingShortcut = createPairingShortcut(() => {
       setOverlay(true, true);
       updateOverlay();
     });
+    try {
+      if (typeof tizen !== "undefined" && tizen.tvinputdevice) tizen.tvinputdevice.registerKey("ColorF0Red");
+    } catch {
+    }
     window.addEventListener("keydown", pairingShortcut, true);
+    window.addEventListener("keydown", hideOverlayWithBack, true);
     window.addEventListener("keydown", emergencyHome, true);
+    document.addEventListener("tizenhwkey", hideOverlayWithBack, true);
     document.addEventListener("tizenhwkey", emergencyHome, true);
     if (document.documentElement) initializeDom();
     else document.addEventListener("DOMContentLoaded", initializeDom, { once: true });

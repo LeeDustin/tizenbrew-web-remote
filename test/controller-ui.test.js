@@ -20,8 +20,16 @@ test('phone remote groups secondary controls into collapsible smart-view section
 
   assert.ok(document.getElementById('toggleAllSections'));
   assert.equal(document.getElementById('showTvOverlay').textContent, 'Pair another phone');
+  assert.equal(document.getElementById('hideTvOverlay').textContent, 'Hide pairing screen');
   assert.equal(document.getElementById('fillTvButton').textContent, 'Fill TV');
   assert.equal(document.getElementById('fillTvButton').dataset.media, 'fullscreen');
   assert.equal(document.getElementById('bilibiliPlayerActions').closest('details').id, 'playerPanel');
   assert.ok(document.getElementById('bilibiliPlaybackSettings').hidden);
+});
+
+test('phone WebSocket reconnects cannot multiply active connections', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'controller', 'app.js'), 'utf8');
+  assert.match(source, /socket\.readyState === WebSocket\.CONNECTING/);
+  assert.match(source, /if \(socket !== nextSocket\) return;/);
+  assert.doesNotMatch(source, /socket\.onclose = null/);
 });

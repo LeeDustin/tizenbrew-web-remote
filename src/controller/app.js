@@ -33,7 +33,7 @@
   function cacheDom() {
     for (const id of [
       'connectionLabel', 'connectionDot', 'pairView', 'remoteView', 'pairForm', 'pinInput', 'pairError',
-      'pageTitle', 'pageUrl', 'showTvOverlay', 'toggleAllSections', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',
+      'pageTitle', 'pageUrl', 'showTvOverlay', 'hideTvOverlay', 'toggleAllSections', 'profiles', 'editSitesButton', 'sitesEditor', 'closeSitesButton',
       'sitesForm', 'profileEditors', 'addProfileButton', 'sitesError', 'textForm', 'textInput', 'sendTextButton',
       'bilibiliPanel', 'bilibiliStatus', 'bilibiliQuality', 'applyBilibiliQuality', 'bilibiliSpeed', 'applyBilibiliSpeed',
       'fillTvButton', 'bilibiliPlayerActions', 'bilibiliPlaybackSettings', 'activateButton', 'touchMode', 'touchpad', 'playerStatus', 'playerTime',
@@ -371,24 +371,28 @@
   function connectSocket() {
     clearTimeout(reconnectTimer);
     if (!token) return;
-    if (socket) {
-      socket.onclose = null;
-      try { socket.close(); } catch { /* Already closed. */ }
-    }
+    if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) return;
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    socket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);
-    socket.addEventListener('open', () => {
+    const nextSocket = new WebSocket(`${protocol}//${location.host}/ws?role=phone&token=${encodeURIComponent(token)}`);
+    socket = nextSocket;
+    nextSocket.addEventListener('open', () => {
+      if (socket !== nextSocket) return;
       setConnection();
       command({ type: 'requestSnapshot' }, false);
     });
-    socket.addEventListener('message', (event) => {
+    nextSocket.addEventListener('message', (event) => {
+      if (socket !== nextSocket) return;
       try { handleMessage(JSON.parse(event.data)); } catch { /* Ignore malformed local messages. */ }
     });
-    socket.addEventListener('close', () => {
+    nextSocket.addEventListener('close', () => {
+      if (socket !== nextSocket) return;
+      socket = null;
       setConnection();
-      reconnectTimer = setTimeout(connectSocket, 1800);
+      if (token) reconnectTimer = setTimeout(connectSocket, 1800);
     });
-    socket.addEventListener('error', setConnection);
+    nextSocket.addEventListener('error', () => {
+      if (socket === nextSocket) setConnection();
+    });
   }
 
   async function command(value, announce = true) {
@@ -464,6 +468,7 @@
     bindSectionControls();
     dom.pairForm.addEventListener('submit', pair);
     dom.showTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'show' }, false));
+    dom.hideTvOverlay.addEventListener('click', () => command({ type: 'overlay', action: 'hide' }, false));
     dom.editSitesButton.addEventListener('click', openEditor);
     dom.closeSitesButton.addEventListener('click', () => { dom.sitesEditor.hidden = true; });
     dom.sitesForm.addEventListener('submit', saveProfiles);

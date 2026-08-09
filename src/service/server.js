@@ -18,7 +18,7 @@ const {
 } = require('./protocol');
 
 const DEFAULT_PORT = 8182;
-const APP_VERSION = '0.2.5';
+const APP_VERSION = '0.2.6';
 const BODY_LIMIT = 32 * 1024;
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 const PIN_TTL = 10 * 60 * 1000;
@@ -204,11 +204,15 @@ function makeDefaultState() {
 
 function createRemoteServer(options = {}) {
   const preferredPort = typeof options.port === 'number' && isFinite(options.port) && Math.floor(options.port) === options.port ? options.port : DEFAULT_PORT;
+  const maintenanceIntervalMs = typeof options.maintenanceIntervalMs === 'number'
+    ? Math.max(20, Math.floor(options.maintenanceIntervalMs))
+    : 15000;
   const host = options.host || '0.0.0.0';
   const staticDir = EMBEDDED_CONTROLLER_ASSETS ? null : (options.controllerDir || controllerDirectory());
   const tokens = new Map();
   const failures = new Map();
   const phoneSockets = new Set();
+  const phoneHeartbeats = new Map();
   let tvSocket = null;
   let tvPollSeenAt = 0;
   let tvPollWaiter = null;
@@ -642,8 +646,13 @@ function createRemoteServer(options = {}) {
     }
 
     phoneSockets.add(socket);
+    phoneHeartbeats.set(socket, true);
     broadcastState();
     broadcastServiceInfo();
+
+    socket.on('pong', () => {
+      if (phoneSockets.has(socket)) phoneHeartbeats.set(socket, true);
+    });
 
     socket.on('message', (payload) => {
       try {
@@ -660,6 +669,7 @@ function createRemoteServer(options = {}) {
       if (phoneDisconnected) return;
       phoneDisconnected = true;
       phoneSockets.delete(socket);
+      phoneHeartbeats.delete(socket);
       broadcastState();
       broadcastServiceInfo();
     };
@@ -686,6 +696,27 @@ function createRemoteServer(options = {}) {
     rotatePin();
     pruneTokens();
     send(tvSocket, { kind: 'ping', at: Date.now() });
+    let phonesChanged = false;
+    for (const phoneSocket of phoneSockets) {
+      if (phoneSocket.readyState !== WS_OPEN || phoneHeartbeats.get(phoneSocket) === false) {
+        phoneSockets.delete(phoneSocket);
+        phoneHeartbeats.delete(phoneSocket);
+        phonesChanged = true;
+        try { phoneSocket.terminate(); } catch { /* Already disconnected. */ }
+        continue;
+      }
+      phoneHeartbeats.set(phoneSocket, false);
+      try { phoneSocket.ping('', false, () => {}); } catch {
+        phoneSockets.delete(phoneSocket);
+        phoneHeartbeats.delete(phoneSocket);
+        phonesChanged = true;
+        try { phoneSocket.terminate(); } catch { /* Already disconnected. */ }
+      }
+    }
+    if (phonesChanged) {
+      broadcastState();
+      broadcastServiceInfo();
+    }
     if (state.navigation.status === 'loading' && Date.now() - state.navigation.startedAt > 20000) {
       state.navigation.status = 'timeout';
       state.navigation.finishedAt = Date.now();
@@ -693,7 +724,7 @@ function createRemoteServer(options = {}) {
       broadcastState();
     }
     if (!tvIsConnected() && state.tvConnected) broadcastState();
-  }, 30000);
+  }, maintenanceIntervalMs);
   if (typeof maintenance.unref === 'function') maintenance.unref();
 
   function close() {
